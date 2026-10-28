@@ -110,7 +110,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
  .tbl th,.tbl td{padding:7px 8px}
 }
 @media (max-width:520px){.g4{grid-template-columns:1fr 1fr}.kpi .v{font-size:21px}.modal-bg{padding:0}.modal{border-radius:0;min-height:100vh}}
-@media print{.side,.top,.bar,.btn,#toasts{display:none!important}.app{display:block}.content{padding:0}.card{box-shadow:none;break-inside:avoid}.print-only{display:block}body{background:#fff}}
+@media print{body:not(:has(#printOverlay)) .side,body:not(:has(#printOverlay)) .top,body:not(:has(#printOverlay)) .bar,body:not(:has(#printOverlay)) .btn,#toasts{display:none!important}.app{display:block}.content{padding:0}.card{box-shadow:none;break-inside:avoid}.print-only{display:block}body{background:#fff}}
 .label-sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(62mm,1fr));gap:4mm}
 .label{border:1px dashed #999;padding:3mm;display:flex;gap:3mm;align-items:center;font-size:10px;break-inside:avoid;background:#fff;color:#000}
 .label svg{width:24mm;height:24mm;flex:none}.label b{font-size:11px;display:block;word-break:break-all}
@@ -121,8 +121,55 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 #bootSplash .diag{max-width:520px;text-align:left;background:#fff;border:1px solid #dfe5e1;border-radius:12px;padding:16px;color:#16211b;font-size:13.5px;line-height:1.5}
 #bootSplash .diag button{margin:4px 6px 0 0;padding:8px 12px;border-radius:8px;border:1px solid #0f5132;background:#0f5132;color:#fff;cursor:pointer}
 #bootSplash .diag button.alt{background:#fff;color:#0f5132}
+/* ---------- loncat ke wilayah ---------- */
+.zoombar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}.zoombar .zt{width:auto;max-width:190px;padding:6px 8px;font-size:13px}
+/* ---------- cetak peta (pola layout ArcGIS) ---------- */
+#printOverlay{position:fixed;inset:0;z-index:2500;background:#5b6660;overflow:auto;padding:58px 20px 30px}
+.pt-tools{position:fixed;top:0;left:0;right:0;z-index:2;display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.pt-sheet{position:relative;margin:0 auto;background:#fff;color:#111;box-shadow:0 10px 40px rgba(0,0,0,.4);font-family:Arial,Helvetica,sans-serif}
+.pt-neat{position:absolute;border:2.2px solid #111;outline:.6px solid #111;outline-offset:1.2mm;display:flex;gap:4mm;padding:3mm}
+.pt-sheet .pt-neat{flex-direction:row}
+.pt-mapwrap{position:relative;border:1px solid #111;flex:none}
+.pt-mapwrap .leaflet-control-attribution{font-size:7px}
+.pt-side{display:flex;flex-direction:column;gap:2.5mm;flex:none;min-height:0;overflow:hidden}
+.pt-bottom{position:absolute;left:3mm;right:3mm;bottom:3mm;display:grid;grid-template-columns:1.1fr 1fr 1.2fr;gap:3mm}
+.pt-col{display:flex;flex-direction:column;gap:2.5mm;min-width:0;overflow:hidden}
+.pt-box{border:1px solid #111;padding:2mm 2.5mm}
+.pt-title{display:flex;gap:2.5mm;align-items:center;border:1px solid #111;padding:2.5mm;border-top:3mm solid #0f5132}
+.pt-title img{width:13mm;height:13mm;object-fit:contain}
+.pt-title h2{margin:0;font-size:4.6mm;line-height:1.1}.pt-org{font-size:2.6mm;text-transform:uppercase;letter-spacing:.06em;color:#333}.pt-sub{font-size:3mm;color:#333;margin-top:.6mm}
+.pt-h{font-weight:700;font-size:3mm;border-bottom:.3mm solid #111;margin-bottom:1.2mm;padding-bottom:.6mm;text-transform:uppercase;letter-spacing:.04em}
+.pt-lg{font-size:2.7mm;line-height:1.55;display:flex;align-items:center}.pt-lg i{display:inline-block;width:5mm;height:3mm;margin-right:2mm;border:.2mm solid #555;flex:none}
+.pt-scale{display:flex;gap:3mm;align-items:center}.pt-north{width:9mm;height:13.5mm;flex:none}
+.pt-segs{display:flex;height:2mm;border:.25mm solid #111}.pt-segs span{flex:1}.pt-segs .b{background:#111}.pt-segs .w{background:#fff}
+.pt-ticks{display:flex;justify-content:space-between;font-size:2.3mm;margin-top:.6mm}.pt-scnum{font-size:2.9mm;font-weight:700;margin-top:1mm}
+.pt-inset{height:30mm;border:.25mm solid #111}
+.pt-info table{width:100%;border-collapse:collapse;font-size:2.45mm}.pt-info td{border-bottom:.2mm solid #bbb;padding:.5mm .6mm;vertical-align:top}.pt-info td:first-child{font-weight:700;width:34%;white-space:nowrap}
+.pt-notes{font-size:2.5mm;margin-top:1.2mm}.pt-disc{font-size:2.1mm;color:#444;margin-top:1.2mm;font-style:italic}
+.pt-grid{position:absolute;inset:0;pointer-events:none;z-index:500}
+.pt-grid span{position:absolute;font-size:2.1mm;background:rgba(255,255,255,.85);padding:0 .6mm;color:#111;white-space:nowrap}
+.pt-grid .gx{transform:translateX(-50%)}.pt-grid .gx.t{top:0}.pt-grid .gx.b{bottom:0}
+.pt-grid .gy{transform:translateY(-50%)}.pt-grid .gy.l{left:0}.pt-grid .gy.r{right:0}
+@media print{
+  body>*:not(#printOverlay){display:none!important}
+  #printOverlay{position:static;padding:0;background:#fff;overflow:visible}
+  #printOverlay .pt-tools{display:none!important}
+  .pt-sheet{box-shadow:none;margin:0;page-break-after:avoid;break-after:avoid}
+  .pt-sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.ssu-lbl{background:rgba(255,255,255,.85);border:0;box-shadow:none;font-weight:700;font-size:11px;padding:0 3px}
+
+/* ---------- dokumentasi foto ---------- */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.doc-card{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);cursor:pointer;transition:transform .1s}.doc-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.doc-th{aspect-ratio:4/3;background:var(--brand-soft) center/cover no-repeat;position:relative}
+.doc-th:not(.ok)::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:sh 1.2s infinite}
+.doc-th.none::after{content:'Pratinjau tidak tersedia';animation:none;background:none;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.doc-meta{padding:6px 8px;font-size:12px;display:flex;flex-direction:column;gap:1px}.doc-meta b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.doc-meta span{color:var(--muted)}
+.doc-view{text-align:center;background:#111;border-radius:10px;min-height:200px;display:flex;align-items:center;justify-content:center}.doc-view img{max-width:100%;max-height:62vh;cursor:zoom-in}
 </style></head><body><div id="bootSplash"><svg width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0f5132"/><path d="M32 12c-9 8-14 16-14 24a14 14 0 0 0 28 0c0-8-5-16-14-24z" fill="#7fc79b"/><path d="M14 44h36v8H14z" fill="#b8860b"/></svg>
-<div class="spin"></div><div id="bootMsg">Memuat SSU Digital Enterprise... v1.1.2</div><div id="bootDiag"></div>
+<div class="spin"></div><div id="bootMsg">Memuat SSU Digital Enterprise... v1.2.0</div><div id="bootDiag"></div>
 <noscript><div class="diag">JavaScript dinonaktifkan. Aktifkan JavaScript untuk memakai aplikasi.</div></noscript></div>
 <script>/* watchdog boot: berjalan walau skrip utama gagal dimuat/di-parse */
 (function () {
@@ -136,7 +183,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
            : '<li>Pastikan URL server (/exec) benar dan penerapan berakses <i>Siapa saja</i>.</li><li>Bila baru diperbarui, tutup semua tab aplikasi lalu buka lagi (cache lama).</li>') +
       '</ul><button onclick="location.reload()">Muat ulang</button><button class="alt" onclick="__ssuClear()">Hapus sesi tersimpan &amp; muat ulang</button>' +
       (gas ? '' : '<button class="alt" onclick="__ssuSetUrl()">Atur URL server</button>') +
-      '<div style="font-size:11px;color:#5d6b63;margin-top:8px">v1.1.2 &middot; ' + (gas ? 'Apps Script' : 'PWA') + '</div></div>';
+      '<div style="font-size:11px;color:#5d6b63;margin-top:8px">v1.2.0 &middot; ' + (gas ? 'Apps Script' : 'PWA') + '</div></div>';
   }
   window.__ssuDiag = diag;
   window.__ssuClear = function () { try { ['session', 'me', 'settings'].forEach(function (k) { localStorage.removeItem('ssu.' + k); }); } catch (e) {} location.reload(); };
@@ -147,7 +194,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 })();</script><div id="toasts"></div>
 <script>/* SSU Digital Enterprise — inti frontend: API, IndexedDB, antrean sinkronisasi, UI kit, login, shell. */
 'use strict';
-const VERSION = '1.1.2';
+const VERSION = '1.2.0';
 const BUILD_DATE = '2026-10-28';
 const IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 const LS = {
@@ -181,12 +228,25 @@ const ICON = {
   lab: 'M9 3v6L4 19a1 1 0 0 0 1 2h14a1 1 0 0 0 1-2L15 9V3M8 3h8', qc: 'M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', chart: 'M4 20V10m6 10V4m6 16v-7m6 7H2',
   leaf: 'M5 21c0-9 6-15 16-16-1 10-7 16-16 16zm0 0 8-8', report: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6', users: 'M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0zM3 21a9 9 0 0 1 18 0',
   audit: 'M12 8v4l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.4-3a7.4 7.4 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14.5 3h-5l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2l.4 2.6h5l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z',
-  menu: 'M3 6h18M3 12h18M3 18h18', plus: 'M12 5v14M5 12h14', sync: 'M4 4v6h6M20 20v-6h-6M5 15a7 7 0 0 0 12 3M19 9A7 7 0 0 0 7 6', out: 'M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3',
+  menu: 'M3 6h18M3 12h18M3 18h18', camera: 'M4 7h3l2-3h6l2 3h3v13H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', print: 'M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z', plus: 'M12 5v14M5 12h14', sync: 'M4 4v6h6M20 20v-6h-6M5 15a7 7 0 0 0 12 3M19 9A7 7 0 0 0 7 6', out: 'M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3',
   edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4', moon: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z', dl: 'M12 3v12m0 0 5-5m-5 5-5-5M4 21h16'
 };
 function ic(n) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[n] || ''}"/></svg>`; }
 const DEFAULT_LOGO = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0f5132"/><path d="M32 12c-9 8-14 16-14 24a14 14 0 0 0 28 0c0-8-5-16-14-24z" fill="#7fc79b"/><path d="M14 44h36v8H14z" fill="#b8860b"/><path d="M14 52h36v4H14z" fill="#6b4a12"/><circle cx="26" cy="47" r="1.6" fill="#fff"/><circle cx="38" cy="48" r="1.6" fill="#fff"/></svg>');
 const DEFAULT_AVATAR = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#cfe3d7"/><circle cx="20" cy="15" r="7" fill="#1f7a4d"/><path d="M6 38a14 14 0 0 1 28 0z" fill="#1f7a4d"/></svg>');
+
+/* --------------- Cache daftar referensi (mempercepat pindah tab) --------------- */
+const READ_ACTIONS = new Set(['crud.list', 'crud.get', 'dashboard', 'field.tasks', 'analytics.stats', 'analytics.compare', 'analytics.map', 'report.campaign', 'report.resultsCsv',
+  'sample.trace', 'shipment.manifest', 'settings.public', 'settings.admin', 'auth.me', 'auth.bootstrap', 'meta', 'health', 'license.status', 'user.list', 'user.field',
+  'doc.thumb', 'doc.image', 'profile.photo', 'ssu.export', 'gis.validate']);
+const REF = (() => {
+  const m = new Map(), TTL = 90000;
+  return {
+    get(k) { const e = m.get(k); return e && Date.now() - e.t < TTL ? e.p : null; },
+    set(k, p) { m.set(k, { t: Date.now(), p }); p.catch(() => m.delete(k)); return p; },
+    clear() { m.clear(); }
+  };
+})();
 
 /* --------------------------- Pustaka lazy --------------------------- */
 const XLSX_URL = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
@@ -202,7 +262,7 @@ function api(action, payload, opt = {}) {
   const req = { action, payload: payload || {}, token: S.session && S.session.token, requestId: uid().slice(0, 12) };
   const handle = r => {
     if (!r || typeof r !== 'object') throw Object.assign(new Error('Respons server tidak valid.'), { code: 'NETWORK' });
-    if (r.ok) return r.data;
+    if (r.ok) { if (!READ_ACTIONS.has(action)) REF.clear(); return r.data; }   // tulis → cache referensi usang
     const e = Object.assign(new Error(r.error.message), { code: r.error.code, extra: r.error.extra, requestId: r.requestId });
     if (e.code === 'AUTH' && !opt.noAuthRedirect && action !== 'auth.login') { logout(true); }
     if (e.code === 'MUST_CHANGE') forceChangePassword();
@@ -232,14 +292,16 @@ const IDB = (() => {
   let dbp;
   function db() {
     if (dbp) return dbp;
-    dbp = new Promise((res, rej) => { const r = indexedDB.open('ssu-field', 2);
-      r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); if (!d.objectStoreNames.contains('queue')) d.createObjectStore('queue', { keyPath: 'opId' }); };
+    dbp = new Promise((res, rej) => { const r = indexedDB.open('ssu-field', 3);
+      r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); if (!d.objectStoreNames.contains('queue')) d.createObjectStore('queue', { keyPath: 'opId' });
+        if (!d.objectStoreNames.contains('files')) d.createObjectStore('files', { keyPath: 'id' }); };   // foto udara PMTiles (tidak dihapus saat logout: bukan data pribadi)
       r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
     return dbp;
   }
   function tx(store, mode, fn) { return db().then(d => new Promise((res, rej) => { const t = d.transaction(store, mode), s = t.objectStore(store); let out; const r = fn(s); if (r) r.onsuccess = () => { out = r.result; }; t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); })); }
   return {
     get: k => tx('kv', 'readonly', s => s.get(k)), set: (k, v) => tx('kv', 'readwrite', s => s.put(v, k)),
+    fAll: () => tx('files', 'readonly', s => s.getAll()), fPut: o => tx('files', 'readwrite', s => s.put(o)), fDel: id => tx('files', 'readwrite', s => s.delete(id)),
     qAll: () => tx('queue', 'readonly', s => s.getAll()), qPut: o => tx('queue', 'readwrite', s => s.put(o)), qDel: id => tx('queue', 'readwrite', s => s.delete(id)),
     wipe: () => db().then(d => new Promise(res => { const t = d.transaction(['kv', 'queue'], 'readwrite'); t.objectStore('kv').clear(); t.objectStore('queue').clear(); t.oncomplete = res; }))
   };
@@ -477,7 +539,7 @@ function renderLogin(msg) {
   $$('img[data-brand-logo]').forEach(i => i.onclick = () => zoomImage(i.src, 'Logo'));
   $('#loginForm').onsubmit = async e => {
     e.preventDefault(); const f = new FormData(e.target), btn = $('button', e.target); btn.disabled = true; $('#loginErr').textContent = '';
-    try { const r = await api('auth.login', { email: f.get('email'), password: f.get('password'), ua: navigator.userAgent }); S.session = { token: r.token, expires: r.expires }; LS.set('session', S.session); boot(); }
+    try { const r = await api('auth.login', { email: f.get('email'), password: f.get('password'), ua: navigator.userAgent }); S.session = { token: r.token, expires: r.expires }; LS.set('session', S.session); S.bootData = r.boot || null; boot(); }
     catch (er) { $('#loginErr').textContent = er.message; btn.disabled = false; }
   };
   $('#forgot').onclick = e => { e.preventDefault(); resetFlow(); };
@@ -503,17 +565,21 @@ function forceChangePassword() {
   formModal('Wajib ganti password', fields, {}, async v => { if (v.newPassword !== v.again) throw new Error('Password baru tidak sama.'); await api('auth.changePassword', v); toast('Password diganti.', 'ok'); forcing = false; boot(); }, { sticky: true }).then(() => { forcing = false; });
 }
 async function logout(expired) {
-  try { if (!expired && S.session) await api('auth.logout', {}, { noAuthRedirect: true }); } catch (e) {}
-  const pending = (await IDB.qAll().catch(() => [])).filter(o => ['LOCAL', 'RETRY', 'CONFLICT'].includes(o.status)).length;
-  if (!expired && pending) { if (!(await confirmBox(pending + ' data lapangan belum tersinkron dan akan DIHAPUS dari perangkat bila logout. Lanjutkan?'))) return; }
-  if (!expired) await IDB.wipe().catch(() => {});   // hapus data lokal sesuai kebijakan
-  S.session = null; S.me = null; LS.del('session');
-  renderLogin(expired ? 'Sesi berakhir. Silakan login kembali (data lapangan tetap tersimpan di perangkat).' : '');
+  // konfirmasi dulu (sebelumnya sesi server sudah dicabut sebelum pengguna sempat membatalkan)
+  const pending = expired ? 0 : (await IDB.qAll().catch(() => [])).filter(o => ['LOCAL', 'RETRY', 'CONFLICT'].includes(o.status)).length;
+  if (pending && !(await confirmBox(pending + ' data lapangan belum tersinkron dan akan DIHAPUS dari perangkat bila logout. Lanjutkan?'))) return;
+  const token = S.session && S.session.token;
+  S.session = null; S.me = null; LS.del('session'); REF.clear();
+  renderLogin(expired ? 'Sesi berakhir. Silakan login kembali (data lapangan tetap tersimpan di perangkat).' : '');   // tampil seketika
+  if (!expired) {
+    IDB.wipe().catch(() => {});   // hapus data lokal sesuai kebijakan
+    if (token) { const keep = S.session; S.session = { token }; api('auth.logout', {}, { noAuthRedirect: true, timeout: 20000 }).catch(() => {}); S.session = keep; }   // cabut sesi di latar
+  }
 }
 
 /* ------------------------------ Shell ------------------------------ */
 const MENU = [
-  ['Utama', [['dashboard', 'Dashboard', 'dash', 'read.field'], ['master', 'Master Data', 'db', 'read'], ['map', 'Peta Kebun', 'map', 'read'], ['ssu', 'SSU', 'poly', 'read']]],
+  ['Utama', [['dashboard', 'Dashboard', 'dash', 'read.field'], ['master', 'Master Data', 'db', 'read'], ['map', 'Peta Kebun', 'map', 'read'], ['ssu', 'SSU', 'poly', 'read'], ['docs', 'Dokumentasi Foto', 'camera', 'read.field']]],
   ['Sampling', [['campaigns', 'Kampanye Sampling', 'flag', 'read'], ['plans', 'Rencana Sampling', 'plan', 'read'], ['points', 'Titik Sampling', 'pin', 'read'], ['field', 'Pekerjaan Lapangan', 'field', 'field.write']]],
   ['Sampel & Lab', [['samples', 'Sampel', 'tube', 'read'], ['shipments', 'Pengiriman Sampel', 'truck', 'read'], ['lab', 'Laboratorium', 'lab', 'read'], ['qc', 'Quality Control', 'qc', 'read']]],
   ['Analisis', [['analytics', 'Analisis GIS', 'chart', 'read'], ['recs', 'Rekomendasi Agronomi', 'leaf', 'read'], ['reports', 'Laporan', 'report', 'report']]],
@@ -571,17 +637,18 @@ async function boot() {
   if (!S.session) { renderLogin(); loadPublicSettings(); return; }   // login tampil SEGERA, server dicek di latar
   try {
     splash('Memeriksa sesi…');
-    loadPublicSettings();
-    S.me = await api('auth.me', {}, { timeout: 25000 }); S.meta = await api('meta', {});
-    LS.set('me', S.me);
-    if (can('read')) { const e = await api('crud.list', { table: 'Estates', all: true }); S.estates = e.rows; } else S.estates = [];
+    // satu round-trip: profil, hak akses, lisensi, meta, estate, pengaturan (dulu 5 panggilan berurutan)
+    const b = S.bootData || await api('auth.bootstrap', {}, { timeout: 25000 }); S.bootData = null;
+    S.me = b.me; S.meta = b.meta; S.estates = b.estates; S.settings = b.settings; S.serverOk = true;
+    LS.set('me', S.me); LS.set('settings', S.settings); LS.set('meta', S.meta); applyBranding();
   } catch (e) {
-    if (e.code === 'NETWORK' && LS.get('me', null)) { S.me = LS.get('me'); S.meta = { roleLabel: {} }; toast('Offline: mode lapangan memakai data terakhir di perangkat.', ''); }
+    if (e.code === 'NETWORK' && LS.get('me', null)) { S.me = LS.get('me'); S.meta = LS.get('meta', { roleLabel: {}, flow: { Sample: {}, Campaign: {} } }); toast('Offline: mode lapangan memakai data terakhir di perangkat.', ''); }
     else if (e.code === 'MUST_CHANGE' || e.code === 'MUST_ACCEPT') { S.me = S.me || { name: '', roles: [], perms: [] }; return; }
     else { if (e.code === 'AUTH') { S.session = null; LS.del('session'); } return renderLogin(e.message); }
   }
   if (S.me.needsConsent) return consentFlow();
   renderShell(); await Sync.recover(); Sync.run();
+  if (can('read')) setTimeout(() => ['Organizations', 'Divisions', 'Protocols', 'LabParameters', 'Laboratories'].forEach(t => listAll(t).catch(() => {})), 1500);   // hangatkan cache
   go(!navigator.onLine && can('field.write') ? 'field' : (location.hash.slice(1) || (can('read') ? 'dashboard' : 'field')));
 }
 const Pages = {};
@@ -589,8 +656,9 @@ const Pages = {};
 /* Dokumen hukum & informasi versi: Syarat & Ketentuan, Pemberitahuan Privasi (UU PDP No. 27/2022), Tentang aplikasi.
  * LEGAL_VERSION harus sama dengan APP.TERMS_VERSION di Config.gs. Ubah keduanya bila isi dokumen berubah
  * — semua pengguna akan diminta menyetujui ulang. */
-const LEGAL_VERSION = '2026-10-28';
+const LEGAL_VERSION = '2026-10-28.2';
 const CHANGELOG = [
+  ['1.2.0', '2026-10-28', 'Lebih cepat: login 1 round-trip (sebelumnya 5), hash password di V8 (bukan 1.500 panggilan Utilities), cache kolom/lisensi/referensi, logout seketika. Peta: loncat ke Organisasi/Estate/Afdeling/Blok/SSU/koordinat, foto udara PMTiles offline, cetak peta A4/A3 layout gaya ArcGIS. Dokumentasi foto ke Google Drive (sheet hanya menyimpan URL), termasuk foto lapangan offline.'],
   ['1.1.2', '2026-10-28', 'Versi Apps Script: JS & CSS dikirim sebagai Base64 ASCII murni lalu di-decode di browser, sehingga tidak dapat dirusak oleh pemrosesan HtmlService (galat "Failed to execute write on Document"). Galat sintaks kini menunjuk ssu-app.js:baris.'],
   ['1.1.1', '2026-10-28', 'Perbaikan galat "Failed to execute write on Document" di Apps Script: tag HTML di dalam skrip (fitur cetak) di-escape saat build sehingga skrip tidak terpotong oleh HtmlService.'],
   ['1.1.0', '2026-10-28', 'Perbaikan layar "Memuat…" tanpa akhir (login tampil segera, batas waktu server, pesan diagnosis); migrasi kolom otomatis; Syarat & Ketentuan, Pemberitahuan Privasi dengan persetujuan tercatat; halaman Tentang & versi.'],
@@ -631,13 +699,13 @@ function privacyHtml() {
   <tr><td>Kredensial</td><td>Password dalam bentuk hash PBKDF2 (password asli tidak disimpan), token sesi dalam bentuk hash</td><td>Anda</td></tr>
   <tr><td>Foto profil</td><td>Gambar yang Anda unggah (opsional)</td><td>Anda</td></tr>
   <tr><td>Lokasi</td><td>Koordinat GPS dan akurasi <b>hanya saat</b> Anda mengaktifkan GPS atau mencatat titik sampling; tidak ada pelacakan di latar belakang</td><td>Perangkat Anda</td></tr>
-  <tr><td>Data kerja lapangan</td><td>Waktu pengamatan, catatan, foto lapangan beserta metadatanya</td><td>Anda</td></tr>
+  <tr><td>Data kerja lapangan & dokumentasi</td><td>Waktu pengamatan, catatan, foto lapangan & foto dokumentasi (disimpan di Google Drive organisasi; spreadsheet hanya menyimpan alamatnya) beserta waktu, kategori, dan lokasi bila Anda memilih menyertakannya</td><td>Anda</td></tr>
   <tr><td>Log aktivitas</td><td>Audit trail (siapa, apa, kapan), jenis peramban (user-agent) saat login, waktu login terakhir</td><td>Sistem</td></tr>
   <tr><td>Persetujuan</td><td>Versi dokumen yang disetujui dan waktunya</td><td>Sistem</td></tr></table>
   <p>Aplikasi <b>tidak</b> memproses data pribadi spesifik (kesehatan, biometrik, keuangan pribadi, dsb.), tidak memakai cookie pelacak, iklan, atau analitik pihak ketiga.</p>
   <h4>3. Tujuan dan dasar pemrosesan</h4><ul><li>Mengelola akun, autentikasi, dan hak akses — pelaksanaan perjanjian kerja/kontrak (Pasal 20 ayat (2) huruf b UU PDP).</li><li>Mencatat dan memvalidasi pengambilan sampel tanah, keterlacakan sampel (chain of custody), dan kualitas data — kepentingan yang sah Organisasi dalam pengelolaan kebun dan pemenuhan kewajiban audit.</li><li>Keamanan sistem, pencegahan penyalahgunaan, dan audit — kepentingan yang sah serta kewajiban hukum penyelenggara sistem elektronik.</li><li>Foto profil bersifat sukarela; dapat dihapus kapan saja.</li></ul>
   <h4>4. Penyimpanan di perangkat</h4><p>Untuk kerja offline, Aplikasi menyimpan di perangkat Anda: token sesi dan preferensi (localStorage), paket tugas dan antrean observasi (IndexedDB). Penyimpanan ini <b>tidak terenkripsi secara bawaan</b>; lindungi perangkat dengan kunci layar. Data antrean yang telah tersinkron dihapus otomatis setelah 7 hari, paket tugas kedaluwarsa setelah 7 hari, dan seluruh data lokal dihapus saat logout.</p>
-  <h4>5. Masa retensi</h4><table class="tbl"><tr><th>Data</th><th>Masa simpan</th></tr><tr><td>Sesi login</td><td>12 jam; dibersihkan otomatis harian</td></tr><tr><td>Kode reset password</td><td>15 menit</td></tr><tr><td>Akun pengguna</td><td>Selama hubungan kerja; dinonaktifkan saat berakhir, dihapus/anonimisasi sesuai kebijakan Organisasi</td></tr><tr><td>Data sampling, hasil lab, audit trail</td><td>Sesuai kebijakan retensi dokumen Organisasi (catatan teknis & audit perkebunan umumnya disimpan bertahun-tahun)</td></tr><tr><td>Backup</td><td>30 salinan harian terakhir di Google Drive Organisasi</td></tr></table>
+  <h4>5. Masa retensi</h4><table class="tbl"><tr><th>Data</th><th>Masa simpan</th></tr><tr><td>Sesi login</td><td>12 jam; dibersihkan otomatis harian</td></tr><tr><td>Kode reset password</td><td>15 menit</td></tr><tr><td>Akun pengguna</td><td>Selama hubungan kerja; dinonaktifkan saat berakhir, dihapus/anonimisasi sesuai kebijakan Organisasi</td></tr><tr><td>Data sampling, hasil lab, audit trail</td><td>Sesuai kebijakan retensi dokumen Organisasi (catatan teknis & audit perkebunan umumnya disimpan bertahun-tahun)</td></tr><tr><td>Foto dokumentasi</td><td>Mengikuti kebijakan retensi dokumen Organisasi; foto yang dihapus masuk Sampah Google Drive selama 30 hari</td></tr><tr><td>Foto udara (PMTiles) di perangkat</td><td>Sampai dihapus pengguna; bukan data pribadi</td></tr><tr><td>Backup</td><td>30 salinan harian terakhir di Google Drive Organisasi</td></tr></table>
   <h4>6. Penerima data</h4><p>Data hanya dapat diakses oleh pengguna sesuai peran dan cakupan estate yang diperiksa di server, administrator Organisasi, serta prosesor yang disebut di butir 1. Data tidak dijual atau dibagikan untuk pemasaran.</p>
   <h4>7. Transfer data ke luar wilayah Indonesia</h4><p>Infrastruktur Google dapat menyimpan dan memproses data di pusat data di luar Indonesia. Organisasi sebagai Pengendali bertanggung jawab memastikan transfer tersebut memenuhi Pasal 56 UU PDP, antara lain melalui ketentuan pemrosesan data Google dan tingkat pelindungan yang memadai.</p>
   <h4>8. Keamanan</h4><p>Langkah teknis yang diterapkan: koneksi HTTPS, hash password PBKDF2, token sesi acak yang disimpan sebagai hash, pembatasan percobaan login, kontrol akses berbasis peran dan estate di server, validasi input dan pencegahan injeksi formula, audit trail yang menyamarkan rahasia, serta backup harian. Tidak ada sistem yang sepenuhnya bebas risiko; bila terjadi kegagalan pelindungan data, Organisasi akan memberitahukan Anda dan otoritas terkait paling lambat 3 x 24 jam sesuai Pasal 46 UU PDP.</p>
@@ -687,9 +755,414 @@ async function consentFlow() {
   if (ok) { toast('Terima kasih. Persetujuan tercatat.', 'ok'); boot(); } else logout(false);
 }
 
+/* Modul peta: foto udara PMTiles offline, loncat ke wilayah, cetak peta A4/A3 bergaya layout ArcGIS. */
+const PMTILES_URL = 'https://unpkg.com/pmtiles@3.2.1/dist/pmtiles.js';
+
+/* ============================ Foto udara (PMTiles) ============================ */
+const Aerial = (() => {
+  const inst = new Map();   // id -> {pm, header}
+  const MIME = { 2: 'image/png', 3: 'image/jpeg', 4: 'image/webp', 5: 'image/avif' };
+  async function lib() { await loadScript(PMTILES_URL, 'pmtiles'); return window.pmtiles; }
+  async function open(rec) {
+    if (inst.has(rec.id)) return inst.get(rec.id);
+    const P = await lib();
+    const file = rec.blob instanceof File ? rec.blob : new File([rec.blob], rec.name);
+    const pm = new P.PMTiles(new P.FileSource(file)), header = await pm.getHeader();
+    const o = { pm, header }; inst.set(rec.id, o); return o;
+  }
+  /** Validasi & simpan berkas .pmtiles di perangkat (IndexedDB) agar bisa dipakai tanpa internet. */
+  async function add(blob, name, source) {
+    const head = new Uint8Array(await blob.slice(0, 7).arrayBuffer());
+    if (String.fromCharCode(...head) !== 'PMTiles') throw new Error('Berkas bukan PMTiles (tanda "PMTiles" tidak ditemukan).');
+    const P = await lib(), file = blob instanceof File ? blob : new File([blob], name);
+    const pm = new P.PMTiles(new P.FileSource(file)), h = await pm.getHeader();
+    if (!MIME[h.tileType]) throw new Error('PMTiles berisi ' + (h.tileType === 1 ? 'vector tiles (MVT)' : 'tipe ubin tidak dikenal') + '. Yang didukung: foto udara raster JPEG/PNG/WebP.');
+    let meta = {}; try { meta = await pm.getMetadata() || {}; } catch (e) {}
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}   // minta agar tidak dihapus browser
+    const rec = { id: uid(), name: meta.name || name.replace(/\.pmtiles$/i, ''), fileName: name, size: blob.size, source: source || 'file', addedAt: new Date().toISOString(),
+      minZoom: h.minZoom, maxZoom: h.maxZoom, bounds: [h.minLon, h.minLat, h.maxLon, h.maxLat], tileType: MIME[h.tileType], attribution: meta.attribution || '', blob: file };
+    await IDB.fPut(rec); return rec;
+  }
+  async function list() { try { return (await IDB.fAll()).sort((a, b) => a.addedAt < b.addedAt ? -1 : 1); } catch (e) { return []; } }
+  async function remove(id) { inst.delete(id); await IDB.fDel(id); }
+  function opacity() { return Number(LS.get('aerialOpacity', 1)); }
+  /** Lapisan Leaflet: memanggil done() juga untuk ubin kosong (agar event "load" & cetak tidak menggantung). */
+  async function layer(rec) {
+    const { pm, header } = await open(rec), mime = MIME[header.tileType];
+    const Cls = L.GridLayer.extend({
+      createTile(c, done) {
+        const img = document.createElement('img'); img.alt = ''; img.setAttribute('role', 'presentation');
+        pm.getZxy(c.z, c.x, c.y).then(r => {
+          if (!r || !r.data) return done(null, img);
+          img.onload = () => done(null, img); img.onerror = () => done(null, img);
+          img.src = URL.createObjectURL(new Blob([r.data], { type: mime }));
+        }).catch(e => done(e, img));
+        return img;
+      }
+    });
+    return new Cls({ minNativeZoom: header.minZoom, maxNativeZoom: header.maxZoom, maxZoom: 22, opacity: opacity(), zIndex: 5,
+      bounds: L.latLngBounds([header.minLat, header.minLon], [header.maxLat, header.maxLon]), attribution: rec.attribution || ('Foto udara: ' + rec.name) });
+  }
+  /** Tambahkan semua foto udara tersimpan ke peta (aktif bawaan). */
+  async function attach(m, active = true) {
+    const recs = await list(); m._aerial = [];
+    for (const r of recs) {
+      try { const l = await layer(r); if (active) l.addTo(m); if (m._ctl) m._ctl.addOverlay(l, 'Foto udara: ' + esc(r.name)); m._aerial.push({ rec: r, layer: l }); }
+      catch (e) { console.warn('PMTiles ' + r.name + ': ' + e.message); }
+    }
+    return m._aerial;
+  }
+  return { add, list, remove, layer, attach, opacity, open };
+})();
+
+function fmtBytes(n) { return n > 1048576 ? num(n / 1048576, 1) + ' MB' : num(n / 1024, 0) + ' KB'; }
+
+async function aerialManager(onChange) {
+  const draw = async box => {
+    const recs = await Aerial.list();
+    $('#aeList', box).innerHTML = recs.length ? recs.map(r => `<div class="list-item"><div class="grow"><b>${esc(r.name)}</b><br><span class="muted" style="font-size:12px">${fmtBytes(r.size)} · ${esc(r.tileType)} · zoom ${r.minZoom}–${r.maxZoom} · ${esc(r.source === 'url' ? 'diunduh dari URL' : 'dari berkas')} · ${fmtDate(r.addedAt)}</span></div>
+      <button class="btn sm" data-ae-zoom="${esc(r.id)}">Zoom ke</button><button class="btn sm danger" data-ae-del="${esc(r.id)}">Hapus</button></div>`).join('')
+      : '<div class="state">Belum ada foto udara di perangkat ini.</div>';
+    let est = null; try { est = await navigator.storage.estimate(); } catch (e) {}
+    $('#aeQuota', box).textContent = est ? 'Penyimpanan perangkat terpakai ' + fmtBytes(est.usage) + ' dari ' + fmtBytes(est.quota) : '';
+  };
+  const box = document.createElement('div');
+  box.innerHTML = `<p class="help">Foto udara/ortofoto drone dalam format <b>PMTiles raster</b> (JPEG/PNG/WebP). Berkas disimpan di perangkat ini (IndexedDB) sehingga tampil di semua peta <b>tanpa internet</b>, dan tidak terhapus saat logout. Buat PMTiles dari GeoTIFF dengan QGIS (Export → XYZ/MBTiles) lalu <span class="mono">pmtiles convert hasil.mbtiles hasil.pmtiles</span>.</p>
+    <div class="bar"><button class="btn pri" id="aeFile">${ic('plus')} Tambah dari berkas .pmtiles</button><input class="in" id="aeUrl" placeholder="atau URL https://…/foto.pmtiles" style="flex:1;min-width:200px"><button class="btn" id="aeDl">Unduh ke perangkat</button></div>
+    <div id="aeProg" class="help"></div><div id="aeList"></div>
+    <label class="f" style="margin-top:10px"><span>Transparansi foto udara</span><input type="range" min="0.2" max="1" step="0.05" id="aeOp" value="${Aerial.opacity()}"></label><p class="help" id="aeQuota"></p>`;
+  await modal('Foto udara offline (PMTiles)', box, [{ label: 'Tutup', cls: 'pri' }], { wide: true, onOpen: b => {
+    draw(b);
+    $('#aeFile', b).onclick = async () => { const f = await pickFile('.pmtiles'); if (!f) return; $('#aeProg', b).textContent = 'Memeriksa & menyimpan ' + f.name + ' (' + fmtBytes(f.size) + ')…';
+      try { const r = await Aerial.add(f, f.name, 'file'); toast('Foto udara "' + r.name + '" tersimpan di perangkat.', 'ok'); $('#aeProg', b).textContent = ''; draw(b); onChange && onChange(); }
+      catch (e) { $('#aeProg', b).innerHTML = '<span class="err-msg">' + esc(e.message) + '</span>'; } };
+    $('#aeDl', b).onclick = async () => {
+      const url = $('#aeUrl', b).value.trim(); if (!/^https:\/\/.+/.test(url)) return toast('URL harus https://', 'bad');
+      try {
+        const r = await fetch(url); if (!r.ok) throw new Error('HTTP ' + r.status);
+        const total = Number(r.headers.get('content-length')) || 0, reader = r.body.getReader(), parts = []; let got = 0;
+        for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; $('#aeProg', b).textContent = 'Mengunduh ' + fmtBytes(got) + (total ? ' / ' + fmtBytes(total) : '') + '…'; }
+        const name = decodeURIComponent(url.split('/').pop().split('?')[0] || 'foto-udara.pmtiles');
+        const rec = await Aerial.add(new Blob(parts), name, 'url'); $('#aeProg', b).textContent = ''; toast('Tersimpan: ' + rec.name, 'ok'); draw(b); onChange && onChange();
+      } catch (e) { $('#aeProg', b).innerHTML = '<span class="err-msg">Gagal mengunduh: ' + esc(e.message) + ' (server harus mengizinkan CORS)</span>'; }
+    };
+    $('#aeOp', b).oninput = e => { LS.set('aerialOpacity', Number(e.target.value)); onChange && onChange('opacity'); };
+    b.onclick = async e => {
+      const z = e.target.closest('[data-ae-zoom]'), d = e.target.closest('[data-ae-del]');
+      if (z) { const r = (await Aerial.list()).find(x => x.id === z.dataset.aeZoom); onChange && onChange('zoom', r); }
+      if (d && await confirmBox('Hapus foto udara ini dari perangkat?')) { await Aerial.remove(d.dataset.aeDel); draw(b); onChange && onChange(); }
+    };
+  } });
+}
+
+/* ============================ Loncat ke wilayah ============================ */
+function boundsOfGeoms(geoms) {
+  let b = null;
+  geoms.filter(Boolean).forEach(g => { const l = L.geoJSON(g).getBounds(); if (l.isValid()) b = b ? b.extend(l) : l; });
+  return b;
+}
+/** Bar pilihan berjenjang Organisasi/PT → Estate → Afdeling → Blok → SSU. */
+async function zoomToBar(el, m, data) {
+  const { orgs, estates, divisions, blocks, ssus } = data;
+  el.innerHTML = `<span class="muted" style="font-size:12.5px">Loncat ke:</span>
+    <select class="in zt" data-zt="org"><option value="">Organisasi / PT</option>${orgs.map(o => `<option value="${esc(o.id)}">${esc(o.name)}</option>`).join('')}</select>
+    <select class="in zt" data-zt="est"><option value="">Estate</option></select><select class="in zt" data-zt="div"><option value="">Afdeling</option></select>
+    <select class="in zt" data-zt="blk"><option value="">Blok</option></select><select class="in zt" data-zt="ssu"><option value="">SSU</option></select>
+    <input class="in zt" data-zt="xy" placeholder="lat, lng" style="max-width:150px" title="Ke koordinat desimal, mis. -7.35, 108.2">`;
+  const sel = k => $(`[data-zt="${k}"]`, el);
+  const fill = (k, rows, label, fmt) => { sel(k).innerHTML = `<option value="">${label}</option>` + rows.map(r => `<option value="${esc(r.id)}">${esc(fmt(r))}</option>`).join(''); };
+  let hl = null, mk = null;
+  function show(geoms, label) {
+    if (hl) m.removeLayer(hl);
+    const b = boundsOfGeoms(geoms);
+    if (!b) return toast('Belum ada geometri (blok/SSU) untuk ' + label + '.', 'bad');
+    hl = L.layerGroup([L.rectangle(b.pad(0.02), { color: '#facc15', weight: 3, fill: false, dashArray: '6 4', interactive: false })]
+      .concat(geoms.filter(Boolean).map(g => L.geoJSON(g, { style: { color: '#facc15', weight: 3, fill: false }, interactive: false })))).addTo(m);
+    m.flyToBounds(b, { padding: [30, 30], duration: 0.6, maxZoom: 18 });
+    toast('Peta: ' + label, '');
+  }
+  const geomsOfEstate = id => blocks.filter(x => x.estateId === id).map(x => x.geomJ).concat(ssus.filter(x => x.estateId === id).map(x => x.geomJ));
+  const refill = () => {
+    const o = sel('org').value, e = sel('est').value, d = sel('div').value;
+    const es = estates.filter(x => !o || x.orgId === o);
+    if (document.activeElement === sel('org') || !es.some(x => x.id === e)) fill('est', es, 'Estate', x => x.code + ' — ' + x.name);
+    const ev = sel('est').value, ds = divisions.filter(x => !ev || x.estateId === ev);
+    if (document.activeElement !== sel('div') && document.activeElement !== sel('blk')) fill('div', ds, 'Afdeling', x => x.code + ' — ' + x.name);
+    const dv = sel('div').value;
+    fill('blk', blocks.filter(x => (!ev || x.estateId === ev) && (!dv || x.divisionId === dv)), 'Blok', x => x.code + (x.name ? ' — ' + x.name : ''));
+    fill('ssu', ssus.filter(x => (!ev || x.estateId === ev) && (!dv || x.divisionId === dv)), 'SSU', x => x.code + ' — ' + x.name);
+  };
+  refill();
+  el.addEventListener('change', e => {
+    const k = e.target.dataset.zt, v = e.target.value; if (!k || !v) return;
+    if (k === 'org') { const es = estates.filter(x => x.orgId === v); sel('est').value = ''; sel('div').value = ''; refill(); show(es.flatMap(x => geomsOfEstate(x.id)), (orgs.find(x => x.id === v) || {}).name); }
+    if (k === 'est') { sel('div').value = ''; refill(); show(geomsOfEstate(v), 'estate ' + (estates.find(x => x.id === v) || {}).name); }
+    if (k === 'div') { refill(); show(blocks.filter(x => x.divisionId === v).map(x => x.geomJ).concat(ssus.filter(x => x.divisionId === v).map(x => x.geomJ)), 'afdeling ' + (divisions.find(x => x.id === v) || {}).name); }
+    if (k === 'blk') { const b = blocks.find(x => x.id === v); show([b && b.geomJ], 'blok ' + (b || {}).code); }
+    if (k === 'ssu') { const s = ssus.find(x => x.id === v); show([s && s.geomJ], 'SSU ' + (s || {}).code); }
+    if (k === 'xy') {
+      const p = v.split(/[ ,;]+/).map(Number);
+      if (p.length !== 2 || !p.every(isFinite) || Math.abs(p[0]) > 90 || Math.abs(p[1]) > 180) return toast('Format koordinat: lat, lng (desimal)', 'bad');
+      if (mk) m.removeLayer(mk); mk = L.marker(p).addTo(m).bindPopup(p[0].toFixed(6) + ', ' + p[1].toFixed(6)).openPopup(); m.flyTo(p, Math.max(m.getZoom(), 17), { duration: 0.6 });
+    }
+  });
+}
+
+/* ============================ Cetak peta (A4/A3) ============================ */
+const PAPER = { A4: [297, 210], A3: [420, 297] };
+function niceNum(x) { const e = Math.pow(10, Math.floor(Math.log10(x))), f = x / e; return (f >= 5 ? 5 : f >= 2 ? 2 : 1) * e; }
+function mPerPx(lat, z) { return 40075016.686 * Math.cos(lat * Math.PI / 180) / (256 * Math.pow(2, z)); }
+const PX_M = 0.0254 / 96;   // 1 px CSS = 0,2646 mm
+function dms(v, pos, neg) { const a = Math.abs(v), d = Math.floor(a), mf = (a - d) * 60, mi = Math.floor(mf), s = Math.round((mf - mi) * 60);
+  const [D, M, Sx] = s === 60 ? [d, mi + 1, 0] : [d, mi, s]; return D + '°' + String(M).padStart(2, '0') + "'" + String(Sx).padStart(2, '0') + '" ' + (v >= 0 ? pos : neg); }
+
+/**
+ * opt: {src: peta sumber, title, subtitle, legend:[[warna,label,gaya]], build:(peta)=>void (tambah lapisan tematik), info:{}}
+ */
+async function openMapPrint(opt) {
+  const f = [{ name: 'paper', label: 'Ukuran kertas', type: 'select', required: true, options: ['A4', 'A3'], value: 'A4' },
+    { name: 'orient', label: 'Orientasi', type: 'select', required: true, options: [{ value: 'landscape', label: 'Lanskap' }, { value: 'portrait', label: 'Potret' }], value: 'landscape' },
+    { name: 'title', label: 'Judul peta', required: true, value: opt.title || 'Peta Kebun' }, { name: 'subtitle', label: 'Subjudul', value: opt.subtitle || '' },
+    { name: 'scale', label: 'Skala', type: 'select', options: [{ value: '', label: 'Sesuai tampilan layar' }].concat([1000, 2500, 5000, 10000, 25000, 50000, 100000].map(v => ({ value: String(v), label: '1 : ' + v.toLocaleString('id-ID') }))) },
+    { name: 'opts', label: 'Elemen', type: 'checks', options: [{ value: 'grid', label: 'Grid & label koordinat' }, { value: 'inset', label: 'Peta inset (lokasi)' }, { value: 'legend', label: 'Legenda' }], value: ['grid', 'inset', 'legend'] },
+    { name: 'notes', label: 'Catatan peta', type: 'textarea', rows: 2 }];
+  const v = await formModal('Cetak peta', f, {}, x => x); if (!v) return;
+  const [W, H] = v.orient === 'landscape' ? PAPER[v.paper] : PAPER[v.paper].slice().reverse();
+  const big = v.paper === 'A3', land = v.orient === 'landscape';
+  const side = land ? (big ? 86 : 66) : 0, bottom = land ? 0 : (big ? 82 : 64), M = 7;
+  const mapW = W - 2 * M - 6 - (land ? side + 4 : 0), mapH = H - 2 * M - 6 - (land ? 0 : bottom + 4);
+  const s = S.settings || {}, est = S.estateId ? (S.estates.find(e => e.id === S.estateId) || {}).name : 'Semua estate dalam cakupan';
+  const wrap = document.createElement('div'); wrap.id = 'printOverlay';
+  const ttl = `<div class="pt-title"><img src="${esc(s.logo || DEFAULT_LOGO)}" alt=""><div><div class="pt-org">${esc(s.orgName || s.appTitle || 'SSU Digital Enterprise')}</div><h2>${esc(v.title)}</h2>${v.subtitle ? `<div class="pt-sub">${esc(v.subtitle)}</div>` : ''}</div></div>`;
+  const north = `<svg class="pt-north" viewBox="0 0 40 60"><polygon points="20,4 32,44 20,36 8,44" fill="#111"/><polygon points="20,4 20,36 8,44" fill="#fff" stroke="#111" stroke-width="1"/><text x="20" y="58" text-anchor="middle" font-size="12" font-weight="700" font-family="Arial">U</text></svg>`;
+  const legend = v.opts.includes('legend') ? `<div class="pt-box"><div class="pt-h">Legenda</div>${(opt.legend || []).map(r => `<div class="pt-lg"><i style="background:${r[0]};${r[2] || ''}"></i>${esc(r[1])}</div>`).join('')}<div id="ptLgAerial"></div></div>` : '';
+  const info = `<div class="pt-box pt-info"><table>
+    <tr><td>Estate</td><td>${esc(est)}</td></tr><tr><td>Skala</td><td id="ptScaleTxt">-</td></tr>
+    <tr><td>Sistem koordinat</td><td>WGS 84 (EPSG:4326); tampilan Web Mercator (EPSG:3857)</td></tr>
+    <tr><td>Sumber data</td><td>${esc(s.appTitle || 'SSU Digital Enterprise')}; peta dasar <span id="ptBase"></span><span id="ptAerSrc"></span></td></tr>
+    <tr><td>Dibuat oleh</td><td>${esc(S.me ? S.me.name : '-')}</td></tr><tr><td>Tanggal cetak</td><td>${fmtDate(new Date().toISOString(), 1)}</td></tr>
+    <tr><td>Kertas</td><td>${v.paper} ${land ? 'lanskap' : 'potret'}</td></tr></table>${v.notes ? `<div class="pt-notes"><b>Catatan:</b> ${esc(v.notes)}</div>` : ''}
+    <div class="pt-disc">Peta ini dibuat untuk keperluan operasional kebun. Posisi bersifat indikatif sesuai akurasi data sumber; nilai interpolasi (bila ada) adalah prediksi, bukan pengukuran.</div></div>`;
+  const scale = `<div class="pt-box pt-scale">${north}<div><div class="pt-bar" id="ptBar"></div><div id="ptScaleNum" class="pt-scnum"></div></div></div>`;
+  const inset = v.opts.includes('inset') ? `<div class="pt-box"><div class="pt-h">Peta lokasi</div><div id="ptInset" class="pt-inset"></div></div>` : '';
+  const panel = land ? `<div class="pt-side" style="width:${side}mm">${ttl}${scale}${legend}${inset}${info}</div>`
+    : `<div class="pt-bottom" style="height:${bottom}mm"><div class="pt-col">${ttl}${scale}</div><div class="pt-col">${legend}${inset}</div><div class="pt-col">${info}</div></div>`;
+  wrap.innerHTML = `<div class="pt-tools"><b>Pratinjau cetak ${v.paper} ${land ? 'lanskap' : 'potret'}</b><span class="muted">Geser/zoom peta di dalam bingkai sebelum mencetak.</span><span class="sp"></span>
+      <button class="btn pri" id="ptGo">Cetak / Simpan PDF</button><button class="btn" id="ptClose">Tutup</button></div>
+    <div class="pt-sheet" style="width:${W}mm;height:${H}mm"><div class="pt-neat" style="left:${M}mm;top:${M}mm;right:${M}mm;bottom:${M}mm">
+      <div class="pt-mapwrap" style="width:${mapW}mm;height:${mapH}mm"><div id="ptMap" style="width:100%;height:100%"></div><div id="ptGrid" class="pt-grid"></div></div>${panel}</div></div>`;
+  document.body.appendChild(wrap);
+  const pageCss = document.createElement('style'); pageCss.id = 'ptPageCss'; pageCss.textContent = `@page{size:${v.paper} ${v.orient};margin:0}`; document.head.appendChild(pageCss);
+  const close = () => { wrap.remove(); pageCss.remove(); };
+  $('#ptClose').onclick = close;
+
+  // peta cetak: lapisan dasar sama dengan tampilan layar
+  const pm = L.map('ptMap', { zoomControl: false, attributionControl: true, zoomSnap: 0, zoomDelta: 0.25, fadeAnimation: false, zoomAnimation: false });
+  const srcBase = opt.src && opt.src._baseName === 'Citra satelit (Esri)' ? 'img' : 'osm';
+  const base = srcBase === 'img' ? L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Tiles © Esri' })
+    : L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' });
+  base.addTo(pm); $('#ptBase').textContent = srcBase === 'img' ? '© Esri & penyedia citra' : '© kontributor OpenStreetMap';
+  const c = opt.src ? opt.src.getCenter() : L.latLng(-2.5, 117), z0 = opt.src ? opt.src.getZoom() : 5;
+  pm.setView(c, z0);
+  if (v.scale) pm.setZoom(Math.log2(40075016.686 * Math.cos(c.lat * Math.PI / 180) / (256 * Number(v.scale) * PX_M)));
+  const aer = await Aerial.attach(pm, !opt.src || !opt.src._aerial || opt.src._aerial.some(a => opt.src.hasLayer(a.layer)));
+  if (aer.length) { $('#ptAerSrc').textContent = '; foto udara: ' + aer.map(a => a.rec.name).join(', '); if ($('#ptLgAerial')) $('#ptLgAerial').innerHTML = aer.map(a => `<div class="pt-lg"><i style="background:linear-gradient(135deg,#5b7f4a,#a3b18a)"></i>Foto udara: ${esc(a.rec.name)}</div>`).join(''); }
+  if (opt.build) opt.build(pm);
+
+  // inset
+  let inm = null, inRect = null;
+  if ($('#ptInset')) {
+    inm = L.map('ptInset', { zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, fadeAnimation: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(inm);
+  }
+  function scaleNow() { return mPerPx(pm.getCenter().lat, pm.getZoom()) / PX_M; }
+  function update() {
+    const sc = scaleNow(), lbl = '1 : ' + Math.round(sc).toLocaleString('id-ID');
+    $('#ptScaleTxt').textContent = lbl; $('#ptScaleNum').textContent = 'Skala ' + lbl;
+    const target = sc * 0.032, L1 = niceNum(target), mm = L1 / sc * 1000, seg = 4;   // batang ±32 mm
+    const unit = L1 >= 1000 ? [L1 / 1000, 'km'] : [L1, 'm'];
+    $('#ptBar').innerHTML = `<div class="pt-segs" style="width:${mm}mm">${Array.from({ length: seg }, (_, i) => `<span class="${i % 2 ? 'w' : 'b'}"></span>`).join('')}</div>
+      <div class="pt-ticks" style="width:${mm}mm"><span>0</span><span>${num(unit[0] / 2, 2)}</span><span>${num(unit[0], 2)} ${unit[1]}</span></div>`;
+    if (inm) { const b = pm.getBounds(); inm.setView(b.getCenter(), Math.max(1, pm.getZoom() - 4.5)); if (inRect) inRect.setBounds(b); else inRect = L.rectangle(b, { color: '#dc2626', weight: 2, fill: false }).addTo(inm); }
+    drawGrid();
+  }
+  let gridLayer = null;
+  function drawGrid() {
+    const g = $('#ptGrid'); g.innerHTML = ''; if (gridLayer) { pm.removeLayer(gridLayer); gridLayer = null; }
+    if (!v.opts.includes('grid')) return;
+    const b = pm.getBounds(), span = Math.max(b.getEast() - b.getWest(), b.getNorth() - b.getSouth());
+    const steps = [1 / 3600, 2 / 3600, 5 / 3600, 10 / 3600, 15 / 3600, 30 / 3600, 1 / 60, 2 / 60, 5 / 60, 10 / 60, 15 / 60, 30 / 60, 1, 2, 5];
+    const st = steps.find(x => span / x <= 6) || 5, lines = [], sz = pm.getSize();
+    for (let x = Math.ceil(b.getWest() / st) * st; x < b.getEast(); x += st) {
+      lines.push(L.polyline([[b.getSouth(), x], [b.getNorth(), x]], { color: '#333', weight: 0.6, opacity: 0.45, dashArray: '2 4', interactive: false }));
+      const px = pm.latLngToContainerPoint([b.getCenter().lat, x]).x / sz.x * 100;
+      g.insertAdjacentHTML('beforeend', `<span class="gx t" style="left:${px}%">${dms(x, 'BT', 'BB')}</span><span class="gx b" style="left:${px}%">${dms(x, 'BT', 'BB')}</span>`);
+    }
+    for (let y = Math.ceil(b.getSouth() / st) * st; y < b.getNorth(); y += st) {
+      lines.push(L.polyline([[y, b.getWest()], [y, b.getEast()]], { color: '#333', weight: 0.6, opacity: 0.45, dashArray: '2 4', interactive: false }));
+      const py = pm.latLngToContainerPoint([y, b.getCenter().lng]).y / sz.y * 100;
+      g.insertAdjacentHTML('beforeend', `<span class="gy l" style="top:${py}%">${dms(y, 'LU', 'LS')}</span><span class="gy r" style="top:${py}%">${dms(y, 'LU', 'LS')}</span>`);
+    }
+    gridLayer = L.layerGroup(lines).addTo(pm);
+  }
+  pm.on('moveend zoomend', update); setTimeout(() => { pm.invalidateSize(); if (inm) inm.invalidateSize(); update(); }, 60);
+
+  function tilesReady(ms) {   // tunggu ubin semua lapisan termuat (atau batas waktu)
+    return new Promise(res => {
+      const layers = []; pm.eachLayer(l => { if (l instanceof L.GridLayer) layers.push(l); }); if (inm) inm.eachLayer(l => { if (l instanceof L.GridLayer) layers.push(l); });
+      const busy = () => layers.some(l => l._loading);
+      const t0 = Date.now(); (function poll() { if (!busy() || Date.now() - t0 > ms) res(); else setTimeout(poll, 150); })();
+    });
+  }
+  $('#ptGo').onclick = async () => { $('#ptGo').disabled = true; $('#ptGo').textContent = 'Menyiapkan ubin peta…'; await tilesReady(10000); $('#ptGo').disabled = false; $('#ptGo').textContent = 'Cetak / Simpan PDF'; window.print(); };
+  return { map: pm, close, ready: () => tilesReady(10000), wrap };
+}
+
+/* Dokumentasi foto: kompres di perangkat → Google Drive (sheet hanya menyimpan URL). Galeri, unggah, viewer, antrean offline. */
+const DOC_CATS = ['Kondisi lahan', 'Profil tanah', 'Titik sampling', 'Pengambilan sampel', 'Label & kemasan', 'Serah terima / pengiriman', 'Laboratorium', 'Kegiatan agronomi', 'Lainnya'];
+const DOC_ENT = { Estates: 'Estate', Blocks: 'Blok', SoilUnits: 'SSU', Campaigns: 'Kampanye', SamplingPoints: 'Titik sampling', Samples: 'Sampel', Shipments: 'Pengiriman', LabImports: 'Impor lab', Recommendations: 'Rekomendasi' };
+const THUMBS = new Map();   // id -> dataUrl (cache memori sesi)
+
+/** Kompres foto: maks 1600 px, JPEG, target ≤ ±350 KB. Mengembalikan {dataUrl, width, height, takenAt}. */
+function compressPhoto(file) {
+  return new Promise((res, rej) => {
+    if (!/^image\/(jpeg|png|webp|heic|heif)$/i.test(file.type) && !/\.(jpe?g|png|webp)$/i.test(file.name)) return rej(new Error(file.name + ': bukan berkas foto.'));
+    const img = new Image(); img.onerror = () => rej(new Error(file.name + ': foto tidak dapat dibaca (format HEIC? ubah ke JPEG).'));
+    img.onload = () => {
+      const k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight)), w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.drawImage(img, 0, 0, w, h);
+      let q = 0.8, out = c.toDataURL('image/jpeg', q);
+      while (out.length > 470000 && q > 0.4) { q -= 0.08; out = c.toDataURL('image/jpeg', q); }
+      URL.revokeObjectURL(img.src);
+      res({ dataUrl: out, width: w, height: h, takenAt: new Date(file.lastModified || Date.now()).toISOString(), name: file.name, originalBytes: file.size });
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+function pickFiles(accept, capture) {
+  return new Promise(res => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; i.multiple = true; if (capture) i.capture = 'environment'; i.onchange = () => res([...i.files]); i.click(); });
+}
+async function loadThumbs(root) {
+  const want = $$('[data-thumb]', root).map(x => x.dataset.thumb).filter(id => !THUMBS.has(id));
+  for (let i = 0; i < want.length; i += 24) {
+    try { const r = await api('doc.thumb', { ids: want.slice(i, i + 24) }); Object.keys(r).forEach(id => THUMBS.set(id, r[id])); } catch (e) { break; }
+    paintThumbs(root);
+  }
+  paintThumbs(root);
+}
+function paintThumbs(root) { $$('[data-thumb]', root).forEach(el => { const v = THUMBS.get(el.dataset.thumb); if (v) { el.style.backgroundImage = `url("${v}")`; el.classList.add('ok'); } else if (THUMBS.has(el.dataset.thumb)) el.classList.add('none'); }); }
+
+function docCard(d) {
+  return `<div class="doc-card" data-doc="${esc(d.id)}"><div class="doc-th" data-thumb="${esc(d.id)}" role="img" aria-label="${esc(d.caption || d.category)}"></div>
+    <div class="doc-meta"><b>${esc(d.caption || '(tanpa keterangan)')}</b><span>${esc(d.category)} · ${esc(DOC_ENT[d.entity] || d.entity)}</span><span>${fmtDate(d.takenAt, 1)} · ${fmtBytes(Number(d.bytes) || 0)}</span></div></div>`;
+}
+
+async function viewDoc(d, after) {
+  const box = document.createElement('div');
+  box.innerHTML = `<div class="doc-view"><div class="state">Memuat foto dari Google Drive…</div></div>
+    <p><b>${esc(d.caption || '(tanpa keterangan)')}</b><br><span class="muted">${esc(d.category)} · ${esc(DOC_ENT[d.entity] || d.entity)} · diambil ${fmtDate(d.takenAt, 1)}${d.lat !== '' && d.lat !== undefined ? ' · ' + Number(d.lat).toFixed(6) + ', ' + Number(d.lng).toFixed(6) : ''} · ${fmtBytes(Number(d.bytes) || 0)}</span></p>
+    <p class="help">Berkas asli di Google Drive: <a href="${esc(d.url)}" target="_blank" rel="noopener">buka di Drive</a> (perlu akses Drive organisasi). Di aplikasi, foto dilayani sesuai hak akses Anda.</p>`;
+  let full = '';
+  const own = S.me && d.uploadedBy === S.me.id, mgr = can('doc.delete');
+  const btns = [{ label: 'Perbesar', onClick: () => { if (full) zoomImage(full, d.caption); return false; } }];
+  if (own || mgr) btns.push({ label: 'Ubah keterangan', onClick: async () => { const v = await formModal('Ubah dokumentasi', [{ name: 'caption', label: 'Keterangan', value: d.caption }, { name: 'category', label: 'Kategori', type: 'select', required: true, options: DOC_CATS, value: d.category }], {}, x => run('doc.update', Object.assign(x, { id: d.id }), 'Tersimpan.')); if (v) { after && after(); return true; } return false; } });
+  if (own || mgr) btns.push({ label: 'Hapus', cls: 'danger', onClick: async () => { if (!(await confirmBox('Hapus foto ini? Berkas dipindah ke Sampah Google Drive (dapat dipulihkan 30 hari).'))) return false; await run('doc.delete', { id: d.id }, 'Foto dihapus.'); THUMBS.delete(d.id); after && after(); return true; } });
+  btns.push({ label: 'Tutup', cls: 'pri' });
+  modal('Dokumentasi', box, btns, { wide: true, onOpen: async b => {
+    try { const r = await api('doc.image', { id: d.id }); full = r.dataUrl; $('.doc-view', b).innerHTML = `<img src="${full}" alt="${esc(d.caption)}" title="Klik untuk memperbesar">`; $('.doc-view img', b).onclick = () => zoomImage(full, d.caption); }
+    catch (e) { $('.doc-view', b).innerHTML = `<div class="state err">${esc(e.message)}</div>`; }
+  } });
+}
+
+/**
+ * Dialog unggah. target: {entity, entityId, estateId, label} (boleh kosong → pengguna memilih).
+ * Online → langsung diunggah; offline → masuk antrean sinkron (op "document").
+ */
+async function uploadDocs(target, after) {
+  target = target || {};
+  const entOpts = Object.keys(DOC_ENT).map(k => ({ value: k, label: DOC_ENT[k] }));
+  const fields = [{ name: 'category', label: 'Kategori', type: 'select', required: true, options: DOC_CATS }, { name: 'caption', label: 'Keterangan (berlaku untuk semua foto terpilih)', placeholder: 'mis. Profil tanah SSU01 kedalaman 0–40 cm' },
+    { name: 'gps', label: 'Lokasi', type: 'checks', options: [{ value: '1', label: 'Sertakan posisi GPS perangkat saat ini' }] }];
+  if (!target.entity) fields.unshift({ name: 'entity', label: 'Terkait dengan', type: 'select', required: true, options: entOpts }, { name: 'entityId', label: 'Objek', type: 'select', options: [] });
+  const box = document.createElement('div'); let files = [];
+  box.innerHTML = `${target.label ? `<p>Untuk: <b>${esc(target.label)}</b></p>` : ''}<form onsubmit="return false">${formHtml(fields, { category: target.category })}</form>
+    <div class="bar"><button class="btn" id="dpPick">${ic('plus')} Pilih foto</button><button class="btn" id="dpCam">Ambil dari kamera</button><span class="muted" id="dpN">Belum ada foto dipilih</span></div>
+    <div class="doc-grid" id="dpPrev"></div><p class="help">Foto dikompres di perangkat (maks 1600 px, ±150–350 KB) lalu disimpan di Google Drive organisasi. Spreadsheet hanya menyimpan alamat (URL) — tidak terkena batas 50.000 karakter per sel.</p><div id="dpProg" class="help"></div>`;
+  const addFiles = async list => {
+    for (const f of list) { try { const c = await compressPhoto(f); files.push(c); $('#dpPrev', box).insertAdjacentHTML('beforeend', `<div class="doc-card"><div class="doc-th ok" style="background-image:url('${c.dataUrl}')"></div><div class="doc-meta"><span>${esc(c.name)}</span><span>${fmtBytes(c.originalBytes)} → ${fmtBytes(Math.round(c.dataUrl.length * 0.75))}</span></div></div>`); } catch (e) { toast(e.message, 'bad'); } }
+    $('#dpN', box).textContent = files.length + ' foto siap';
+  };
+  return modal('Unggah dokumentasi foto', box, [{ label: 'Batal' }, { label: 'Unggah', cls: 'pri', onClick: async b => {
+    const v = formRead(b, fields); if (!v) return false; if (!files.length) { toast('Pilih minimal satu foto.', 'bad'); return false; }
+    const ent = target.entity || v.entity, eid = target.entityId || v.entityId || '', est = target.estateId || S.estateId || '';
+    if (!eid && ent !== 'Estates' && !est) { toast('Pilih objek atau estate.', 'bad'); return false; }
+    let pos = null; if (v.gps && v.gps.length) pos = await new Promise(r => navigator.geolocation ? navigator.geolocation.getCurrentPosition(p => r(p.coords), () => r(null), { enableHighAccuracy: true, timeout: 15000 }) : r(null));
+    let ok = 0, queued = 0;
+    for (let i = 0; i < files.length; i++) {
+      const c = files[i]; $('#dpProg', b).textContent = 'Mengunggah ' + (i + 1) + '/' + files.length + '…';
+      const payload = { entity: ent, entityId: ent === 'Estates' ? (eid || est) : eid, estateId: est, category: v.category, caption: v.caption, takenAt: c.takenAt, width: c.width, height: c.height, lat: pos ? pos.latitude : '', lng: pos ? pos.longitude : '' };
+      if (!navigator.onLine) { await Sync.enqueue('document', Object.assign({ photo: c.dataUrl }, payload)); queued++; continue; }
+      try { await api('doc.upload', Object.assign({ dataUrl: c.dataUrl }, payload), { timeout: 90000 }); ok++; }
+      catch (e) { if (e.code === 'NETWORK') { await Sync.enqueue('document', Object.assign({ photo: c.dataUrl }, payload)); queued++; } else { toast(c.name + ': ' + e.message, 'bad'); } }
+    }
+    toast(ok + ' foto diunggah ke Google Drive' + (queued ? ', ' + queued + ' menunggu sinkron (offline)' : '') + '.', ok || queued ? 'ok' : 'bad');
+    after && after(); return true;
+  } }], { wide: true, onOpen: b => {
+    $('#dpPick', b).onclick = async () => addFiles(await pickFiles('image/*'));
+    $('#dpCam', b).onclick = async () => addFiles(await pickFiles('image/*', true));
+    const es = $('[name="entity"]', b);
+    if (es) es.onchange = async () => {
+      const t = es.value, sel = $('[name="entityId"]', b); sel.innerHTML = '<option value="">— memuat… —</option>';
+      if (t === 'Estates') { sel.innerHTML = S.estates.map(e => `<option value="${esc(e.id)}"${e.id === S.estateId ? ' selected' : ''}>${esc(e.code)} — ${esc(e.name)}</option>`).join(''); return; }
+      const rows = await listAll(t, estateFilter()).catch(() => []);
+      sel.innerHTML = '<option value="">— pilih —</option>' + rows.slice(0, 2000).map(r => `<option value="${esc(r.id)}">${esc(r.code || r.fileName || r.title || r.id)}${r.name ? ' — ' + esc(r.name) : ''}</option>`).join('');
+    };
+  } });
+}
+
+/** Galeri untuk satu objek (dipanggil dari tombol "Foto" di tabel lain). */
+async function docGallery(entity, row, label) {
+  const box = document.createElement('div');
+  const load = async () => {
+    const r = await api('crud.list', { table: 'Documents', filter: { entity, entityId: row.id }, size: 200 });
+    box.innerHTML = `<div class="bar">${can('doc.write') ? `<button class="btn pri" id="dgUp">${ic('plus')} Tambah foto</button>` : ''}<span class="muted">${r.total} foto</span></div>
+      <div class="doc-grid">${r.rows.map(docCard).join('') || '<div class="state">Belum ada dokumentasi.</div>'}</div>`;
+    loadThumbs(box);
+    const up = $('#dgUp', box); if (up) up.onclick = () => uploadDocs({ entity, entityId: row.id, estateId: row.estateId || (entity === 'Estates' ? row.id : ''), label }, load);
+    $$('[data-doc]', box).forEach(el => el.onclick = () => viewDoc(r.rows.find(x => x.id === el.dataset.doc), load));
+  };
+  modal('Dokumentasi — ' + label, box, null, { wide: true, onOpen: () => load().catch(e => { box.innerHTML = `<div class="state err">${esc(e.message)}</div>`; }) });
+}
+
+Pages.docs = function () {
+  C().innerHTML = `<div class="card"><div class="bar"><select class="in" id="dcEnt" style="width:auto"><option value="">Semua objek</option>${Object.keys(DOC_ENT).map(k => `<option value="${k}">${DOC_ENT[k]}</option>`).join('')}</select>
+    <select class="in" id="dcCat" style="width:auto"><option value="">Semua kategori</option>${DOC_CATS.map(c => `<option>${esc(c)}</option>`).join('')}</select><input class="in" id="dcQ" placeholder="Cari keterangan…" style="max-width:220px">
+    <span class="sp"></span>${can('doc.write') ? `<button class="btn pri" id="dcUp">${ic('plus')} Unggah foto</button>` : ''}</div><div id="dcGrid" class="doc-grid"><div class="state">Memuat…</div></div><div class="pager" id="dcPg"></div></div>`;
+  let page = 1;
+  const load = async () => {
+    const f = Object.assign({}, estateFilter()); if ($('#dcEnt').value) f.entity = $('#dcEnt').value; if ($('#dcCat').value) f.category = $('#dcCat').value;
+    try {
+      const r = await api('crud.list', { table: 'Documents', filter: f, page, size: 48, sort: '-takenAt' });
+      const q = $('#dcQ').value.toLowerCase(), rows = q ? r.rows.filter(d => String(d.caption).toLowerCase().includes(q)) : r.rows;
+      $('#dcGrid').innerHTML = rows.map(docCard).join('') || '<div class="state">Belum ada dokumentasi foto. Unggah dari tombol di kanan atas atau dari menu SSU, Kampanye, Titik, Pengiriman.</div>';
+      $('#dcPg').innerHTML = `${r.total} foto · hal ${r.page}/${r.pages} <button class="btn sm" data-p="-1" ${r.page <= 1 ? 'disabled' : ''}>‹</button><button class="btn sm" data-p="1" ${r.page >= r.pages ? 'disabled' : ''}>›</button>`;
+      $$('[data-doc]', $('#dcGrid')).forEach(el => el.onclick = () => viewDoc(r.rows.find(x => x.id === el.dataset.doc), load));
+      loadThumbs($('#dcGrid'));
+    } catch (e) { $('#dcGrid').innerHTML = `<div class="state err">${esc(e.message)}</div>`; }
+  };
+  $('#dcPg').onclick = e => { const p = e.target.closest('[data-p]'); if (p) { page += Number(p.dataset.p); load(); } };
+  ['#dcEnt', '#dcCat'].forEach(s => $(s).onchange = () => { page = 1; load(); }); $('#dcQ').oninput = debounce(load, 300);
+  if ($('#dcUp')) $('#dcUp').onclick = () => uploadDocs({}, load);
+  load();
+};
+
 /* Halaman: Dashboard, Master Data, Peta, SSU, Kampanye, Rencana, Titik, Pekerjaan Lapangan */
 const C = () => $('#content');
-async function listAll(table, filter) { return (await api('crud.list', { table, all: true, filter: filter || {} })).rows; }
+/** Daftar lengkap tabel referensi; di-cache 90 dtk & dibatalkan otomatis setiap ada penulisan. */
+function listAll(table, filter) {
+  const k = table + JSON.stringify(filter || {});
+  return REF.get(k) || REF.set(k, api('crud.list', { table, all: true, filter: filter || {} }).then(r => r.rows));
+}
 function estateFilter() { return S.estateId ? { estateId: S.estateId } : {}; }
 function estateOpts() { return S.estates.map(e => ({ value: e.id, label: e.code + ' — ' + e.name })); }
 function tabs(el, list, onPick) {
@@ -703,12 +1176,16 @@ const CRS_OPTS = [{ value: '', label: 'Otomatis (baca dari file / EPSG:4326)' },
   .concat([46, 47, 48, 49, 50, 51, 52, 53, 54].flatMap(z => [{ value: 'EPSG:327' + z, label: 'EPSG:327' + z + ' UTM ' + z + 'S' }, { value: 'EPSG:326' + z, label: 'EPSG:326' + z + ' UTM ' + z + 'N' }]));
 
 /* ------------------------------ Peta (Leaflet) ------------------------------ */
-function makeMap(el) {
+function makeMap(el, opt = {}) {
   if (typeof L === 'undefined') { el.innerHTML = '<div class="state err">Pustaka peta belum termuat (offline pertama kali?).</div>'; return null; }
-  const m = L.map(el, { zoomControl: true }).setView([-2.5, 117], 5);
-  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(m);
-  const img = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Tiles © Esri — Esri, Maxar, Earthstar Geographics' });
+  const m = L.map(el, { zoomControl: true, maxZoom: 22 }).setView([-2.5, 117], 5);
+  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 22, maxNativeZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(m);
+  const img = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 22, maxNativeZoom: 19, attribution: 'Tiles © Esri — Esri, Maxar, Earthstar Geographics' });
   m._ctl = L.control.layers({ 'OpenStreetMap': osm, 'Citra satelit (Esri)': img }, {}).addTo(m);
+  m._baseName = 'OpenStreetMap'; m.on('baselayerchange', e => { m._baseName = e.name; });
+  L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(m);
+  // foto udara PMTiles yang tersimpan di perangkat ikut tampil (juga saat offline)
+  m._aerialReady = opt.aerial === false ? Promise.resolve([]) : Aerial.attach(m).catch(() => []);
   setTimeout(() => m.invalidateSize(), 200);
   return m;
 }
@@ -753,8 +1230,9 @@ Pages.master = function () {
     const m = MASTER[t], w = can('master.write');
     const dt = dataTable(body, { table: t, filter: m.scoped ? estateFilter() : {}, cols: m.cols.map(c => ({ k: c[0], label: c[1] })),
       tools: w ? `<button class="btn pri" data-add>${ic('plus')} Tambah ${esc(m.label)}</button>` : '',
-      actions: w ? () => actBtn('edit', 'Ubah') + ' ' + actBtn('del', 'Hapus', 'danger') : null,
+      actions: (w || ['Blocks', 'Estates'].includes(t)) ? () => (['Blocks', 'Estates'].includes(t) ? actBtn('foto', 'Foto') + ' ' : '') + (w ? actBtn('edit', 'Ubah') + ' ' + actBtn('del', 'Hapus', 'danger') : '') : null,
       onAction: async (a, row) => {
+        if (a === 'foto') return docGallery(t, row, m.label + ' ' + row.code);
         if (a === 'edit') { const f = await m.fields(); if (await formModal('Ubah ' + m.label, f, row, v => run('crud.save', { table: t, record: Object.assign(v, { id: row.id }) }, 'Tersimpan.'))) dt.reload(); }
         if (a === 'del' && await confirmBox('Hapus ' + row.code + '? (soft delete; data historis tetap)')) { await run('crud.delete', { table: t, id: row.id }, 'Dihapus.'); dt.reload(); }
       } });
@@ -763,27 +1241,51 @@ Pages.master = function () {
 };
 
 /* ------------------------------ Peta Kebun ------------------------------ */
+const MAP_LEGEND = [[SSU_COLOR.APPROVED, 'SSU disetujui'], [SSU_COLOR.DRAFT, 'SSU draft'], ['transparent', 'Batas blok', 'border:2px dashed #b8860b'], [PT_COLOR.PLANNED, 'Titik rencana'], [PT_COLOR.OBSERVED, 'Titik teramati (aktual)']];
+function mapThematic(data) {   // lapisan tematik dapat dibuat ulang (dipakai juga oleh peta cetak)
+  return m => {
+    const bl = L.geoJSON({ type: 'FeatureCollection', features: data.blocks.filter(b => b.geomJ).map(b => ({ type: 'Feature', geometry: b.geomJ, properties: b })) },
+      { style: { color: '#b8860b', weight: 1.5, dashArray: '4 3', fill: false } }).bindPopup(l => 'Blok ' + esc(l.feature.properties.code) + (l.feature.properties.areaHa ? ' · ' + num(l.feature.properties.areaHa) + ' ha' : ''));
+    const sl = L.geoJSON({ type: 'FeatureCollection', features: data.ssus.map(x => ({ type: 'Feature', geometry: x.geomJ, properties: x })) },
+      { style: f => ({ color: SSU_COLOR[f.properties.status] || '#555', weight: 2, fillOpacity: .18 }) })
+      .bindPopup(l => { const p = l.feature.properties; return `<b>${esc(p.code)}</b> ${esc(p.name)}<br>${esc(p.soilType)}<br>Status: ${esc(p.status)} · v${esc(p.currentVersion)}<br>Luas: ${num(p.areaHa)} ha`; })
+      .bindTooltip(l => esc(l.feature.properties.code), { permanent: data.labels, direction: 'center', className: 'ssu-lbl' });
+    bl.addTo(m); sl.addTo(m);
+    const pl = data.points && data.points.length ? L.layerGroup(data.points.map(p => { const obs = p.status === 'OBSERVED' && p.actualLat !== '';
+      return L.circleMarker(obs ? [p.actualLat, p.actualLng] : [p.planLat, p.planLng], { radius: 6, color: '#fff', weight: 1.5, fillColor: PT_COLOR[p.status], fillOpacity: 1 })
+        .bindPopup(`<b>${esc(p.code)}</b><br>${esc(p.status)}<br>Rencana: ${num(p.planLat, 6)}, ${num(p.planLng, 6)}${obs ? `<br>Aktual: ${num(p.actualLat, 6)}, ${num(p.actualLng, 6)} (±${num(p.accuracy, 1)} m)` : ''}<br>Petugas: ${esc(p.assignedName || '-')}`); })).addTo(m) : null;
+    return { bl, sl, pl };
+  };
+}
 Pages.map = async function () {
-  const camps = await listAll('Campaigns', estateFilter());
-  C().innerHTML = `<div class="card"><div class="bar"><select class="in" id="mpC" style="max-width:320px"><option value="">— titik dari kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)}</option>`).join('')}</select><span class="sp"></span><span class="muted" id="mpInfo"></span></div><div class="map" id="mp"></div></div>`;
-  const m = makeMap($('#mp')); if (!m) return;
-  const [ssu, blocks] = await Promise.all([listAll('SoilUnits', estateFilter()), listAll('Blocks', estateFilter())]);
-  const bl = L.geoJSON({ type: 'FeatureCollection', features: blocks.filter(b => b.geomJ).map(b => ({ type: 'Feature', geometry: b.geomJ, properties: b })) }, { style: { color: '#b8860b', weight: 1.5, dashArray: '4 3', fill: false } }).bindPopup(l => 'Blok ' + esc(l.feature.properties.code));
-  const sl = L.geoJSON({ type: 'FeatureCollection', features: ssu.map(s => ({ type: 'Feature', geometry: s.geomJ, properties: s })) },
-    { style: f => ({ color: SSU_COLOR[f.properties.status] || '#555', weight: 2, fillOpacity: .18 }) })
-    .bindPopup(l => { const p = l.feature.properties; return `<b>${esc(p.code)}</b> ${esc(p.name)}<br>${esc(p.soilType)}<br>Status: ${esc(p.status)} · v${esc(p.currentVersion)}<br>Luas: ${num(p.areaHa)} ha`; }).addTo(m);
-  bl.addTo(m); m._ctl.addOverlay(sl, 'SSU'); m._ctl.addOverlay(bl, 'Blok');
-  if (ssu.length) m.fitBounds(sl.getBounds(), { padding: [20, 20] });
-  legend(m, [[SSU_COLOR.APPROVED, 'SSU disetujui'], [SSU_COLOR.DRAFT, 'SSU draft'], ['transparent', 'Batas blok', 'border:2px dashed #b8860b'], [PT_COLOR.PLANNED, 'Titik rencana'], [PT_COLOR.OBSERVED, 'Titik teramati (aktual)']]);
-  $('#mpInfo').textContent = ssu.length + ' SSU · ' + blocks.length + ' blok';
-  let pl;
+  const [camps, ssus, blocks, divisions, orgs] = await Promise.all([listAll('Campaigns', estateFilter()), listAll('SoilUnits', estateFilter()), listAll('Blocks', estateFilter()), listAll('Divisions', estateFilter()), listAll('Organizations')]);
+  C().innerHTML = `<div class="card"><div class="zoombar" id="mpZoom"></div><div class="bar"><select class="in" id="mpC" style="max-width:300px"><option value="">— titik dari kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)}</option>`).join('')}</select>
+    <label class="chk"><input type="checkbox" id="mpLbl"> Label SSU</label><span class="sp"></span><span class="muted" id="mpInfo"></span>
+    <button class="btn" id="mpAer">Foto udara offline</button><button class="btn pri" id="mpPrint">Cetak peta A4/A3</button></div><div class="map" id="mp" style="height:min(70vh,640px)"></div></div>`;
+  const m = makeMap($('#mp')); if (!m) return; S._map = m;
+  const data = { ssus, blocks, points: [], labels: false };
+  let th = mapThematic(data)(m);
+  const relayer = () => { [th.bl, th.sl, th.pl].forEach(l => { if (l) { m.removeLayer(l); m._ctl.removeLayer(l); } }); th = mapThematic(data)(m); m._ctl.addOverlay(th.sl, 'SSU'); m._ctl.addOverlay(th.bl, 'Blok'); };
+  m._ctl.addOverlay(th.sl, 'SSU'); m._ctl.addOverlay(th.bl, 'Blok');
+  const all = boundsOfGeoms(ssus.map(x => x.geomJ).concat(blocks.map(x => x.geomJ)));
+  if (all) m.fitBounds(all, { padding: [20, 20] });
+  else m._aerialReady.then(a => { if (a.length) { const r = a[0].rec.bounds; m.fitBounds([[r[1], r[0]], [r[3], r[2]]]); } });
+  legend(m, MAP_LEGEND);
+  $('#mpInfo').textContent = ssus.length + ' SSU · ' + blocks.length + ' blok';
+  zoomToBar($('#mpZoom'), m, { orgs, estates: S.estates, divisions, blocks, ssus });
+  $('#mpLbl').onchange = e => { data.labels = e.target.checked; relayer(); };
   $('#mpC').onchange = async e => {
-    if (pl) m.removeLayer(pl); if (!e.target.value) return;
-    const pts = (await listAll('SamplingPoints', { campaignId: e.target.value })).filter(p => p.status !== 'VOID');
-    pl = L.layerGroup(pts.map(p => { const obs = p.status === 'OBSERVED' && p.actualLat !== '';
-      const mk = L.circleMarker(obs ? [p.actualLat, p.actualLng] : [p.planLat, p.planLng], { radius: 6, color: '#fff', weight: 1.5, fillColor: PT_COLOR[p.status], fillOpacity: 1 });
-      return mk.bindPopup(`<b>${esc(p.code)}</b><br>${esc(p.status)}<br>Rencana: ${num(p.planLat, 6)}, ${num(p.planLng, 6)}${obs ? `<br>Aktual: ${num(p.actualLat, 6)}, ${num(p.actualLng, 6)} (±${num(p.accuracy, 1)} m)` : ''}<br>Petugas: ${esc(p.assignedName || '-')}`); })).addTo(m);
-    $('#mpInfo').textContent = pts.length + ' titik';
+    data.points = e.target.value ? (await listAll('SamplingPoints', { campaignId: e.target.value })).filter(p => p.status !== 'VOID') : [];
+    relayer(); $('#mpInfo').textContent = data.points.length + ' titik';
+  };
+  $('#mpAer').onclick = () => aerialManager(async (what, rec) => {
+    if (what === 'zoom' && rec) { const b = rec.bounds; m.fitBounds([[b[1], b[0]], [b[3], b[2]]]); return; }
+    if (what === 'opacity') { (m._aerial || []).forEach(a => a.layer.setOpacity(Aerial.opacity())); return; }
+    (m._aerial || []).forEach(a => { m.removeLayer(a.layer); m._ctl.removeLayer(a.layer); }); m._aerialReady = Aerial.attach(m);
+  });
+  $('#mpPrint').onclick = () => {
+    const camp = camps.find(c => c.id === $('#mpC').value);
+    openMapPrint({ src: m, title: 'Peta Soil Sampling Unit', subtitle: camp ? 'Kampanye ' + camp.code + ' — ' + camp.name : '', legend: MAP_LEGEND, build: pm => mapThematic(data)(pm) });
   };
 };
 
@@ -826,9 +1328,10 @@ Pages.ssu = function () {
   const dt = dataTable($('#sc'), { table: 'SoilUnits', filter: estateFilter(), filters: `<select class="in" data-filter="status" style="width:auto"><option value="">Semua status</option><option>DRAFT</option><option>APPROVED</option><option>RETIRED</option></select>`,
     cols: [{ k: 'code', label: 'Kode' }, { k: 'name', label: 'Nama' }, { k: 'soilType', label: 'Jenis tanah' }, { k: 'areaHa', label: 'Luas (ha)', fmt: v => num(v, 3) }, { k: 'currentVersion', label: 'Versi', fmt: v => 'v' + esc(v) }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
     tools: (w ? `<button class="btn pri" data-new>${ic('plus')} SSU baru</button> <button class="btn" data-imp>Impor GeoJSON</button>` : '') + ` <button class="btn" data-exp>${ic('dl')} Ekspor GeoJSON</button>`,
-    actions: r => (w ? actBtn('edit', 'Ubah') + ' ' : '') + actBtn('ver', 'Riwayat versi') + (ap && r.status === 'DRAFT' ? ' ' + actBtn('APPROVED', 'Setujui', 'pri') : '') + (ap && r.status === 'APPROVED' ? ' ' + actBtn('RETIRED', 'Pensiunkan', 'danger') : ''),
+    actions: r => (w ? actBtn('edit', 'Ubah') + ' ' : '') + actBtn('foto', 'Foto') + ' ' + actBtn('ver', 'Riwayat versi') + (ap && r.status === 'DRAFT' ? ' ' + actBtn('APPROVED', 'Setujui', 'pri') : '') + (ap && r.status === 'APPROVED' ? ' ' + actBtn('RETIRED', 'Pensiunkan', 'danger') : ''),
     onAction: async (a, r) => {
       if (a === 'edit') openSsuForm(r, () => dt.reload());
+      if (a === 'foto') docGallery('SoilUnits', r, 'SSU ' + r.code);
       if (a === 'ver') { const v = await listAll('SoilUnitVersions', { ssuId: r.id });
         modal('Riwayat versi ' + r.code, `<div class="tbl-wrap"><table class="tbl"><tr><th>Versi</th><th>Luas (ha)</th><th>CRS sumber → target</th><th>Transformasi</th><th>Catatan</th><th>Tanggal</th></tr>${v.sort((a, b) => b.version - a.version).map(x => `<tr><td>v${x.version}</td><td>${num(x.areaHa, 4)}</td><td>${esc(x.crsSource)} → ${esc(x.crsTarget)}</td><td>${esc(x.transform)}</td><td>${esc(x.note)}</td><td>${fmtDate(x.createdAt, 1)}</td></tr>`).join('')}</table></div>`, null, { wide: true }); }
       if (a === 'APPROVED' || a === 'RETIRED') { if (await confirmBox((a === 'APPROVED' ? 'Setujui ' : 'Pensiunkan ') + r.code + ' v' + r.currentVersion + '?')) { await run('ssu.status', { id: r.id, to: a }, 'Status diperbarui.'); dt.reload(); } }
@@ -857,8 +1360,8 @@ Pages.campaigns = function () {
   const next = s => ((S.meta.flow || {}).Campaign || {})[s] || [];
   const dt = dataTable($('#cc'), { table: 'Campaigns', filter: estateFilter(), cols: [{ k: 'code', label: 'Kode' }, { k: 'name', label: 'Nama' }, { k: 'estateName', label: 'Estate' }, { k: 'protocolCode', label: 'Protokol', fmt: (v, r) => esc(v) + ' v' + esc(r.protocolVersion) }, { k: 'startDate', label: 'Periode', fmt: (v, r) => esc(v || '-') + ' s/d ' + esc(r.endDate || '-') }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
     tools: w ? `<button class="btn pri" data-new>${ic('plus')} Kampanye baru</button>` : '',
-    actions: r => (w && r.status === 'PLANNED' ? actBtn('edit', 'Ubah') + ' ' : '') + next(r.status).filter(s => s !== 'IN_PROGRESS').map(s => actBtn(s, { APPROVED: 'Setujui', COMPLETED: 'Selesaikan', CANCELLED: 'Batalkan' }[s] || s, s === 'CANCELLED' ? 'danger' : '')).join(' '),
-    onAction: async (a, r) => { if (a === 'edit') return campaignForm(r, () => dt.reload());
+    actions: r => actBtn('foto', 'Foto') + ' ' + (w && r.status === 'PLANNED' ? actBtn('edit', 'Ubah') + ' ' : '') + next(r.status).filter(s => s !== 'IN_PROGRESS').map(s => actBtn(s, { APPROVED: 'Setujui', COMPLETED: 'Selesaikan', CANCELLED: 'Batalkan' }[s] || s, s === 'CANCELLED' ? 'danger' : '')).join(' '),
+    onAction: async (a, r) => { if (a === 'edit') return campaignForm(r, () => dt.reload()); if (a === 'foto') return docGallery('Campaigns', r, 'Kampanye ' + r.code);
       if (await confirmBox('Ubah status ' + r.code + ' → ' + a + '?' + (a === 'APPROVED' ? ' Protokol akan DIKUNCI.' : ''))) { await run('campaign.transition', { id: r.id, to: a }, 'Status kampanye diperbarui.'); dt.reload(); } } });
   const n = $('[data-new]'); if (n) n.onclick = () => campaignForm(null, () => dt.reload());
 };
@@ -935,6 +1438,7 @@ Pages.points = async function () {
     cur = camps.find(c => c.id === e.target.value); sel.clear(); if ($('#ptGen')) $('#ptGen').disabled = !cur; if ($('#ptAs')) $('#ptAs').disabled = !cur; if (!cur) return;
     dt = dataTable($('#ptT'), { table: 'SamplingPoints', filter: { campaignId: cur.id }, size: 50, sort: 'code', filters: `<select class="in" data-filter="status" style="width:auto"><option value="">Semua</option><option>PLANNED</option><option>OBSERVED</option><option>VOID</option></select>`,
       cols: [{ k: 'id', label: '', fmt: (v, r) => r.status === 'PLANNED' ? `<input type="checkbox" data-sel="${esc(v)}">` : '' }, { k: 'code', label: 'Kode' }, { k: 'ssuCode', label: 'SSU' }, { k: 'planLat', label: 'Rencana', fmt: (v, r) => `<span class="mono">${num(v, 6)}, ${num(r.planLng, 6)}</span>` }, { k: 'assignedName', label: 'Petugas' }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+      actions: () => actBtn('foto', 'Foto'), onAction: (a, r) => { if (a === 'foto') docGallery('SamplingPoints', r, 'Titik ' + r.code); },
       onLoad: rows => draw(rows.filter(r => r.status !== 'VOID')) });
   };
   $('#ptT').addEventListener('change', e => { const c = e.target.closest('[data-sel]'); if (c) c.checked ? sel.add(c.dataset.sel) : sel.delete(c.dataset.sel); });
@@ -1004,21 +1508,27 @@ function navigatePoint(pack, p) {
 }
 async function recordPoint(pack, p) {
   const camp = pack.campaigns.find(c => c.id === p.campaignId), prot = camp.protocol;
-  let photo = '', meta = null;
+  let photo = '', meta = null; const extra = [];
   const fields = [{ name: 'depths', label: 'Kedalaman diambil', type: 'checks', required: true, options: prot.depths.map(d => ({ value: d.code, label: d.code + ' (' + d.topCm + '–' + d.bottomCm + ' cm)' })), value: prot.depths.map(d => d.code) },
     { name: 'notes', label: 'Catatan pengamatan', type: 'textarea', help: `${prot.subsamplesPerPoint} subsampel/titik · ${prot.handling || ''}` }];
   const box = document.createElement('div');
   box.innerHTML = `<p><b>Posisi aktual:</b> <span class="mono" id="rcPos">menunggu GPS…</span></p><form onsubmit="return false">${formHtml(fields)}</form>
-    <div class="bar"><label class="btn">Ambil foto<input type="file" accept="image/*" capture="environment" id="rcPh" class="hidden"></label><img id="rcPrev" class="avatar hidden" style="border-radius:8px;width:56px;height:56px"></div><p class="help">Foto dikompres otomatis (≤ ±200 KB). ${esc(prot.acceptance || '')}</p>`;
+    <div class="bar"><label class="btn">Ambil foto sampling<input type="file" accept="image/*" capture="environment" id="rcPh" class="hidden"></label><img id="rcPrev" class="avatar hidden" style="border-radius:8px;width:56px;height:56px">
+      <button class="btn" type="button" id="rcDoc">${ic('camera')} Foto dokumentasi tambahan</button><span class="muted" id="rcDocN"></span></div>
+    <label class="f" id="rcDocCatW" style="display:none"><span>Kategori foto tambahan</span><select class="in" id="rcDocCat">${DOC_CATS.map(c => `<option${c === 'Kondisi lahan' ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
+    <p class="help">Semua foto dikompres di perangkat lalu disimpan ke Google Drive saat sinkron (sheet hanya menyimpan URL). ${esc(prot.acceptance || '')}</p>`;
   await modal('Catat ' + p.code, box, [{ label: 'Batal' }, { label: 'Simpan di perangkat', cls: 'pri', onClick: async b => {
     const v = formRead(b, fields); if (!v) return false;
     if (!GEO.pos) { toast('Tunggu posisi GPS.', 'bad'); return false; }
     const data = { pointId: p.id, lat: GEO.pos.lat, lng: GEO.pos.lng, accuracy: GEO.pos.acc, observedAt: new Date().toISOString(), depths: v.depths, notes: v.notes, photo, photoMeta: meta };
     await Sync.enqueue('observation', data, p.version);
+    for (const dc of extra) await Sync.enqueue('document', { pointId: p.id, category: $('#rcDocCat', b).value, caption: (v.notes || 'Dokumentasi titik ' + p.code).slice(0, 200), photo: dc.dataUrl, takenAt: dc.takenAt, width: dc.width, height: dc.height, lat: GEO.pos.lat, lng: GEO.pos.lng });
     toast('Tersimpan di perangkat. Akan dikirim saat online.', 'ok'); Pages.field();
   } }], { onOpen: b => {
     startGps(pos => { const el = $('#rcPos', b); if (el) el.textContent = `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)} ±${pos.acc} m · ${Math.round(distM(pos.lat, pos.lng, p.planLat, p.planLng))} m dari rencana`; });
-    $('#rcPh', b).onchange = async e => { const f = e.target.files[0]; if (!f) return; try { photo = await imageToDataUrl(f, 1280, 280000); meta = { name: f.name, type: 'image/jpeg', originalBytes: f.size, chars: photo.length, takenAt: new Date(f.lastModified || Date.now()).toISOString() };
+    $('#rcDoc', b).onclick = async () => { for (const f of await pickFiles('image/*', true)) { try { extra.push(await compressPhoto(f)); } catch (er) { toast(er.message, 'bad'); } }
+      $('#rcDocN', b).textContent = extra.length ? extra.length + ' foto tambahan' : ''; $('#rcDocCatW', b).style.display = extra.length ? '' : 'none'; };
+    $('#rcPh', b).onchange = async e => { const f = e.target.files[0]; if (!f) return; try { const c = await compressPhoto(f); photo = c.dataUrl; meta = { name: f.name, type: 'image/jpeg', originalBytes: f.size, width: c.width, height: c.height, takenAt: c.takenAt };
       $('#rcPrev', b).src = photo; $('#rcPrev', b).classList.remove('hidden'); $('#rcPrev', b).onclick = () => zoomImage(photo, 'Foto lapangan'); } catch (er) { toast(er.message, 'bad'); } };
   } });
 }
@@ -1085,9 +1595,10 @@ Pages.shipments = async function () {
   C().innerHTML = '<div class="card" id="shc"></div>';
   const dt = dataTable($('#shc'), { table: 'Shipments', filter: estateFilter(), cols: [{ k: 'code', label: 'Manifest' }, { k: 'campaignCode', label: 'Kampanye' }, { k: 'labName', label: 'Laboratorium' }, { k: 'courier', label: 'Kurir' }, { k: 'sentAt', label: 'Dikirim', fmt: v => fmtDate(v, 1) }, { k: 'receivedAt', label: 'Diterima', fmt: v => fmtDate(v, 1) }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
     tools: w ? `<button class="btn pri" data-new>${ic('plus')} Manifest baru</button>` : '',
-    actions: r => actBtn('man', 'Manifest') + (w && r.status === 'DRAFT' ? ' ' + actBtn('send', 'Serahkan ke kurir', 'pri') + ' ' + actBtn('cancel', 'Batalkan', 'danger') : '') + (rc && r.status === 'SENT' ? ' ' + actBtn('recv', 'Terima di lab', 'pri') : ''),
+    actions: r => actBtn('man', 'Manifest') + ' ' + actBtn('foto', 'Foto') + (w && r.status === 'DRAFT' ? ' ' + actBtn('send', 'Serahkan ke kurir', 'pri') + ' ' + actBtn('cancel', 'Batalkan', 'danger') : '') + (rc && r.status === 'SENT' ? ' ' + actBtn('recv', 'Terima di lab', 'pri') : ''),
     onAction: async (a, r) => {
       if (a === 'man') return manifest(r.id);
+      if (a === 'foto') return docGallery('Shipments', r, 'Pengiriman ' + r.code);
       if (a === 'send' && await confirmBox('Serahkan ' + r.code + ' ke kurir? Status semua sampel → SHIPPED.')) { await run('shipment.send', { id: r.id }, 'Diserahkan.'); dt.reload(); }
       if (a === 'cancel' && await confirmBox('Batalkan manifest ' + r.code + '? Sampel kembali COLLECTED.')) { await run('shipment.cancel', { id: r.id }, 'Dibatalkan.'); dt.reload(); }
       if (a === 'recv') receive(r, () => dt.reload());
@@ -1212,17 +1723,23 @@ Pages.analytics = async function () {
     const r = await run('analytics.compare', Object.assign(f(), { campaignA: a, campaignB: b }));
     $('#anOut').innerHTML = `<h2>Perbandingan antarperiode</h2><p class="help">${esc(r.meta.note)}</p><div class="tbl-wrap"><table class="tbl"><tr><th>SSU</th><th>Rata-rata A (n)</th><th>Rata-rata B (n)</th><th>Selisih B−A</th><th>Satuan / metode</th></tr>${r.rows.map(x => `<tr><td>${esc(x.ssu)}</td><td>${num(x.meanA, 3)} (${x.nA})</td><td>${x.comparable ? num(x.meanB, 3) + ' (' + x.nB + ')' : '<span class="muted">tidak sebanding</span>'}</td><td>${x.comparable ? num(x.delta, 3) : '-'}</td><td>${esc(x.unit)} / ${esc(x.method || '-')}</td></tr>`).join('')}</table></div>`; };
   let m = makeMap($('#anM')), lay = [];
+  $('#anOut').addEventListener('click', e => { if (e.target.closest('#anPrint') && S._anPrint) { const P = S._anPrint; openMapPrint({ src: m, title: P.title, subtitle: P.sub, legend: P.lgRows, build: pm => P.draw(pm) }); } });
   $('#anMap').onclick = async () => { if (!m) return; lay.forEach(l => m.removeLayer(l)); lay = [];
     const r = await run('analytics.map', Object.assign(f(), { interpolate: $('#anIdw').checked }));
     const vals = r.ssu.features.map(x => x.properties.mean).filter(v => v !== null).concat(r.idw ? r.idw.cells.map(c => c.value) : []);
     const lo = Math.min(...vals), hi = Math.max(...vals), pal = ['#fef3c7', '#fcd34d', '#f59e0b', '#c2410c', '#7c2d12'];
     const col = v => v === null || !isFinite(lo) ? '#e5e7eb' : pal[Math.min(4, Math.floor((v - lo) / ((hi - lo) || 1) * 5))];
-    if (r.idw) lay.push(L.layerGroup(r.idw.cells.map(c => L.rectangle([[c.lat - c.dLat / 2, c.lng - c.dLng / 2], [c.lat + c.dLat / 2, c.lng + c.dLng / 2]], { stroke: false, fillColor: col(c.value), fillOpacity: .55 }).bindTooltip('PREDIKSI ' + num(c.value, 3)))).addTo(m));
-    const g = L.geoJSON(r.ssu, { style: x => ({ color: '#111', weight: 1.5, fillColor: col(x.properties.mean), fillOpacity: r.idw ? 0 : .7, dashArray: r.idw ? '4 3' : null }) }).bindPopup(l => `<b>${esc(l.feature.properties.code)}</b><br>TERUKUR rata-rata: ${num(l.feature.properties.mean, 3)} (n=${l.feature.properties.n})`).addTo(m); lay.push(g);
-    lay.push(L.layerGroup(r.points.map(p => L.circleMarker([p.lat, p.lng], { radius: 5, color: '#111', weight: 1, fillColor: col(p.value), fillOpacity: 1 }).bindTooltip('TERUKUR ' + esc(p.code) + ': ' + num(p.value, 3)))).addTo(m));
+    const draw = mm => { const out = []; let g;
+    if (r.idw) out.push(L.layerGroup(r.idw.cells.map(c => L.rectangle([[c.lat - c.dLat / 2, c.lng - c.dLng / 2], [c.lat + c.dLat / 2, c.lng + c.dLng / 2]], { stroke: false, fillColor: col(c.value), fillOpacity: .55 }).bindTooltip('PREDIKSI ' + num(c.value, 3)))).addTo(mm));
+    g = L.geoJSON(r.ssu, { style: x => ({ color: '#111', weight: 1.5, fillColor: col(x.properties.mean), fillOpacity: r.idw ? 0 : .7, dashArray: r.idw ? '4 3' : null }) }).bindPopup(l => `<b>${esc(l.feature.properties.code)}</b><br>TERUKUR rata-rata: ${num(l.feature.properties.mean, 3)} (n=${l.feature.properties.n})`).addTo(mm); out.push(g);
+    out.push(L.layerGroup(r.points.map(p => L.circleMarker([p.lat, p.lng], { radius: 5, color: '#111', weight: 1, fillColor: col(p.value), fillOpacity: 1 }).bindTooltip('TERUKUR ' + esc(p.code) + ': ' + num(p.value, 3)))).addTo(mm));
+      return { out, g }; };
+    const dd = draw(m); lay.push(...dd.out); const g = dd.g;
     if (r.ssu.features.length) m.fitBounds(g.getBounds());
-    lay.push(legend(m, pal.map((c, i) => [c, (isFinite(lo) ? num(lo + (hi - lo) * i / 5, 2) + ' – ' + num(lo + (hi - lo) * (i + 1) / 5, 2) : '-')]).concat([['#e5e7eb', 'Tidak ada data'], ['transparent', 'Poligon/titik = TERUKUR', 'border:2px solid #111'], ['transparent', r.idw ? 'Sel arsir = PREDIKSI (IDW)' : 'Tanpa prediksi', 'border:2px dashed #c2410c']])));
-    $('#anOut').innerHTML = `<h2>Peta parameter tanah</h2>${meta(Object.assign({}, r.meta, { campaign: r.meta.campaignId }))}<p>${r.idw ? badge('REVIEW', 'PREDIKSI') + ' ' + esc(r.idw.method) + ' dari ' + r.idw.n + ' titik — bukan pengukuran.' : esc(r.idwReason || '')}</p>${r.warning ? `<p>${badge('REVIEW', r.warning)}</p>` : ''}`; };
+    const lgRows = pal.map((c, i) => [c, (isFinite(lo) ? num(lo + (hi - lo) * i / 5, 2) + ' – ' + num(lo + (hi - lo) * (i + 1) / 5, 2) : '-')]).concat([['#e5e7eb', 'Tidak ada data'], ['transparent', 'Poligon/titik = TERUKUR', 'border:2px solid #111'], ['transparent', r.idw ? 'Sel arsir = PREDIKSI (IDW)' : 'Tanpa prediksi', 'border:2px dashed #c2410c']]);
+    lay.push(legend(m, lgRows));
+    S._anPrint = { draw, lgRows, title: 'Peta ' + r.meta.paramCode + ' kedalaman ' + r.meta.depth, sub: (r.idw ? 'TERUKUR + PREDIKSI (IDW)' : 'Rata-rata TERUKUR per SSU') + ' · n = ' + r.meta.n };
+    $('#anOut').innerHTML = `<h2>Peta parameter tanah<span class="sp"></span><button class="btn sm pri" id="anPrint">Cetak peta A4/A3</button></h2>${meta(Object.assign({}, r.meta, { campaign: r.meta.campaignId }))}<p>${r.idw ? badge('REVIEW', 'PREDIKSI') + ' ' + esc(r.idw.method) + ' dari ' + r.idw.n + ' titik — bukan pengukuran.' : esc(r.idwReason || '')}</p>${r.warning ? `<p>${badge('REVIEW', r.warning)}</p>` : ''}`; };
 };
 
 /* ------------------------------ Rekomendasi ------------------------------ */
@@ -1333,7 +1850,8 @@ Pages.settings = async function () {
   $('#stWipe').onclick = async () => { const n = (await IDB.qAll()).filter(o => o.status !== 'DONE').length; if (await confirmBox('Hapus paket tugas & antrean lokal' + (n ? ' (' + n + ' BELUM TERSINKRON akan hilang)' : '') + '?')) { await IDB.wipe(); Sync.badge(); toast('Data lokal dihapus.', 'ok'); } };
 };
 const LEGAL_FIELDS = [{ name: 'orgName', label: 'Nama organisasi (Pengendali Data)', help: 'mis. PT Contoh Sawit Lestari' }, { name: 'providerName', label: 'Nama penyedia aplikasi' }, { name: 'privacyContact', label: 'Email kontak privasi / Pejabat PDP', type: 'email' }];
-const OPS = [{ name: 'fieldMaxDeviationM', label: 'Batas deviasi titik aktual vs rencana (m)', type: 'number', min: 0 }, { name: 'fieldMaxAccuracyM', label: 'Batas akurasi GPS (m)', type: 'number', min: 0 }, { name: 'idwMinPoints', label: 'Minimum titik untuk interpolasi IDW', type: 'number', min: 3 }, { name: 'transitMaxDays', label: 'Maks hari sampel dalam perjalanan (0 = nonaktif)', type: 'number', min: 0 }];
+const OPS_DOC = { name: 'docPublicLink', label: 'Foto dokumentasi: bagikan tautan Google Drive', type: 'select', options: [{ value: 'false', label: 'Tidak — hanya lewat aplikasi (disarankan, sesuai hak akses)' }, { value: 'true', label: 'Ya — siapa pun yang punya tautan dapat melihat' }] };
+const OPS = [{ name: 'fieldMaxDeviationM', label: 'Batas deviasi titik aktual vs rencana (m)', type: 'number', min: 0 }, { name: 'fieldMaxAccuracyM', label: 'Batas akurasi GPS (m)', type: 'number', min: 0 }, { name: 'idwMinPoints', label: 'Minimum titik untuk interpolasi IDW', type: 'number', min: 3 }, { name: 'transitMaxDays', label: 'Maks hari sampel dalam perjalanan (0 = nonaktif)', type: 'number', min: 0 }, OPS_DOC];
 
 /* ------------------------------ Start ------------------------------ */
 window.addEventListener('hashchange', () => { const p = location.hash.slice(1); if (S.me && p && p !== S.page && Pages[p]) go(p); });
