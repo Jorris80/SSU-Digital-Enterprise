@@ -1,0 +1,1342 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f5132"><title>SSU Digital Enterprise</title>
+<meta name="description" content="Soil Sampling Unit Management System untuk perkebunan kelapa sawit">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<script>window.SSU_CONFIG={apiUrl:'https://script.google.com/macros/s/AKfycbz0P1ahnitzxq0hXS1xNoNIJH1agtV89ikYPsWT1ehkxut6-v0lDd3jdlW20o_bmKNp/exec'};/* isi URL Web App /exec di sini atau lewat menu Koneksi */</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" media="print" onload="this.media='all'">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>:root{--brand:#0f5132;--brand-2:#1f7a4d;--brand-soft:#e7f3ec;--accent:#b8860b;--bg:#f4f6f5;--panel:#ffffff;--ink:#16211b;--muted:#5d6b63;--line:#dfe5e1;
+--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--info:#1d4ed8;--radius:12px;--shadow:0 1px 2px rgba(16,24,20,.06),0 4px 16px rgba(16,24,20,.06);--side:252px;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1411;--panel:#141d18;--ink:#e6eee9;--muted:#9aaba1;--line:#26332c;--brand-soft:#16271e;--shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1411;--panel:#141d18;--ink:#e6eee9;--muted:#9aaba1;--line:#26332c;--brand-soft:#16271e;--shadow:none;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--brand-2)}
+.hidden{display:none!important}
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}
+.side{background:var(--brand);color:#eaf4ee;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column}
+.brand{display:flex;gap:10px;align-items:center;padding:16px 14px;border-bottom:1px solid rgba(255,255,255,.12)}
+.logo{width:40px;height:40px;border-radius:10px;background:#fff;object-fit:contain;cursor:zoom-in;flex:none}
+.brand-txt{min-width:0}.brand-title{font-weight:700;font-size:15px;line-height:1.2;overflow-wrap:anywhere}.brand-sub{font-size:11.5px;opacity:.75}
+.nav{padding:8px;flex:1}.nav-group{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.55;padding:12px 10px 4px}
+.nav button{display:flex;gap:10px;align-items:center;width:100%;border:0;background:transparent;color:inherit;padding:8px 10px;border-radius:8px;cursor:pointer;text-align:left;font-size:13.5px}
+.nav button:hover{background:rgba(255,255,255,.08)}.nav button.on{background:rgba(255,255,255,.16);font-weight:600}
+.nav svg{width:17px;height:17px;flex:none;opacity:.9}
+.side-foot{padding:10px 14px;font-size:11px;opacity:.6;border-top:1px solid rgba(255,255,255,.12)}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 18px;min-height:58px}
+.top h1{font-size:17px;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn.burger{display:none}
+.chip-net{font-size:12px;padding:3px 9px;border-radius:99px;background:var(--brand-soft);color:var(--brand-2);white-space:nowrap}
+.chip-net.off{background:#fde8e8;color:var(--bad)}
+.avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--brand-soft);border:2px solid var(--line);cursor:zoom-in;flex:none}
+.user-box{display:flex;align-items:center;gap:8px}.user-name{font-size:12.5px;line-height:1.2;text-align:right}.user-name small{color:var(--muted);display:block}
+.content{padding:18px;max-width:1400px;width:100%;margin:0 auto}
+/* ---------- components ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+.card h2{font-size:15px;margin:0 0 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.card h2 .sp{flex:1}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpi{padding:14px 16px}.kpi .v{font-size:26px;font-weight:700;line-height:1.1}.kpi .l{color:var(--muted);font-size:12.5px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--brand-2)}.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}.btn.pri:hover{background:var(--brand-2)}
+.btn.danger{color:var(--bad);border-color:#f1c4c4}.btn.sm{padding:4px 9px;font-size:12.5px}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn svg{width:15px;height:15px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}.bar .sp{flex:1}
+input.in,select.in,textarea.in{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px;outline:none}
+input.in:focus,select.in:focus,textarea.in:focus{border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(31,122,77,.15)}
+.in.bad{border-color:var(--bad)}
+label.f{display:block;margin-bottom:10px}label.f>span{display:block;font-size:12.5px;font-weight:600;margin-bottom:4px}
+.err-msg{color:var(--bad);font-size:12px;margin-top:3px}
+.help{color:var(--muted);font-size:12px;margin-top:3px}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--brand-soft);text-align:left;font-weight:600;padding:8px 10px;white-space:nowrap;position:sticky;top:0}
+.tbl td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.tbl tr:hover td{background:rgba(31,122,77,.04)}
+.state{padding:28px;text-align:center;color:var(--muted)}.state.err{color:var(--bad)}
+.pager{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.badge{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;background:#eef2f0;color:#33463b;white-space:nowrap}
+.b-ok{background:#dcfce7;color:#166534}.b-warn{background:#fef3c7;color:#92400e}.b-bad{background:#fee2e2;color:#991b1b}.b-info{background:#dbeafe;color:#1e40af}.b-mute{background:#eceff1;color:#455a64}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow:auto}
+.tabs button{border:0;background:none;padding:9px 12px;cursor:pointer;border-bottom:2px solid transparent;font-weight:500;color:var(--muted);white-space:nowrap}
+.tabs button.on{color:var(--brand-2);border-color:var(--brand-2)}
+.progress{height:8px;background:var(--brand-soft);border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:var(--brand-2)}
+.map{height:460px;border-radius:10px;border:1px solid var(--line);z-index:0}
+.legend{background:var(--panel);padding:8px 10px;border-radius:8px;box-shadow:var(--shadow);font-size:12px;line-height:1.6;color:var(--ink)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.muted{color:var(--muted)}.right{text-align:right}.nowrap{white-space:nowrap}
+.chk{display:flex;gap:6px;align-items:center;margin:4px 0}
+.list-item{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--panel)}
+.list-item .grow{flex:1;min-width:0}
+/* ---------- modal & toast & zoom ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(10,20,15,.5);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto}
+.modal{background:var(--panel);border-radius:14px;width:100%;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal.wide{max-width:980px}
+.modal-h{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}.modal-h h3{margin:0;font-size:16px;flex:1}
+.modal-b{padding:16px}.modal-f{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}
+.x{border:0;background:none;font-size:22px;cursor:pointer;line-height:1;color:var(--muted)}
+#toasts{position:fixed;right:14px;bottom:14px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:min(420px,calc(100vw - 28px))}
+.toast{background:#13241b;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:13px}
+.toast.bad{background:#7f1d1d}.toast.ok{background:#14532d}
+.zoom-bg{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;overflow:hidden;touch-action:none;cursor:grab}
+.zoom-bg img{position:absolute;left:50%;top:50%;max-width:none;transform-origin:center;user-select:none;-webkit-user-drag:none}
+.zoom-ctl{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
+.zoom-ctl button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:15px}
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.login-art{background:linear-gradient(150deg,var(--brand) 0%,#0b3b25 60%,#082a1a 100%);color:#e8f5ee;padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-art svg.bg{position:absolute;right:-60px;bottom:-40px;width:520px;opacity:.12}
+.login-art h2{font-size:30px;line-height:1.15;margin:0 0 10px;max-width:460px}
+.login-art ul{padding-left:18px;opacity:.85;max-width:440px}
+.login-box{display:flex;align-items:center;justify-content:center;padding:28px}
+.login-card{width:100%;max-width:380px}
+.login-card .logo{width:64px;height:64px;border-radius:14px;border:1px solid var(--line)}
+.print-only{display:none}
+/* ---------- responsive ---------- */
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){
+ .app{grid-template-columns:1fr}.side{position:fixed;left:0;top:0;bottom:0;width:min(84vw,300px);z-index:900;transform:translateX(-102%);transition:transform .2s}
+ .app.nav-open .side{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.4)}
+ .btn.burger{display:inline-flex}.top h1{font-size:15px}.card h2 .btn{padding:6px 10px;font-size:13px}.g2,.g3{grid-template-columns:1fr}.content{padding:12px}.top{padding:8px 12px}.user-name{display:none}
+ .login{grid-template-columns:1fr}.login-art{display:none}.map{height:62vh}
+ .tbl th,.tbl td{padding:7px 8px}
+}
+@media (max-width:520px){.g4{grid-template-columns:1fr 1fr}.kpi .v{font-size:21px}.modal-bg{padding:0}.modal{border-radius:0;min-height:100vh}}
+@media print{.side,.top,.bar,.btn,#toasts{display:none!important}.app{display:block}.content{padding:0}.card{box-shadow:none;break-inside:avoid}.print-only{display:block}body{background:#fff}}
+.label-sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(62mm,1fr));gap:4mm}
+.label{border:1px dashed #999;padding:3mm;display:flex;gap:3mm;align-items:center;font-size:10px;break-inside:avoid;background:#fff;color:#000}
+.label svg{width:24mm;height:24mm;flex:none}.label b{font-size:11px;display:block;word-break:break-all}
+
+.legal h4{margin:14px 0 4px;font-size:13.5px;color:var(--brand-2)}.legal p,.legal li{font-size:13px}.legal ul{padding-left:18px;margin:4px 0}.legal .tbl{margin:6px 0}
+#bootSplash{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;font-family:system-ui,sans-serif}
+#bootSplash .spin{width:34px;height:34px;border:3px solid #cfe3d7;border-top-color:#0f5132;border-radius:50%;animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+#bootSplash .diag{max-width:520px;text-align:left;background:#fff;border:1px solid #dfe5e1;border-radius:12px;padding:16px;color:#16211b;font-size:13.5px;line-height:1.5}
+#bootSplash .diag button{margin:4px 6px 0 0;padding:8px 12px;border-radius:8px;border:1px solid #0f5132;background:#0f5132;color:#fff;cursor:pointer}
+#bootSplash .diag button.alt{background:#fff;color:#0f5132}
+</style></head><body><div id="bootSplash"><svg width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0f5132"/><path d="M32 12c-9 8-14 16-14 24a14 14 0 0 0 28 0c0-8-5-16-14-24z" fill="#7fc79b"/><path d="M14 44h36v8H14z" fill="#b8860b"/></svg>
+<div class="spin"></div><div id="bootMsg">Memuat SSU Digital Enterprise... v1.1.2</div><div id="bootDiag"></div>
+<noscript><div class="diag">JavaScript dinonaktifkan. Aktifkan JavaScript untuk memakai aplikasi.</div></noscript></div>
+<script>/* watchdog boot: berjalan walau skrip utama gagal dimuat/di-parse */
+(function () {
+  function diag(reason) {
+    var b = document.getElementById('bootSplash'), d = document.getElementById('bootDiag'); if (!b || !d || d.innerHTML) return;
+    var sp = b.querySelector('.spin'); if (sp) sp.style.display = 'none';
+    var gas = typeof google !== 'undefined' && google.script;
+    d.innerHTML = '<div class="diag"><b>Aplikasi tidak dapat dimulai.</b><br>' + String(reason).replace(/[<>&]/g, '') +
+      '<ul style="padding-left:18px;margin:8px 0"><li>Periksa koneksi internet, lalu muat ulang.</li>' +
+      (gas ? '<li>Bila browser login dengan <b>lebih dari satu akun Google</b>, buka di jendela Incognito/Private atau logout akun lain (keterbatasan Apps Script).</li><li>Admin: pastikan semua file .gs & Index.html versi sama, lalu buat <i>Versi baru</i> di Kelola penerapan.</li>'
+           : '<li>Pastikan URL server (/exec) benar dan penerapan berakses <i>Siapa saja</i>.</li><li>Bila baru diperbarui, tutup semua tab aplikasi lalu buka lagi (cache lama).</li>') +
+      '</ul><button onclick="location.reload()">Muat ulang</button><button class="alt" onclick="__ssuClear()">Hapus sesi tersimpan &amp; muat ulang</button>' +
+      (gas ? '' : '<button class="alt" onclick="__ssuSetUrl()">Atur URL server</button>') +
+      '<div style="font-size:11px;color:#5d6b63;margin-top:8px">v1.1.2 &middot; ' + (gas ? 'Apps Script' : 'PWA') + '</div></div>';
+  }
+  window.__ssuDiag = diag;
+  window.__ssuClear = function () { try { ['session', 'me', 'settings'].forEach(function (k) { localStorage.removeItem('ssu.' + k); }); } catch (e) {} location.reload(); };
+  window.__ssuSetUrl = function () { var u = prompt('URL Web App Apps Script (/exec):'); if (u) { try { localStorage.setItem('ssu.apiUrl', JSON.stringify(u.trim())); } catch (e) {} location.reload(); } };
+  window.addEventListener('error', function (e) { if (e.message) diag('Galat skrip: ' + e.message + (e.lineno ? ' (' + (window.__ssuInjecting ? 'ssu-app.js' : ((e.filename || '').split('/').pop() || 'halaman')) + ' baris ' + e.lineno + ':' + e.colno + ')' : '')); });
+  window.addEventListener('unhandledrejection', function (e) { if (document.getElementById('bootSplash')) diag('Galat: ' + ((e.reason && e.reason.message) || e.reason)); });
+  setTimeout(function () { if (document.getElementById('bootSplash')) diag(window.__ssuBooted ? 'Server tidak merespons dalam 40 detik.' : 'Skrip aplikasi tidak berjalan (kemungkinan berkas tidak lengkap atau rusak).'); }, 40000);
+})();</script><div id="toasts"></div>
+<script>/* SSU Digital Enterprise — inti frontend: API, IndexedDB, antrean sinkronisasi, UI kit, login, shell. */
+'use strict';
+const VERSION = '1.1.2';
+const BUILD_DATE = '2026-10-28';
+const IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem('ssu.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('ssu.' + k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem('ssu.' + k); } catch (e) {} }
+};
+const S = { session: LS.get('session', null), me: null, settings: LS.get('settings', {}), meta: null, page: 'dashboard', estates: [], estateId: LS.get('estateId', '') };
+
+/* ------------------------------ util ------------------------------ */
+const $ = (s, el) => (el || document).querySelector(s);
+const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+function esc(v) { return String(v === undefined || v === null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function uid() { return (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)); }
+function fmtDate(s, time) { if (!s) return '-'; const d = new Date(s); if (isNaN(d)) return esc(s); return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + (time ? ' ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : ''); }
+function num(v, d = 2) { return v === null || v === undefined || v === '' ? '-' : Number(v).toLocaleString('id-ID', { maximumFractionDigits: d }); }
+function can(p) { const ps = (S.me && S.me.perms) || []; return ps.includes('*') || ps.includes(p); }
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function download(name, text, type = 'text/plain') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+const STATUS_CLS = { APPROVED: 'b-ok', VALIDATED: 'b-ok', PUBLISHED: 'b-ok', RECEIVED: 'b-ok', OBSERVED: 'b-ok', ANALYZED: 'b-ok', COMPLETED: 'b-ok', PASS: 'b-ok', DONE: 'b-ok', LOCKED: 'b-info',
+  DRAFT: 'b-mute', PLANNED: 'b-mute', PENDING: 'b-warn', REVIEW: 'b-warn', IN_PROGRESS: 'b-info', SENT: 'b-info', SHIPPED: 'b-info', PACKED: 'b-info', COLLECTED: 'b-mute', COMPOSITED: 'b-mute', LOCAL: 'b-warn', RETRY: 'b-warn', SYNCING: 'b-info',
+  REJECTED: 'b-bad', CONFLICT: 'b-bad', FAIL: 'b-bad', CANCELLED: 'b-bad', RESAMPLE_REQUIRED: 'b-bad', DISCARDED: 'b-bad', VOID: 'b-mute', RETIRED: 'b-mute', CLOSED: 'b-mute', OUT_OF_RANGE: 'b-bad', BELOW_DL: 'b-warn' };
+const STATUS_ID = { LOCAL: 'Tersimpan lokal', SYNCING: 'Mengirim…', RETRY: 'Menunggu kirim ulang', CONFLICT: 'Konflik', DONE: 'Tersinkron', REJECTED: 'Ditolak server' };
+function badge(s, label) { return s ? `<span class="badge ${STATUS_CLS[s] || ''}">${esc(label || STATUS_ID[s] || s)}</span>` : ''; }
+
+const ICON = {
+  dash: 'M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z', db: 'M12 3c4.4 0 8 1.3 8 3v12c0 1.7-3.6 3-8 3s-8-1.3-8-3V6c0-1.7 3.6-3 8-3zm8 3c0 1.7-3.6 3-8 3S4 7.7 4 6m16 6c0 1.7-3.6 3-8 3s-8-1.3-8-3',
+  map: 'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zm0 0v14m6-12v14', poly: 'M4 7l6-4 10 5-3 11-11 2z', flag: 'M5 21V4m0 0h11l-2 4 2 4H5', plan: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+  pin: 'M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z', field: 'M12 2v4m0 12v4M2 12h4m12 0h4m-10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0',
+  tube: 'M9 3h6m-5 0v12a3 3 0 0 0 6 0V3M10 9h4', truck: 'M3 6h11v10H3zM14 9h4l3 3v4h-7M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  lab: 'M9 3v6L4 19a1 1 0 0 0 1 2h14a1 1 0 0 0 1-2L15 9V3M8 3h8', qc: 'M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', chart: 'M4 20V10m6 10V4m6 16v-7m6 7H2',
+  leaf: 'M5 21c0-9 6-15 16-16-1 10-7 16-16 16zm0 0 8-8', report: 'M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6', users: 'M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0zM3 21a9 9 0 0 1 18 0',
+  audit: 'M12 8v4l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.4-3a7.4 7.4 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14.5 3h-5l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2l.4 2.6h5l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z',
+  menu: 'M3 6h18M3 12h18M3 18h18', plus: 'M12 5v14M5 12h14', sync: 'M4 4v6h6M20 20v-6h-6M5 15a7 7 0 0 0 12 3M19 9A7 7 0 0 0 7 6', out: 'M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3',
+  edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4', moon: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z', dl: 'M12 3v12m0 0 5-5m-5 5-5-5M4 21h16'
+};
+function ic(n) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${ICON[n] || ''}"/></svg>`; }
+const DEFAULT_LOGO = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0f5132"/><path d="M32 12c-9 8-14 16-14 24a14 14 0 0 0 28 0c0-8-5-16-14-24z" fill="#7fc79b"/><path d="M14 44h36v8H14z" fill="#b8860b"/><path d="M14 52h36v4H14z" fill="#6b4a12"/><circle cx="26" cy="47" r="1.6" fill="#fff"/><circle cx="38" cy="48" r="1.6" fill="#fff"/></svg>');
+const DEFAULT_AVATAR = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#cfe3d7"/><circle cx="20" cy="15" r="7" fill="#1f7a4d"/><path d="M6 38a14 14 0 0 1 28 0z" fill="#1f7a4d"/></svg>');
+
+/* --------------------------- Pustaka lazy --------------------------- */
+const XLSX_URL = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+function loadScript(src, globalName) {
+  if (globalName && window[globalName]) return Promise.resolve();
+  return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = () => res(); s.onerror = () => rej(new Error('Gagal memuat ' + src));
+    setTimeout(() => rej(new Error('Waktu habis memuat ' + src)), 30000); document.head.appendChild(s); });
+}
+
+/* ------------------------------ API ------------------------------ */
+function apiUrl() { return LS.get('apiUrl', (window.SSU_CONFIG && window.SSU_CONFIG.apiUrl) || ''); }
+function api(action, payload, opt = {}) {
+  const req = { action, payload: payload || {}, token: S.session && S.session.token, requestId: uid().slice(0, 12) };
+  const handle = r => {
+    if (!r || typeof r !== 'object') throw Object.assign(new Error('Respons server tidak valid.'), { code: 'NETWORK' });
+    if (r.ok) return r.data;
+    const e = Object.assign(new Error(r.error.message), { code: r.error.code, extra: r.error.extra, requestId: r.requestId });
+    if (e.code === 'AUTH' && !opt.noAuthRedirect && action !== 'auth.login') { logout(true); }
+    if (e.code === 'MUST_CHANGE') forceChangePassword();
+    if (e.code === 'MUST_ACCEPT') consentFlow();
+    throw e;
+  };
+  if (IS_GAS) return new Promise((res, rej) => {
+    let done = false;
+    const to = setTimeout(() => { if (done) return; done = true; rej(Object.assign(new Error('Server Apps Script tidak merespons. Bila browser login dengan lebih dari satu akun Google, buka aplikasi di jendela Incognito atau logout dari akun lain, lalu muat ulang.'), { code: 'NETWORK', timeout: true })); }, opt.timeout || 30000);
+    google.script.run.withSuccessHandler(r => { if (done) return; done = true; clearTimeout(to); try { res(handle(r)); } catch (e) { rej(e); } })
+      .withFailureHandler(err => { if (done) return; done = true; clearTimeout(to); rej(Object.assign(new Error((err && err.message) || 'Gagal menghubungi server.'), { code: 'NETWORK' })); }).api(req);
+  });
+  const url = apiUrl();
+  if (!url) return Promise.reject(Object.assign(new Error('URL Web App Apps Script belum diatur (Pengaturan → Koneksi).'), { code: 'CONFIG' }));
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), opt.timeout || 60000);
+  return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), redirect: 'follow', signal: ctl.signal })
+    .then(r => r.json()).catch(e => { throw Object.assign(new Error(navigator.onLine ? 'Server tidak dapat dihubungi.' : 'Perangkat sedang offline.'), { code: 'NETWORK' }); })
+    .finally(() => clearTimeout(to)).then(handle);
+}
+async function run(action, payload, okMsg) {
+  try { const r = await api(action, payload); if (okMsg) toast(okMsg, 'ok'); return r; }
+  catch (e) { toast(e.message + (e.requestId ? ' (ref ' + e.requestId + ')' : ''), 'bad'); throw e; }
+}
+
+/* ------------------------- IndexedDB (offline) ------------------------- */
+const IDB = (() => {
+  let dbp;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => { const r = indexedDB.open('ssu-field', 2);
+      r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); if (!d.objectStoreNames.contains('queue')) d.createObjectStore('queue', { keyPath: 'opId' }); };
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    return dbp;
+  }
+  function tx(store, mode, fn) { return db().then(d => new Promise((res, rej) => { const t = d.transaction(store, mode), s = t.objectStore(store); let out; const r = fn(s); if (r) r.onsuccess = () => { out = r.result; }; t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); })); }
+  return {
+    get: k => tx('kv', 'readonly', s => s.get(k)), set: (k, v) => tx('kv', 'readwrite', s => s.put(v, k)),
+    qAll: () => tx('queue', 'readonly', s => s.getAll()), qPut: o => tx('queue', 'readwrite', s => s.put(o)), qDel: id => tx('queue', 'readwrite', s => s.delete(id)),
+    wipe: () => db().then(d => new Promise(res => { const t = d.transaction(['kv', 'queue'], 'readwrite'); t.objectStore('kv').clear(); t.objectStore('queue').clear(); t.oncomplete = res; }))
+  };
+})();
+
+/* --------------------- Antrean sinkronisasi + backoff --------------------- */
+const Sync = {
+  busy: false,
+  async enqueue(type, data, baseVersion) {
+    const op = { opId: uid(), type, data, baseVersion, status: 'LOCAL', tries: 0, nextAt: 0, createdAt: new Date().toISOString(), userId: S.me && S.me.id };
+    await IDB.qPut(op);   // tersimpan di perangkat SEBELUM upaya jaringan apa pun
+    Sync.badge(); setTimeout(() => Sync.run(), 300);
+    return op;
+  },
+  async recover() {   // aplikasi ditutup paksa saat mengirim → kembalikan ke antrean (aman karena idempoten)
+    for (const o of await IDB.qAll()) if (o.status === 'SYNCING') { o.status = 'RETRY'; await IDB.qPut(o); }
+  },
+  async run(manual) {
+    if (Sync.busy || !S.session) return;
+    if (!navigator.onLine) { if (manual) toast('Offline — data tetap aman di perangkat.', ''); return; }
+    Sync.busy = true;
+    try {
+      const now = Date.now(), all = await IDB.qAll();
+      const due = all.filter(o => (o.status === 'LOCAL' || o.status === 'RETRY') && (manual || o.nextAt <= now) && (!o.userId || o.userId === S.me.id));
+      for (let i = 0; i < due.length; i += 10) {
+        const batch = due.slice(i, i + 10);
+        for (const o of batch) { o.status = 'SYNCING'; await IDB.qPut(o); }
+        let res;
+        try { res = await api('sync.push', { ops: batch.map(o => ({ opId: o.opId, type: o.type, data: o.data, baseVersion: o.baseVersion, force: o.force })) }, { timeout: 120000 }); }
+        catch (e) { for (const o of batch) { o.status = 'RETRY'; o.tries++; o.nextAt = Date.now() + Math.min(600000, 5000 * Math.pow(2, o.tries)); o.lastError = e.message; await IDB.qPut(o); } break; }
+        for (const r of res) {
+          const o = batch.find(b => b.opId === r.opId); if (!o) continue;
+          o.result = r; o.lastError = r.message || '';
+          if (r.status === 'VALIDATED' || r.status === 'REVIEW') { o.status = 'DONE'; o.serverStatus = r.status; o.doneAt = new Date().toISOString(); if (o.data) delete o.data.photo; }
+          else if (r.status === 'CONFLICT') o.status = 'CONFLICT';
+          else if (r.status === 'RETRY') { o.status = 'RETRY'; o.tries++; o.nextAt = Date.now() + Math.min(600000, 5000 * Math.pow(2, o.tries)); }
+          else o.status = 'REJECTED';
+          await IDB.qPut(o);
+        }
+      }
+      // retensi: hapus item tersinkron > 7 hari (simpan hanya data yang diperlukan di perangkat)
+      for (const o of await IDB.qAll()) if (o.status === 'DONE' && Date.now() - new Date(o.doneAt).getTime() > 7 * 864e5) await IDB.qDel(o.opId);
+    } finally { Sync.busy = false; Sync.badge(); if (S.page === 'field') Pages.field(true); }
+  },
+  async badge() {
+    const el = $('#syncCount'); if (!el) return;
+    try { const n = (await IDB.qAll()).filter(o => ['LOCAL', 'RETRY', 'SYNCING', 'CONFLICT'].includes(o.status)).length; el.textContent = n ? n : ''; el.classList.toggle('hidden', !n); } catch (e) {}
+  }
+};
+window.addEventListener('online', () => { netChip(); Sync.run(); });
+window.addEventListener('offline', netChip);
+setInterval(() => Sync.run(), 60000);
+
+/* ------------------------------ UI kit ------------------------------ */
+function toast(msg, kind) { const t = document.createElement('div'); t.className = 'toast ' + (kind || ''); t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => t.remove(), kind === 'bad' ? 7000 : 3500); }
+function netChip() { const c = $('#netChip'); if (!c) return; const on = navigator.onLine; c.textContent = on ? 'Online' : 'Offline'; c.classList.toggle('off', !on); }
+
+function modal(title, body, buttons, opt = {}) {
+  return new Promise(resolve => {
+    const bg = document.createElement('div'); bg.className = 'modal-bg';
+    bg.innerHTML = `<div class="modal ${opt.wide ? 'wide' : ''}" role="dialog" aria-modal="true"><div class="modal-h"><h3>${esc(title)}</h3><button class="x" aria-label="Tutup">×</button></div><div class="modal-b"></div><div class="modal-f"></div></div>`;
+    const b = $('.modal-b', bg); if (typeof body === 'string') b.innerHTML = body; else b.appendChild(body);
+    const close = v => { bg.remove(); resolve(v); };
+    $('.x', bg).onclick = () => close(null);
+    bg.addEventListener('mousedown', e => { if (e.target === bg && !opt.sticky) close(null); });
+    (buttons || [{ label: 'Tutup', value: null }]).forEach(bt => {
+      const el = document.createElement('button'); el.className = 'btn ' + (bt.cls || ''); el.textContent = bt.label;
+      el.onclick = async () => { if (bt.onClick) { el.disabled = true; try { const v = await bt.onClick(b); if (v !== false) close(v === undefined ? bt.value : v); } catch (e) { /* galat sudah ditampilkan */ } finally { el.disabled = false; } } else close(bt.value); };
+      $('.modal-f', bg).appendChild(el);
+    });
+    document.body.appendChild(bg);
+    if (opt.onOpen) opt.onOpen(b, close);
+    const first = $('input,select,textarea', b); if (first) setTimeout(() => first.focus(), 50);
+  });
+}
+function confirmBox(msg) { return modal('Konfirmasi', `<p>${esc(msg)}</p>`, [{ label: 'Batal', value: false }, { label: 'Ya, lanjutkan', cls: 'pri', value: true }]); }
+
+/** Form builder dengan validasi klien. fields: [{name,label,type,options,required,help,value,pattern,min,max}] */
+function formHtml(fields, data = {}) {
+  return fields.map(f => {
+    const v = data[f.name] !== undefined ? data[f.name] : (f.value !== undefined ? f.value : '');
+    const req = f.required ? ' required' : '';
+    let input;
+    if (f.type === 'select') input = `<select class="in" name="${f.name}"${req}${f.multiple ? ' multiple size="5"' : ''}>${f.multiple ? '' : '<option value="">— pilih —</option>'}${(f.options || []).map(o => { const ov = typeof o === 'object' ? o.value : o, ol = typeof o === 'object' ? o.label : o; const sel = Array.isArray(v) ? v.includes(ov) : String(v) === String(ov); return `<option value="${esc(ov)}"${sel ? ' selected' : ''}>${esc(ol)}</option>`; }).join('')}</select>`;
+    else if (f.type === 'textarea') input = `<textarea class="in" name="${f.name}" rows="${f.rows || 3}"${req}>${esc(typeof v === 'object' ? JSON.stringify(v, null, 1) : v)}</textarea>`;
+    else if (f.type === 'checks') input = (f.options || []).map(o => `<label class="chk"><input type="checkbox" name="${f.name}" value="${esc(o.value)}"${(v || []).includes(o.value) ? ' checked' : ''}> ${esc(o.label)}</label>`).join('');
+    else input = `<input class="in" name="${f.name}" type="${f.type || 'text'}" value="${esc(v)}"${req}${f.pattern ? ` pattern="${f.pattern}"` : ''}${f.min !== undefined ? ` min="${f.min}"` : ''}${f.max !== undefined ? ` max="${f.max}"` : ''}${f.step ? ` step="${f.step}"` : ''}${f.placeholder ? ` placeholder="${esc(f.placeholder)}"` : ''}>`;
+    return `<label class="f" data-f="${f.name}"><span>${esc(f.label)}${f.required ? ' *' : ''}</span>${input}${f.help ? `<div class="help">${esc(f.help)}</div>` : ''}<div class="err-msg"></div></label>`;
+  }).join('');
+}
+function formRead(root, fields) {
+  const out = {}; let ok = true;
+  fields.forEach(f => {
+    const box = $(`[data-f="${f.name}"]`, root), err = $('.err-msg', box); err.textContent = '';
+    let v;
+    if (f.type === 'checks') v = $$(`input[name="${f.name}"]:checked`, root).map(x => x.value);
+    else if (f.multiple) v = $$(`select[name="${f.name}"] option:checked`, root).map(x => x.value);
+    else { const el = $(`[name="${f.name}"]`, root); v = el.value.trim(); el.classList.remove('bad');
+      if (f.required && !v) { err.textContent = f.label + ' wajib diisi.'; el.classList.add('bad'); ok = false; }
+      else if (v && f.pattern && !new RegExp('^' + f.pattern + '$').test(v)) { err.textContent = f.patternMsg || 'Format tidak valid.'; el.classList.add('bad'); ok = false; }
+      else if (v && f.type === 'number' && !isFinite(Number(v))) { err.textContent = 'Harus angka.'; ok = false; }
+      if (f.type === 'number' && v !== '') v = Number(v);
+      if (f.json && v) { try { v = JSON.parse(v); } catch (e) { err.textContent = 'JSON tidak valid.'; ok = false; } } }
+    if (f.type === 'checks' && f.required && !v.length) { err.textContent = 'Pilih minimal satu.'; ok = false; }
+    out[f.name] = v;
+  });
+  return ok ? out : null;
+}
+function showServerError(root, e) {
+  toast(e.message, 'bad');
+  const m = /^(.+?) wajib/.exec(e.message); if (!m) return;
+  $$('label.f', root).forEach(l => { if (e.message.startsWith($('span', l).textContent.replace(' *', ''))) $('.err-msg', l).textContent = e.message; });
+}
+async function formModal(title, fields, data, onSave, opt) {
+  return modal(title, `<form onsubmit="return false">${formHtml(fields, data)}</form>`, [{ label: 'Batal', value: null },
+    { label: 'Simpan', cls: 'pri', onClick: async b => { const v = formRead(b, fields); if (!v) { toast('Periksa isian yang ditandai.', 'bad'); return false; } try { return await onSave(v); } catch (e) { showServerError(b, e); return false; } } }], opt);
+}
+
+/**
+ * Tabel data server-side: pencarian, filter, pagination, loading/empty/error state.
+ * cfg: {table, cols:[{k,label,fmt}], filter, actions:(row)=>html, onAction:(act,row)=>{}, searchable}
+ */
+function dataTable(el, cfg) {
+  const st = { page: 1, q: '', size: cfg.size || 25, filter: Object.assign({}, cfg.filter || {}) };
+  el.innerHTML = `<div class="bar">${cfg.searchable !== false ? `<input class="in" style="max-width:280px" placeholder="Cari kode/nama…" data-q>` : ''}${cfg.filters || ''}<span class="sp"></span>${cfg.tools || ''}</div><div class="tbl-wrap"><table class="tbl"><thead><tr>${cfg.cols.map(c => `<th>${esc(c.label)}</th>`).join('')}${cfg.actions ? '<th></th>' : ''}</tr></thead><tbody></tbody></table></div><div class="pager"></div>`;
+  const body = $('tbody', el), pager = $('.pager', el), span = cfg.cols.length + (cfg.actions ? 1 : 0);
+  let rows = [];
+  async function load() {
+    body.innerHTML = `<tr><td colspan="${span}"><div class="state">Memuat data…</div></td></tr>`;
+    try {
+      const r = await api('crud.list', { table: cfg.table, page: st.page, size: st.size, q: st.q, filter: st.filter, sort: cfg.sort });
+      rows = r.rows;
+      body.innerHTML = rows.length ? rows.map((row, i) => `<tr data-i="${i}">${cfg.cols.map(c => `<td>${c.fmt ? c.fmt(row[c.k], row) : esc(row[c.k])}</td>`).join('')}${cfg.actions ? `<td class="nowrap right">${cfg.actions(row)}</td>` : ''}</tr>`).join('')
+        : `<tr><td colspan="${span}"><div class="state">${esc(cfg.empty || 'Belum ada data.')}</div></td></tr>`;
+      pager.innerHTML = `${r.total} data · hal ${r.page}/${r.pages} <button class="btn sm" data-p="-1" ${r.page <= 1 ? 'disabled' : ''}>‹</button><button class="btn sm" data-p="1" ${r.page >= r.pages ? 'disabled' : ''}>›</button>`;
+      if (cfg.onLoad) cfg.onLoad(rows, r);
+    } catch (e) { body.innerHTML = `<tr><td colspan="${span}"><div class="state err">Gagal memuat: ${esc(e.message)} <button class="btn sm" data-retry>Coba lagi</button></div></td></tr>`; }
+  }
+  el.addEventListener('click', e => {
+    const p = e.target.closest('[data-p]'); if (p) { st.page += Number(p.dataset.p); load(); return; }
+    if (e.target.closest('[data-retry]')) { load(); return; }
+    const a = e.target.closest('[data-act]'); if (a && cfg.onAction) { const tr = a.closest('tr'); cfg.onAction(a.dataset.act, rows[Number(tr.dataset.i)], a); }
+  });
+  const q = $('[data-q]', el); if (q) q.addEventListener('input', debounce(() => { st.q = q.value; st.page = 1; load(); }, 350));
+  $$('[data-filter]', el).forEach(s => s.addEventListener('change', () => { st.filter[s.dataset.filter] = s.value; st.page = 1; load(); }));
+  load();
+  return { reload: load, state: st, rows: () => rows };
+}
+
+/* ---------------------- Zoom gambar (logo & foto) ---------------------- */
+function zoomImage(src, alt) {
+  if (!src) return;
+  const bg = document.createElement('div'); bg.className = 'zoom-bg';
+  bg.innerHTML = `<img alt="${esc(alt || 'gambar')}"><div class="zoom-ctl"><button data-z="-1">−</button><button data-z="0">100%</button><button data-z="1">+</button><button data-z="x">Tutup ✕</button></div>`;
+  const img = $('img', bg); img.src = src;
+  let s = 1, x = 0, y = 0, base = 1;
+  const apply = () => { img.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${s * base})`; };
+  img.onload = () => { base = Math.min(innerWidth * 0.85 / img.naturalWidth, innerHeight * 0.8 / img.naturalHeight, 4); apply(); };
+  const ptrs = new Map(); let startDist = 0, startS = 1, last = null;
+  bg.addEventListener('wheel', e => { e.preventDefault(); s = Math.min(12, Math.max(0.3, s * (e.deltaY < 0 ? 1.15 : 0.87))); apply(); }, { passive: false });
+  bg.addEventListener('pointerdown', e => { if (e.target.closest('.zoom-ctl')) return; bg.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, e); last = e;
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; startDist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); startS = s; } });
+  bg.addEventListener('pointermove', e => { if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, e);
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; s = Math.min(12, Math.max(0.3, startS * Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) / startDist)); }
+    else if (last) { x += e.clientX - last.clientX; y += e.clientY - last.clientY; last = e; } apply(); });
+  const up = e => { ptrs.delete(e.pointerId); last = ptrs.size === 1 ? [...ptrs.values()][0] : null; };
+  bg.addEventListener('pointerup', up); bg.addEventListener('pointercancel', up);
+  bg.addEventListener('dblclick', () => { s = s > 1 ? 1 : 2.5; x = y = 0; apply(); });
+  bg.addEventListener('click', e => { const z = e.target.closest('[data-z]'); if (!z) return; const v = z.dataset.z;
+    if (v === 'x') return close(); if (v === '0') { s = 1; x = y = 0; } else s = Math.min(12, Math.max(0.3, s * (v === '1' ? 1.3 : 0.77))); apply(); });
+  const key = e => { if (e.key === 'Escape') close(); if (e.key === '+') { s *= 1.3; apply(); } if (e.key === '-') { s *= 0.77; apply(); } };
+  function close() { bg.remove(); removeEventListener('keydown', key); }
+  addEventListener('keydown', key);
+  document.body.appendChild(bg);
+}
+
+/** Baca file gambar, kecilkan ke maxPx, kompres sampai ≤ maxChars (data URL). */
+function imageToDataUrl(file, maxPx, maxChars, type = 'image/jpeg') {
+  return new Promise((res, rej) => {
+    if (!/^image\/(jpeg|png|webp|svg\+xml)$/.test(file.type)) return rej(new Error('Format gambar harus JPEG/PNG/WebP/SVG.'));
+    if (file.type === 'image/svg+xml') { if (file.size > 300000) return rej(new Error('SVG terlalu besar.')); const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(file); return; }
+    const img = new Image(); img.onerror = () => rej(new Error('Gambar tidak dapat dibaca.'));
+    img.onload = () => {
+      let w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, maxPx / Math.max(w, h)); w = Math.round(w * k); h = Math.round(h * k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d');
+      if (type === 'image/jpeg') { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
+      g.drawImage(img, 0, 0, w, h);
+      let q = 0.85, out = c.toDataURL(type, q);
+      while (out.length > maxChars && q > 0.35) { q -= 0.1; out = c.toDataURL('image/jpeg', q); }
+      if (out.length > maxChars) return rej(new Error('Gambar masih terlalu besar setelah kompresi.'));
+      URL.revokeObjectURL(img.src); res(out);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+function pickFile(accept) { return new Promise(res => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; i.onchange = () => res(i.files[0] || null); i.click(); }); }
+
+/* --------------------------- Tema & branding --------------------------- */
+function applyBranding() {
+  const s = S.settings || {};
+  document.documentElement.style.setProperty('--brand', s.themeColor || '#0f5132');
+  document.title = s.appTitle || 'SSU Digital Enterprise';
+  $$('[data-brand-title]').forEach(e => e.textContent = s.appTitle || 'SSU Digital Enterprise');
+  $$('[data-brand-sub]').forEach(e => e.textContent = s.appSubtitle || 'Soil Sampling Unit Management');
+  $$('img[data-brand-logo]').forEach(e => e.src = s.logo || DEFAULT_LOGO);
+  const th = LS.get('theme', ''); if (th) document.documentElement.dataset.theme = th; else delete document.documentElement.dataset.theme;
+}
+async function loadPublicSettings() {
+  try { S.settings = await api('settings.public', {}, { noAuthRedirect: true, timeout: 20000 }); LS.set('settings', S.settings); S.serverOk = true; S.serverErr = ''; }
+  catch (e) { S.serverOk = false; S.serverErr = e.message; }   // offline / server lambat: pakai cache, jangan memblokir
+  applyBranding(); serverStatusLine();
+  return S.serverOk;
+}
+function serverStatusLine() {
+  const el = $('#srvLine'); if (!el) return;
+  if (S.serverOk) { el.innerHTML = 'Server terhubung · v' + esc(S.settings.version || '?') + (S.settings.version && S.settings.version !== VERSION ? ' <b style="color:var(--warn)">(berbeda dari aplikasi v' + VERSION + ' — perbarui berkas)</b>' : ''); el.className = 'help'; }
+  else if (S.serverErr) { el.innerHTML = '⚠ ' + esc(S.serverErr) + ' <a href="#" id="srvRetry">Coba lagi</a>'; el.className = 'err-msg'; const r = $('#srvRetry'); if (r) r.onclick = ev => { ev.preventDefault(); el.textContent = 'Menghubungi server…'; el.className = 'help'; loadPublicSettings(); }; }
+}
+
+/* ------------------------------ Login ------------------------------ */
+function renderLogin(msg) {
+  document.body.innerHTML = `<div class="login"><div class="login-art"><div><div style="display:flex;gap:12px;align-items:center"><img class="logo" data-brand-logo alt="logo" title="Klik untuk memperbesar"><div><div style="font-weight:700" data-brand-title></div><div style="opacity:.75;font-size:12.5px" data-brand-sub></div></div></div></div>
+    <div><h2>Kebenaran data tanah, dari titik sampling sampai rekomendasi.</h2><ul><li>SSU berversi & validasi geometri/CRS</li><li>Kerja lapangan offline dengan sinkronisasi aman</li><li>Chain of custody, impor lab, QC, analitik GIS</li></ul></div>
+    <div style="font-size:12px;opacity:.6">v${VERSION} · ${IS_GAS ? 'Apps Script' : 'PWA'}</div>
+    <svg class="bg" viewBox="0 0 200 200"><path fill="#fff" d="M100 10c-30 30-50 60-50 90a50 50 0 0 0 100 0c0-30-20-60-50-90z"/></svg></div>
+    <div class="login-box"><div class="login-card"><img class="logo" data-brand-logo alt="logo" title="Klik untuk memperbesar"><h1 style="font-size:22px;margin:14px 0 2px" data-brand-title></h1><p class="muted" style="margin:0 0 18px">Masuk untuk melanjutkan</p>
+    <form id="loginForm"><label class="f"><span>Email</span><input class="in" name="email" type="email" autocomplete="username" required></label>
+    <label class="f"><span>Password</span><input class="in" name="password" type="password" autocomplete="current-password" required></label>
+    <div class="err-msg" id="loginErr">${esc(msg || '')}</div>
+    <button class="btn pri" style="width:100%;justify-content:center;padding:10px;margin-top:8px">Masuk</button></form>
+    <div class="bar" style="margin-top:12px"><a href="#" id="forgot">Lupa password?</a><span class="sp"></span>${IS_GAS ? '' : '<a href="#" id="cfgApi">Koneksi server</a>'}</div>
+    <p class="help">Sesi berlaku 12 jam. Jangan gunakan perangkat bersama tanpa logout.</p><p class="help" id="srvLine">Menghubungi server…</p>
+    <p class="help" style="margin-top:14px">Dengan masuk, Anda menyetujui <a href="#" data-legal="terms">Syarat & Ketentuan</a> dan telah membaca <a href="#" data-legal="privacy">Pemberitahuan Privasi</a>.<br><a href="#" data-legal="about">Versi aplikasi v${VERSION}</a></p></div></div></div><div id="toasts"></div>`;
+  applyBranding();
+  $$('img[data-brand-logo]').forEach(i => i.onclick = () => zoomImage(i.src, 'Logo'));
+  $('#loginForm').onsubmit = async e => {
+    e.preventDefault(); const f = new FormData(e.target), btn = $('button', e.target); btn.disabled = true; $('#loginErr').textContent = '';
+    try { const r = await api('auth.login', { email: f.get('email'), password: f.get('password'), ua: navigator.userAgent }); S.session = { token: r.token, expires: r.expires }; LS.set('session', S.session); boot(); }
+    catch (er) { $('#loginErr').textContent = er.message; btn.disabled = false; }
+  };
+  $('#forgot').onclick = e => { e.preventDefault(); resetFlow(); };
+  if ($('#cfgApi')) $('#cfgApi').onclick = e => { e.preventDefault(); configApi(); };
+  $$('[data-legal]').forEach(a => a.onclick = e => { e.preventDefault(); showLegal(a.dataset.legal); });
+  serverStatusLine();
+  if (!IS_GAS && !apiUrl()) configApi();
+}
+function configApi() {
+  formModal('Koneksi ke server Apps Script', [{ name: 'apiUrl', label: 'URL Web App (/exec)', required: true, pattern: 'https://script\\.google\\.com/macros/s/[A-Za-z0-9_-]+/exec', patternMsg: 'Harus URL https://script.google.com/macros/s/…/exec', value: apiUrl() }], {},
+    async v => { LS.set('apiUrl', v.apiUrl); await loadPublicSettings(); toast('URL server disimpan.', 'ok'); renderLogin(); });
+}
+async function resetFlow() {
+  const em = await formModal('Reset password', [{ name: 'email', label: 'Email terdaftar', type: 'email', required: true }], {}, v => api('auth.requestReset', v).then(r => { toast(r.message, 'ok'); return v.email; }));
+  if (!em) return;
+  formModal('Masukkan kode reset', [{ name: 'code', label: 'Kode 6 digit dari email', required: true, pattern: '\\d{6}' }, { name: 'password', label: 'Password baru (min 10, huruf+angka)', type: 'password', required: true }], {},
+    v => api('auth.confirmReset', { email: em, code: v.code, password: v.password }).then(() => toast('Password diganti. Silakan login.', 'ok')));
+}
+let forcing = false;
+function forceChangePassword() {
+  if (forcing) return; forcing = true;
+  const fields = [{ name: 'oldPassword', label: 'Password sementara/lama', type: 'password', required: true }, { name: 'newPassword', label: 'Password baru (min 10, huruf+angka)', type: 'password', required: true }, { name: 'again', label: 'Ulangi password baru', type: 'password', required: true }];
+  formModal('Wajib ganti password', fields, {}, async v => { if (v.newPassword !== v.again) throw new Error('Password baru tidak sama.'); await api('auth.changePassword', v); toast('Password diganti.', 'ok'); forcing = false; boot(); }, { sticky: true }).then(() => { forcing = false; });
+}
+async function logout(expired) {
+  try { if (!expired && S.session) await api('auth.logout', {}, { noAuthRedirect: true }); } catch (e) {}
+  const pending = (await IDB.qAll().catch(() => [])).filter(o => ['LOCAL', 'RETRY', 'CONFLICT'].includes(o.status)).length;
+  if (!expired && pending) { if (!(await confirmBox(pending + ' data lapangan belum tersinkron dan akan DIHAPUS dari perangkat bila logout. Lanjutkan?'))) return; }
+  if (!expired) await IDB.wipe().catch(() => {});   // hapus data lokal sesuai kebijakan
+  S.session = null; S.me = null; LS.del('session');
+  renderLogin(expired ? 'Sesi berakhir. Silakan login kembali (data lapangan tetap tersimpan di perangkat).' : '');
+}
+
+/* ------------------------------ Shell ------------------------------ */
+const MENU = [
+  ['Utama', [['dashboard', 'Dashboard', 'dash', 'read.field'], ['master', 'Master Data', 'db', 'read'], ['map', 'Peta Kebun', 'map', 'read'], ['ssu', 'SSU', 'poly', 'read']]],
+  ['Sampling', [['campaigns', 'Kampanye Sampling', 'flag', 'read'], ['plans', 'Rencana Sampling', 'plan', 'read'], ['points', 'Titik Sampling', 'pin', 'read'], ['field', 'Pekerjaan Lapangan', 'field', 'field.write']]],
+  ['Sampel & Lab', [['samples', 'Sampel', 'tube', 'read'], ['shipments', 'Pengiriman Sampel', 'truck', 'read'], ['lab', 'Laboratorium', 'lab', 'read'], ['qc', 'Quality Control', 'qc', 'read']]],
+  ['Analisis', [['analytics', 'Analisis GIS', 'chart', 'read'], ['recs', 'Rekomendasi Agronomi', 'leaf', 'read'], ['reports', 'Laporan', 'report', 'report']]],
+  ['Sistem', [['users', 'Pengguna & Hak Akses', 'users', 'user.manage'], ['audit', 'Audit Log', 'audit', 'audit.read'], ['settings', 'Pengaturan', 'gear', 'read.field']]]
+];
+function renderShell() {
+  const nav = MENU.map(([g, items]) => { const vis = items.filter(i => can(i[3])); return vis.length ? `<div class="nav-group">${g}</div>` + vis.map(i => `<button data-nav="${i[0]}">${ic(i[2])}<span>${i[1]}</span>${i[0] === 'field' ? ' <span id="syncCount" class="badge b-warn hidden" style="margin-left:auto"></span>' : ''}</button>`).join('') : ''; }).join('');
+  document.body.innerHTML = `<div class="app" id="app"><aside class="side"><div class="brand"><img class="logo" data-brand-logo alt="logo" title="Klik untuk memperbesar"><div class="brand-txt"><div class="brand-title" data-brand-title></div><div class="brand-sub" data-brand-sub></div></div></div>
+    <nav class="nav">${nav}</nav><div class="side-foot"><a href="#" data-legal="about" style="color:inherit">v${VERSION}</a> · ${IS_GAS ? 'Apps Script' : 'PWA'} · <span id="licChip"></span><br><a href="#" data-legal="terms" style="color:inherit">Syarat & Ketentuan</a> · <a href="#" data-legal="privacy" style="color:inherit">Privasi</a></div></aside>
+    <div class="main"><header class="top"><button class="btn sm burger" id="burger" aria-label="Menu">${ic('menu')}</button><h1 id="pageTitle"></h1>
+    ${can('settings.write') ? `<button class="btn sm" id="editBrand" title="Edit judul & logo">${ic('edit')}</button>` : ''}
+    ${S.estates.length > 1 ? `<select class="in" id="estateSel" style="width:auto;max-width:180px"><option value="">Semua estate</option>${S.estates.map(e => `<option value="${esc(e.id)}"${e.id === S.estateId ? ' selected' : ''}>${esc(e.name)}</option>`).join('')}</select>` : ''}
+    <span class="chip-net" id="netChip"></span><button class="btn sm" id="themeBtn" title="Mode gelap/terang">${ic('moon')}</button>
+    <div class="user-box"><div class="user-name">${esc(S.me.name)}<small>${esc((S.me.roles || []).map(r => (S.meta && S.meta.roleLabel[r]) || r).join(', '))}</small></div><img class="avatar" id="myAvatar" alt="foto profil" src="${DEFAULT_AVATAR}" title="Klik untuk memperbesar"></div>
+    <button class="btn sm" id="logoutBtn" title="Keluar">${ic('out')}</button></header><main class="content" id="content"></main></div></div><div id="toasts"></div>`;
+  applyBranding(); netChip(); Sync.badge();
+  const lic = S.me.license || {}; $('#licChip').textContent = (lic.label || '') + (lic.licensed ? '' : ' (baca-saja)');
+  $$('img[data-brand-logo]').forEach(i => i.onclick = () => zoomImage(i.src, 'Logo'));
+  $('#myAvatar').onclick = () => zoomImage($('#myAvatar').src, 'Foto profil');
+  $$('.side-foot [data-legal]').forEach(a => a.onclick = e => { e.preventDefault(); showLegal(a.dataset.legal); });
+  $('.nav').onclick = e => { const b = e.target.closest('[data-nav]'); if (b) { go(b.dataset.nav); $('#app').classList.remove('nav-open'); } };
+  $('#burger').onclick = () => $('#app').classList.toggle('nav-open');
+  $('.main').addEventListener('click', e => { if ($('#app').classList.contains('nav-open') && !e.target.closest('#burger')) $('#app').classList.remove('nav-open'); });
+  $('#logoutBtn').onclick = () => logout(false);
+  $('#themeBtn').onclick = () => { const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); LS.set('theme', cur === 'dark' ? 'light' : 'dark'); applyBranding(); };
+  if ($('#editBrand')) $('#editBrand').onclick = editBranding;
+  if ($('#estateSel')) $('#estateSel').onchange = e => { S.estateId = e.target.value; LS.set('estateId', S.estateId); go(S.page); };
+  if (S.me.hasPhoto) api('profile.photo', {}).then(r => { if (r.photo) $('#myAvatar').src = r.photo; }).catch(() => {});
+  if (!lic.licensed) toast('Lisensi: ' + (lic.reason || 'tidak aktif') + ' Aplikasi dalam mode baca-saja.', 'bad');
+  else if (lic.tier === 'TRIAL') toast('Trial tersisa ' + lic.daysLeft + ' hari.', '');
+}
+async function editBranding() {
+  const s = S.settings, box = document.createElement('div');
+  let logo = s.logo || '';
+  box.innerHTML = `<form onsubmit="return false">${formHtml([{ name: 'appTitle', label: 'Judul header', required: true, value: s.appTitle }, { name: 'appSubtitle', label: 'Subjudul', value: s.appSubtitle }, { name: 'themeColor', label: 'Warna tema', type: 'color', value: s.themeColor || '#0f5132' }])}</form>
+    <div class="bar"><img class="logo" id="lgPrev" src="${esc(logo || DEFAULT_LOGO)}" style="width:72px;height:72px;border:1px solid var(--line)" title="Klik untuk memperbesar"><button class="btn" id="lgUp">Unggah logo</button><button class="btn danger" id="lgDel">Pakai logo bawaan</button></div><p class="help">PNG/JPEG/WebP/SVG. Diperkecil otomatis ke 512 px; data > 50.000 karakter dipecah aman di Sheets.</p>`;
+  const fields = [{ name: 'appTitle', label: 'Judul header', required: true }, { name: 'appSubtitle', label: 'Subjudul' }, { name: 'themeColor', label: 'Warna tema' }];
+  await modal('Edit judul header & logo', box, [{ label: 'Batal', value: null }, { label: 'Simpan', cls: 'pri', onClick: async b => { const v = formRead(b, fields); if (!v) return false; v.logo = logo; S.settings = await run('settings.save', v, 'Branding disimpan.'); LS.set('settings', S.settings); applyBranding(); } }],
+    { onOpen: b => { $('#lgPrev', b).onclick = () => zoomImage($('#lgPrev', b).src, 'Logo');
+      $('#lgUp', b).onclick = async () => { const f = await pickFile('image/png,image/jpeg,image/webp,image/svg+xml'); if (!f) return; try { logo = await imageToDataUrl(f, 512, 400000, f.type === 'image/png' ? 'image/png' : 'image/jpeg'); $('#lgPrev', b).src = logo; } catch (e) { toast(e.message, 'bad'); } };
+      $('#lgDel', b).onclick = () => { logo = ''; $('#lgPrev', b).src = DEFAULT_LOGO; }; } });
+}
+function go(page) {
+  if (!Pages[page]) page = 'dashboard';
+  S.page = page; location.hash = page;
+  $$('.nav [data-nav]').forEach(b => b.classList.toggle('on', b.dataset.nav === page));
+  const item = MENU.flatMap(m => m[1]).find(i => i[0] === page); $('#pageTitle').textContent = item ? item[1] : '';
+  $('#content').onclick = null; $('#content').innerHTML = '<div class="state">Memuat…</div>';
+  Promise.resolve(Pages[page]()).catch(e => { $('#content').innerHTML = `<div class="card state err">${esc(e.message)}</div>`; });
+}
+function splash(msg) { const el = $('#bootMsg'); if (el) el.textContent = msg; }
+async function boot() {
+  window.__ssuBooted = true;
+  applyBranding();
+  if (!S.session) { renderLogin(); loadPublicSettings(); return; }   // login tampil SEGERA, server dicek di latar
+  try {
+    splash('Memeriksa sesi…');
+    loadPublicSettings();
+    S.me = await api('auth.me', {}, { timeout: 25000 }); S.meta = await api('meta', {});
+    LS.set('me', S.me);
+    if (can('read')) { const e = await api('crud.list', { table: 'Estates', all: true }); S.estates = e.rows; } else S.estates = [];
+  } catch (e) {
+    if (e.code === 'NETWORK' && LS.get('me', null)) { S.me = LS.get('me'); S.meta = { roleLabel: {} }; toast('Offline: mode lapangan memakai data terakhir di perangkat.', ''); }
+    else if (e.code === 'MUST_CHANGE' || e.code === 'MUST_ACCEPT') { S.me = S.me || { name: '', roles: [], perms: [] }; return; }
+    else { if (e.code === 'AUTH') { S.session = null; LS.del('session'); } return renderLogin(e.message); }
+  }
+  if (S.me.needsConsent) return consentFlow();
+  renderShell(); await Sync.recover(); Sync.run();
+  go(!navigator.onLine && can('field.write') ? 'field' : (location.hash.slice(1) || (can('read') ? 'dashboard' : 'field')));
+}
+const Pages = {};
+
+/* Dokumen hukum & informasi versi: Syarat & Ketentuan, Pemberitahuan Privasi (UU PDP No. 27/2022), Tentang aplikasi.
+ * LEGAL_VERSION harus sama dengan APP.TERMS_VERSION di Config.gs. Ubah keduanya bila isi dokumen berubah
+ * — semua pengguna akan diminta menyetujui ulang. */
+const LEGAL_VERSION = '2026-10-28';
+const CHANGELOG = [
+  ['1.1.2', '2026-10-28', 'Versi Apps Script: JS & CSS dikirim sebagai Base64 ASCII murni lalu di-decode di browser, sehingga tidak dapat dirusak oleh pemrosesan HtmlService (galat "Failed to execute write on Document"). Galat sintaks kini menunjuk ssu-app.js:baris.'],
+  ['1.1.1', '2026-10-28', 'Perbaikan galat "Failed to execute write on Document" di Apps Script: tag HTML di dalam skrip (fitur cetak) di-escape saat build sehingga skrip tidak terpotong oleh HtmlService.'],
+  ['1.1.0', '2026-10-28', 'Perbaikan layar "Memuat…" tanpa akhir (login tampil segera, batas waktu server, pesan diagnosis); migrasi kolom otomatis; Syarat & Ketentuan, Pemberitahuan Privasi dengan persetujuan tercatat; halaman Tentang & versi.'],
+  ['1.0.0', '2026-10-28', 'Rilis awal: 18 menu, SSU berversi, kerja lapangan offline, chain of custody, impor lab, QC, analitik GIS, rekomendasi, lisensi RSA.']
+];
+function legalCtx() {
+  const s = S.settings || {};
+  return { app: s.appTitle || 'SSU Digital Enterprise', org: s.orgName || 'organisasi/perusahaan pengguna aplikasi ini', orgSet: !!s.orgName,
+    provider: s.providerName || 'penyedia aplikasi', contact: s.privacyContact || '', date: '28 Oktober 2026' };
+}
+function contactLine(c) { return c.contact ? `<a href="mailto:${esc(c.contact)}">${esc(c.contact)}</a>` : 'administrator sistem di organisasi Anda (kontak belum diisi oleh admin di Pengaturan → Dokumen hukum)'; }
+
+function termsHtml() {
+  const c = legalCtx();
+  return `<div class="legal"><p class="muted">Versi ${LEGAL_VERSION} · berlaku sejak ${c.date}</p>
+  <h4>1. Ruang lingkup</h4><p>Syarat & Ketentuan ini mengatur penggunaan aplikasi <b>${esc(c.app)}</b> ("Aplikasi"), sistem internal untuk pengelolaan Soil Sampling Unit, pengambilan sampel tanah, pengiriman sampel, hasil laboratorium, analisis, dan rekomendasi agronomi di perkebunan kelapa sawit. Aplikasi dioperasikan oleh <b>${esc(c.org)}</b> ("Organisasi") dan perangkat lunaknya disediakan oleh ${esc(c.provider)} ("Penyedia"). Dengan masuk dan menggunakan Aplikasi, Anda menyetujui ketentuan ini.</p>
+  <h4>2. Akun dan keamanan</h4><ul><li>Akun diberikan oleh administrator Organisasi sesuai peran dan cakupan estate Anda. Akun bersifat pribadi dan tidak boleh dipinjamkan.</li><li>Anda wajib menjaga kerahasiaan password, mengganti password sementara saat login pertama, mengunci layar perangkat, dan logout setelah selesai — terutama pada perangkat bersama.</li><li>Segera laporkan kepada administrator bila akun Anda diduga disalahgunakan atau perangkat hilang.</li></ul>
+  <h4>3. Penggunaan yang diizinkan dan dilarang</h4><p>Aplikasi hanya digunakan untuk keperluan pekerjaan Organisasi. Anda dilarang: memasukkan data palsu atau rekayasa (termasuk koordinat, waktu pengamatan, foto, dan hasil laboratorium); mengakses data di luar hak dan cakupan estate Anda; mencoba melewati kontrol keamanan, lisensi, atau pembatasan akses; mengunggah berkas berbahaya; serta menyalin atau membagikan data kepada pihak yang tidak berwenang.</p>
+  <h4>4. Data dan kepemilikan</h4><ul><li>Seluruh data operasional (SSU, sampel, observasi lapangan, hasil laboratorium, rekomendasi) adalah milik Organisasi dan disimpan di Google Sheets/Google Drive milik Organisasi.</li><li>Setiap perubahan dicatat dalam audit trail dan riwayat (versi SSU, chain of custody, revisi hasil). Riwayat tidak dihapus untuk menjaga keterlacakan.</li><li>Pemrosesan data pribadi pengguna dijelaskan dalam Pemberitahuan Privasi yang merupakan bagian dari ketentuan ini.</li></ul>
+  <h4>5. Kerja lapangan offline</h4><p>Data yang dicatat tanpa koneksi disimpan sementara di perangkat dan baru dianggap diterima setelah lolos validasi server. Status "Tersimpan lokal" bukan berarti data telah disetujui. Pengguna bertanggung jawab menyinkronkan data sebelum logout; logout menghapus data lokal yang belum tersinkron.</p>
+  <h4>6. Batasan hasil analisis dan rekomendasi</h4><p>Statistik, peta, dan interpolasi bersifat alat bantu. Nilai interpolasi selalu ditandai sebagai <b>PREDIKSI</b>, bukan pengukuran. Rekomendasi agronomi disusun dari aturan dan pedoman yang disetujui Organisasi dan wajib melalui peninjauan serta persetujuan yang berwenang sebelum diterbitkan. Keputusan pemupukan dan tindakan agronomi tetap menjadi tanggung jawab Organisasi dan tenaga ahli yang berwenang. Asosiasi data tidak menunjukkan hubungan sebab-akibat.</p>
+  <h4>7. Ketersediaan layanan</h4><p>Aplikasi berjalan di atas Google Apps Script, Google Sheets, dan GitHub Pages, sehingga ketersediaannya bergantung pada layanan pihak ketiga tersebut beserta kuotanya. Kecuali diatur lain dalam kontrak tertulis, tidak ada jaminan tingkat layanan (SLA). Organisasi bertanggung jawab atas backup dan uji pemulihan sesuai prosedur dalam panduan.</p>
+  <h4>8. Lisensi perangkat lunak</h4><p>Hak penggunaan Aplikasi diberikan kepada Organisasi melalui kunci lisensi sesuai paket dan masa berlaku. Bila lisensi berakhir, Aplikasi beralih ke mode baca-saja; data tetap dapat dilihat dan diekspor. Dilarang mengubah, membongkar, atau menghapus mekanisme lisensi, serta mendistribusikan ulang Aplikasi tanpa izin tertulis Penyedia. Komponen pihak ketiga tunduk pada lisensinya masing-masing (lihat menu Tentang).</p>
+  <h4>9. Layanan peta pihak ketiga</h4><p>Peta dasar dari OpenStreetMap (© kontributor OpenStreetMap, ODbL) dan citra satelit dari Esri digunakan sesuai ketentuan penyedianya, termasuk kewajiban atribusi dan larangan pengunduhan massal.</p>
+  <h4>10. Batasan tanggung jawab</h4><p>Sejauh diizinkan oleh hukum, Penyedia tidak bertanggung jawab atas kerugian tidak langsung yang timbul dari kesalahan input data, penyalahgunaan akun, gangguan layanan pihak ketiga, atau keputusan agronomi yang diambil berdasarkan data dalam Aplikasi. Tanggung jawab para pihak dapat diatur lebih rinci dalam perjanjian lisensi tertulis.</p>
+  <h4>11. Penangguhan akses</h4><p>Administrator dapat menonaktifkan akun yang melanggar ketentuan ini, tidak lagi bekerja untuk Organisasi, atau menimbulkan risiko keamanan.</p>
+  <h4>12. Perubahan ketentuan</h4><p>Ketentuan ini dapat diperbarui. Versi baru ditandai dengan nomor versi yang berbeda dan Anda akan diminta menyetujuinya kembali saat login berikutnya.</p>
+  <h4>13. Hukum yang berlaku</h4><p>Ketentuan ini tunduk pada hukum Negara Republik Indonesia, termasuk UU No. 11/2008 jo. UU No. 19/2016 dan UU No. 1/2024 tentang Informasi dan Transaksi Elektronik, PP No. 71/2019 tentang Penyelenggaraan Sistem dan Transaksi Elektronik, serta UU No. 27/2022 tentang Pelindungan Data Pribadi.</p>
+  <h4>14. Kontak</h4><p>Pertanyaan mengenai ketentuan ini: ${contactLine(c)}.</p></div>`;
+}
+
+function privacyHtml() {
+  const c = legalCtx();
+  return `<div class="legal"><p class="muted">Versi ${LEGAL_VERSION} · berlaku sejak ${c.date}. Disusun dengan mengacu pada UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP).</p>
+  <h4>1. Pengendali dan prosesor data</h4><p><b>Pengendali Data Pribadi:</b> ${esc(c.org)}, yang menentukan tujuan dan cara pemrosesan data dalam Aplikasi. <b>Prosesor:</b> Google LLC sebagai penyedia infrastruktur (Google Sheets, Drive, Apps Script); GitHub sebagai penyedia hosting halaman aplikasi (tidak menyimpan data Anda); serta ${esc(c.provider)} bila diberi akses untuk dukungan teknis.</p>
+  <h4>2. Data pribadi yang diproses</h4><table class="tbl"><tr><th>Kategori</th><th>Contoh</th><th>Sumber</th></tr>
+  <tr><td>Identitas akun</td><td>Nama, alamat email, peran, cakupan estate</td><td>Administrator</td></tr>
+  <tr><td>Kredensial</td><td>Password dalam bentuk hash PBKDF2 (password asli tidak disimpan), token sesi dalam bentuk hash</td><td>Anda</td></tr>
+  <tr><td>Foto profil</td><td>Gambar yang Anda unggah (opsional)</td><td>Anda</td></tr>
+  <tr><td>Lokasi</td><td>Koordinat GPS dan akurasi <b>hanya saat</b> Anda mengaktifkan GPS atau mencatat titik sampling; tidak ada pelacakan di latar belakang</td><td>Perangkat Anda</td></tr>
+  <tr><td>Data kerja lapangan</td><td>Waktu pengamatan, catatan, foto lapangan beserta metadatanya</td><td>Anda</td></tr>
+  <tr><td>Log aktivitas</td><td>Audit trail (siapa, apa, kapan), jenis peramban (user-agent) saat login, waktu login terakhir</td><td>Sistem</td></tr>
+  <tr><td>Persetujuan</td><td>Versi dokumen yang disetujui dan waktunya</td><td>Sistem</td></tr></table>
+  <p>Aplikasi <b>tidak</b> memproses data pribadi spesifik (kesehatan, biometrik, keuangan pribadi, dsb.), tidak memakai cookie pelacak, iklan, atau analitik pihak ketiga.</p>
+  <h4>3. Tujuan dan dasar pemrosesan</h4><ul><li>Mengelola akun, autentikasi, dan hak akses — pelaksanaan perjanjian kerja/kontrak (Pasal 20 ayat (2) huruf b UU PDP).</li><li>Mencatat dan memvalidasi pengambilan sampel tanah, keterlacakan sampel (chain of custody), dan kualitas data — kepentingan yang sah Organisasi dalam pengelolaan kebun dan pemenuhan kewajiban audit.</li><li>Keamanan sistem, pencegahan penyalahgunaan, dan audit — kepentingan yang sah serta kewajiban hukum penyelenggara sistem elektronik.</li><li>Foto profil bersifat sukarela; dapat dihapus kapan saja.</li></ul>
+  <h4>4. Penyimpanan di perangkat</h4><p>Untuk kerja offline, Aplikasi menyimpan di perangkat Anda: token sesi dan preferensi (localStorage), paket tugas dan antrean observasi (IndexedDB). Penyimpanan ini <b>tidak terenkripsi secara bawaan</b>; lindungi perangkat dengan kunci layar. Data antrean yang telah tersinkron dihapus otomatis setelah 7 hari, paket tugas kedaluwarsa setelah 7 hari, dan seluruh data lokal dihapus saat logout.</p>
+  <h4>5. Masa retensi</h4><table class="tbl"><tr><th>Data</th><th>Masa simpan</th></tr><tr><td>Sesi login</td><td>12 jam; dibersihkan otomatis harian</td></tr><tr><td>Kode reset password</td><td>15 menit</td></tr><tr><td>Akun pengguna</td><td>Selama hubungan kerja; dinonaktifkan saat berakhir, dihapus/anonimisasi sesuai kebijakan Organisasi</td></tr><tr><td>Data sampling, hasil lab, audit trail</td><td>Sesuai kebijakan retensi dokumen Organisasi (catatan teknis & audit perkebunan umumnya disimpan bertahun-tahun)</td></tr><tr><td>Backup</td><td>30 salinan harian terakhir di Google Drive Organisasi</td></tr></table>
+  <h4>6. Penerima data</h4><p>Data hanya dapat diakses oleh pengguna sesuai peran dan cakupan estate yang diperiksa di server, administrator Organisasi, serta prosesor yang disebut di butir 1. Data tidak dijual atau dibagikan untuk pemasaran.</p>
+  <h4>7. Transfer data ke luar wilayah Indonesia</h4><p>Infrastruktur Google dapat menyimpan dan memproses data di pusat data di luar Indonesia. Organisasi sebagai Pengendali bertanggung jawab memastikan transfer tersebut memenuhi Pasal 56 UU PDP, antara lain melalui ketentuan pemrosesan data Google dan tingkat pelindungan yang memadai.</p>
+  <h4>8. Keamanan</h4><p>Langkah teknis yang diterapkan: koneksi HTTPS, hash password PBKDF2, token sesi acak yang disimpan sebagai hash, pembatasan percobaan login, kontrol akses berbasis peran dan estate di server, validasi input dan pencegahan injeksi formula, audit trail yang menyamarkan rahasia, serta backup harian. Tidak ada sistem yang sepenuhnya bebas risiko; bila terjadi kegagalan pelindungan data, Organisasi akan memberitahukan Anda dan otoritas terkait paling lambat 3 x 24 jam sesuai Pasal 46 UU PDP.</p>
+  <h4>9. Hak Anda sebagai subjek data</h4><p>Sesuai Pasal 5–13 UU PDP, Anda berhak: memperoleh informasi tentang pemrosesan; mengakses dan memperoleh salinan data pribadi Anda; memperbaiki data yang tidak akurat; meminta penghapusan atau pemusnahan data sepanjang tidak bertentangan dengan kewajiban hukum dan keterlacakan audit; menarik persetujuan; mengajukan keberatan atas pemrosesan; menunda atau membatasi pemrosesan; serta mengajukan gugatan atas pelanggaran. Sebagian data dapat Anda kelola sendiri di <b>Pengaturan → Profil</b> (nama, foto, password). Permintaan lain disampaikan ke: ${contactLine(c)}. Permintaan ditanggapi paling lambat 3 x 24 jam sesuai ketentuan UU PDP.</p>
+  <h4>10. Perubahan pemberitahuan</h4><p>Pemberitahuan ini dapat diperbarui. Perubahan ditandai dengan versi baru dan Anda akan diminta membaca serta menyetujuinya kembali.</p>
+  <p class="help">Dokumen ini adalah templat yang disesuaikan dengan cara kerja Aplikasi dan bukan nasihat hukum. Organisasi disarankan meninjaunya bersama bagian legal/Pejabat Pelindungan Data Pribadi.</p></div>`;
+}
+
+async function aboutHtml() {
+  let srv = null; try { srv = await api('health', {}, { noAuthRedirect: true, timeout: 15000 }); } catch (e) {}
+  const lic = (S.me && S.me.license) || {};
+  return `<table class="tbl"><tr><td>Aplikasi</td><td><b>${esc((S.settings || {}).appTitle || 'SSU Digital Enterprise')}</b></td></tr>
+    <tr><td>Versi aplikasi (klien)</td><td><span class="mono">v${VERSION}</span> · build ${BUILD_DATE} · ${IS_GAS ? 'Apps Script' : 'PWA'}</td></tr>
+    <tr><td>Versi server</td><td>${srv ? `<span class="mono">v${esc(srv.version)}</span> · status ${esc(srv.status)}${srv.version !== VERSION ? ' · <b style="color:var(--warn)">berbeda dari klien — perbarui berkas & penerapan</b>' : ''}` : '<span class="muted">tidak dapat dihubungi</span>'}</td></tr>
+    <tr><td>Versi dokumen hukum</td><td>${LEGAL_VERSION}${S.me && S.me.consent ? ' · Anda setujui ' + fmtDate(S.me.consent.at, 1) : ''}</td></tr>
+    <tr><td>Lisensi</td><td>${esc(lic.label || '-')}${lic.exp ? ' · s/d ' + esc(lic.exp) : ''}</td></tr>
+    <tr><td>Peramban</td><td class="mono" style="font-size:11px">${esc(navigator.userAgent)}</td></tr></table>
+    <h4>Riwayat versi</h4>${CHANGELOG.map(c => `<p><b>v${c[0]}</b> <span class="muted">(${c[1]})</span><br>${esc(c[2])}</p>`).join('')}
+    <h4>Komponen pihak ketiga</h4><ul class="muted" style="font-size:12.5px"><li>Leaflet 1.9.4 — BSD-2-Clause</li><li>SheetJS Community Edition 0.20.3 — Apache-2.0</li><li>qrcode-generator 1.4.4 — MIT ("QR Code" merek dagang DENSO WAVE)</li><li>Font Inter — SIL OFL 1.1</li><li>Data peta © kontributor OpenStreetMap (ODbL); citra © Esri & penyedianya</li></ul>
+    <p><a href="#" data-l2="terms">Syarat & Ketentuan</a> · <a href="#" data-l2="privacy">Pemberitahuan Privasi</a></p>`;
+}
+
+async function showLegal(kind) {
+  const title = { terms: 'Syarat & Ketentuan', privacy: 'Pemberitahuan Privasi', about: 'Tentang aplikasi & versi' }[kind];
+  const body = kind === 'about' ? await aboutHtml() : kind === 'terms' ? termsHtml() : privacyHtml();
+  modal(title, body, [{ label: 'Cetak', onClick: b => { const w = window.open('', '_blank'); if (!w) return false; w.document.write(`\x3c!doctype html>\x3cmeta charset="utf-8">\x3ctitle>${esc(title)}\x3c/title>\x3cstyle>body{font-family:Arial,sans-serif;font-size:12px;margin:16mm;line-height:1.5}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:4px;text-align:left}\x3c/style><h2>${esc(title)}</h2>` + b.innerHTML); w.document.close(); w.print(); return false; } }, { label: 'Tutup', cls: 'pri' }],
+    { wide: true, onOpen: b => $$('[data-l2]', b).forEach(a => a.onclick = e => { e.preventDefault(); showLegal(a.dataset.l2); }) });
+}
+
+let consenting = false;
+async function consentFlow() {
+  if (consenting) return; consenting = true;
+  const box = document.createElement('div');
+  box.innerHTML = `<p>Sebelum menggunakan aplikasi, mohon baca dan setujui dokumen berikut (versi ${LEGAL_VERSION}).</p>
+    <div class="tabs"><button class="on" data-ct="terms">Syarat & Ketentuan</button><button data-ct="privacy">Pemberitahuan Privasi</button></div>
+    <div id="ctBody" style="max-height:52vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:12px">${termsHtml()}</div>
+    <label class="chk" style="margin-top:12px"><input type="checkbox" id="ctTerms"> Saya telah membaca dan menyetujui Syarat & Ketentuan.</label>
+    <label class="chk"><input type="checkbox" id="ctPriv"> Saya telah membaca Pemberitahuan Privasi dan memahami pemrosesan data pribadi saya.</label>`;
+  const ok = await modal('Syarat & Ketentuan dan Privasi', box, [
+    { label: 'Tolak & keluar', value: false },
+    { label: 'Setuju & lanjutkan', cls: 'pri', onClick: async b => {
+      if (!$('#ctTerms', b).checked || !$('#ctPriv', b).checked) { toast('Centang kedua pernyataan untuk melanjutkan.', 'bad'); return false; }
+      await run('auth.accept', { version: LEGAL_VERSION }); return true; } }],
+    { wide: true, sticky: true, onOpen: b => { $('.x', b.parentNode).classList.add('hidden');
+      $('.tabs', b).onclick = e => { const t = e.target.closest('[data-ct]'); if (!t) return; $$('.tabs button', b).forEach(x => x.classList.toggle('on', x === t)); $('#ctBody', b).innerHTML = t.dataset.ct === 'terms' ? termsHtml() : privacyHtml(); }; } });
+  consenting = false;
+  if (ok) { toast('Terima kasih. Persetujuan tercatat.', 'ok'); boot(); } else logout(false);
+}
+
+/* Halaman: Dashboard, Master Data, Peta, SSU, Kampanye, Rencana, Titik, Pekerjaan Lapangan */
+const C = () => $('#content');
+async function listAll(table, filter) { return (await api('crud.list', { table, all: true, filter: filter || {} })).rows; }
+function estateFilter() { return S.estateId ? { estateId: S.estateId } : {}; }
+function estateOpts() { return S.estates.map(e => ({ value: e.id, label: e.code + ' — ' + e.name })); }
+function tabs(el, list, onPick) {
+  el.innerHTML = `<div class="tabs">${list.map((t, i) => `<button data-t="${t[0]}" class="${i ? '' : 'on'}">${esc(t[1])}</button>`).join('')}</div><div data-tab-body></div>`;
+  const body = $('[data-tab-body]', el);
+  el.querySelector('.tabs').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; $$('.tabs button', el).forEach(x => x.classList.toggle('on', x === b)); onPick(b.dataset.t, body); };
+  onPick(list[0][0], body);
+}
+function actBtn(act, label, cls) { return `<button class="btn sm ${cls || ''}" data-act="${act}">${esc(label)}</button>`; }
+const CRS_OPTS = [{ value: '', label: 'Otomatis (baca dari file / EPSG:4326)' }, { value: 'EPSG:4326', label: 'EPSG:4326 WGS84 geografis' }, { value: 'EPSG:3857', label: 'EPSG:3857 Web Mercator' }]
+  .concat([46, 47, 48, 49, 50, 51, 52, 53, 54].flatMap(z => [{ value: 'EPSG:327' + z, label: 'EPSG:327' + z + ' UTM ' + z + 'S' }, { value: 'EPSG:326' + z, label: 'EPSG:326' + z + ' UTM ' + z + 'N' }]));
+
+/* ------------------------------ Peta (Leaflet) ------------------------------ */
+function makeMap(el) {
+  if (typeof L === 'undefined') { el.innerHTML = '<div class="state err">Pustaka peta belum termuat (offline pertama kali?).</div>'; return null; }
+  const m = L.map(el, { zoomControl: true }).setView([-2.5, 117], 5);
+  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(m);
+  const img = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Tiles © Esri — Esri, Maxar, Earthstar Geographics' });
+  m._ctl = L.control.layers({ 'OpenStreetMap': osm, 'Citra satelit (Esri)': img }, {}).addTo(m);
+  setTimeout(() => m.invalidateSize(), 200);
+  return m;
+}
+function legend(m, rows) {
+  const c = L.control({ position: 'bottomright' });
+  c.onAdd = () => { const d = L.DomUtil.create('div', 'legend'); d.innerHTML = rows.map(r => `<div><i style="background:${r[0]};${r[2] || ''}"></i>${esc(r[1])}</div>`).join(''); return d; };
+  c.addTo(m); return c;
+}
+const SSU_COLOR = { DRAFT: '#9ca3af', APPROVED: '#16a34a', RETIRED: '#6b7280' };
+const PT_COLOR = { PLANNED: '#2563eb', OBSERVED: '#16a34a', VOID: '#9ca3af' };
+
+/* ------------------------------ Dashboard ------------------------------ */
+Pages.dashboard = async function () {
+  const d = await api('dashboard', { estateId: S.estateId });
+  if (d.field) { C().innerHTML = `<div class="card"><h2>Tugas lapangan Anda</h2><p>${d.field.points.length} titik siap dikerjakan pada ${d.field.campaigns.length} kampanye.</p><button class="btn pri" onclick="go('field')">Buka Pekerjaan Lapangan</button></div>`; return; }
+  const sum = o => Object.values(o || {}).reduce((a, b) => a + b, 0);
+  const chips = o => Object.keys(o || {}).map(k => badge(k, k + ' · ' + o[k])).join(' ') || '<span class="muted">-</span>';
+  C().innerHTML = `<div class="grid g4">
+    <div class="card kpi"><div class="v">${d.estates}</div><div class="l">Estate dalam cakupan</div></div>
+    <div class="card kpi"><div class="v">${sum(d.ssu)}</div><div class="l">SSU (${(d.ssu || {}).APPROVED || 0} disetujui)</div></div>
+    <div class="card kpi"><div class="v">${sum(d.samples)}</div><div class="l">Sampel tercatat</div></div>
+    <div class="card kpi"><div class="v">${(d.results || {}).VALIDATED || 0}<span class="muted" style="font-size:14px"> / ${sum(d.results)}</span></div><div class="l">Hasil lab tervalidasi</div></div></div>
+    <div class="grid g2"><div class="card"><h2>Progres kampanye</h2>${d.campaigns.length ? d.campaigns.map(c => `<div style="margin-bottom:12px"><div class="bar" style="margin:0 0 4px"><b>${esc(c.code)}</b> <span class="muted">${esc(c.name)}</span><span class="sp"></span>${badge(c.status)} <span class="mono">${c.observed}/${c.points}</span></div><div class="progress"><i style="width:${c.pct}%"></i></div></div>`).join('') : '<div class="state">Belum ada kampanye.</div>'}</div>
+    <div class="card"><h2>Status</h2><p><b>Sampel</b><br>${chips(d.samples)}</p><p><b>Pengiriman</b><br>${chips(d.shipments)}</p><p><b>Hasil lab</b><br>${chips(d.results)}</p><p><b>Rekomendasi</b><br>${chips(d.recs)}</p>
+    ${d.reviewObs ? `<p>${badge('REVIEW', d.reviewObs + ' pengamatan lapangan perlu ditinjau')}</p>` : ''}</div></div>
+    ${d.recent.length ? `<div class="card"><h2>Aktivitas terbaru</h2><div class="tbl-wrap"><table class="tbl"><tr><th>Waktu</th><th>Aksi</th><th>Entitas</th></tr>${d.recent.map(a => `<tr><td class="nowrap">${fmtDate(a.at, 1)}</td><td>${esc(a.action)}</td><td>${esc(a.entity)}</td></tr>`).join('')}</table></div></div>` : ''}
+    <div class="card"><h2>Lisensi</h2>${badge(d.license.licensed ? 'APPROVED' : 'REJECTED', d.license.label)} <span class="muted">berlaku s/d ${esc(d.license.exp)}</span></div>`;
+};
+
+/* ------------------------------ Master Data ------------------------------ */
+const MASTER = {
+  Organizations: { label: 'Organisasi', cols: [['code', 'Kode'], ['name', 'Nama']], fields: () => [{ name: 'code', label: 'Kode', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }] },
+  Estates: { label: 'Estate', cols: [['code', 'Kode'], ['name', 'Nama'], ['orgName', 'Organisasi'], ['province', 'Provinsi']], fields: async () => [{ name: 'orgId', label: 'Organisasi', type: 'select', required: true, options: (await listAll('Organizations')).map(o => ({ value: o.id, label: o.name })) }, { name: 'code', label: 'Kode', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }, { name: 'province', label: 'Provinsi' }] },
+  Divisions: { label: 'Afdeling', scoped: 1, cols: [['code', 'Kode'], ['name', 'Nama'], ['estateName', 'Estate']], fields: () => [{ name: 'estateId', label: 'Estate', type: 'select', required: true, options: estateOpts(), value: S.estateId }, { name: 'code', label: 'Kode', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }] },
+  Blocks: { label: 'Blok', scoped: 1, cols: [['code', 'Kode'], ['name', 'Nama'], ['divisionName', 'Afdeling'], ['plantYear', 'Tahun tanam'], ['areaHa', 'Luas (ha)']], fields: async () => [{ name: 'estateId', label: 'Estate', type: 'select', required: true, options: estateOpts(), value: S.estateId }, { name: 'divisionId', label: 'Afdeling', type: 'select', options: (await listAll('Divisions', estateFilter())).map(d => ({ value: d.id, label: d.code + ' — ' + d.name })) }, { name: 'code', label: 'Kode', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }, { name: 'plantYear', label: 'Tahun tanam', type: 'number', min: 1900 }, { name: 'geojson', label: 'Batas blok (GeoJSON, opsional)', type: 'textarea', rows: 3, json: true, help: 'Tempel Feature/Polygon. Transformasi CRS dilakukan di server.' }, { name: 'crs', label: 'CRS sumber', type: 'select', options: CRS_OPTS }] },
+  Laboratories: { label: 'Laboratorium', cols: [['code', 'Kode'], ['name', 'Nama'], ['contact', 'Kontak']], fields: () => [{ name: 'code', label: 'Kode', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }, { name: 'contact', label: 'Kontak' }] },
+  LabParameters: { label: 'Parameter Lab', cols: [['code', 'Kode'], ['name', 'Nama'], ['unit', 'Satuan'], ['method', 'Metode'], ['minExpected', 'Min harapan'], ['maxExpected', 'Maks harapan']], fields: () => [{ name: 'code', label: 'Kode', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }, { name: 'unit', label: 'Satuan baku', required: true, help: 'mis. %, ppm, cmol/kg, -' }, { name: 'method', label: 'Metode analisis', help: 'Hasil dengan metode berbeda akan ditolak saat impor.' }, { name: 'minExpected', label: 'Batas bawah harapan', type: 'number', step: 'any' }, { name: 'maxExpected', label: 'Batas atas harapan', type: 'number', step: 'any', help: 'Nilai di luar rentang DITANDAI untuk ditinjau, tidak diubah.' }] }
+};
+Pages.master = function () {
+  C().innerHTML = '<div class="card" id="mcard"></div>';
+  tabs($('#mcard'), Object.keys(MASTER).map(k => [k, MASTER[k].label]), (t, body) => {
+    const m = MASTER[t], w = can('master.write');
+    const dt = dataTable(body, { table: t, filter: m.scoped ? estateFilter() : {}, cols: m.cols.map(c => ({ k: c[0], label: c[1] })),
+      tools: w ? `<button class="btn pri" data-add>${ic('plus')} Tambah ${esc(m.label)}</button>` : '',
+      actions: w ? () => actBtn('edit', 'Ubah') + ' ' + actBtn('del', 'Hapus', 'danger') : null,
+      onAction: async (a, row) => {
+        if (a === 'edit') { const f = await m.fields(); if (await formModal('Ubah ' + m.label, f, row, v => run('crud.save', { table: t, record: Object.assign(v, { id: row.id }) }, 'Tersimpan.'))) dt.reload(); }
+        if (a === 'del' && await confirmBox('Hapus ' + row.code + '? (soft delete; data historis tetap)')) { await run('crud.delete', { table: t, id: row.id }, 'Dihapus.'); dt.reload(); }
+      } });
+    const add = $('[data-add]', body); if (add) add.onclick = async () => { const f = await m.fields(); if (await formModal('Tambah ' + m.label, f, {}, v => run('crud.save', { table: t, record: v }, 'Tersimpan.'))) { dt.reload(); if (t === 'Estates') S.estates = await listAll('Estates'); } };
+  });
+};
+
+/* ------------------------------ Peta Kebun ------------------------------ */
+Pages.map = async function () {
+  const camps = await listAll('Campaigns', estateFilter());
+  C().innerHTML = `<div class="card"><div class="bar"><select class="in" id="mpC" style="max-width:320px"><option value="">— titik dari kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)}</option>`).join('')}</select><span class="sp"></span><span class="muted" id="mpInfo"></span></div><div class="map" id="mp"></div></div>`;
+  const m = makeMap($('#mp')); if (!m) return;
+  const [ssu, blocks] = await Promise.all([listAll('SoilUnits', estateFilter()), listAll('Blocks', estateFilter())]);
+  const bl = L.geoJSON({ type: 'FeatureCollection', features: blocks.filter(b => b.geomJ).map(b => ({ type: 'Feature', geometry: b.geomJ, properties: b })) }, { style: { color: '#b8860b', weight: 1.5, dashArray: '4 3', fill: false } }).bindPopup(l => 'Blok ' + esc(l.feature.properties.code));
+  const sl = L.geoJSON({ type: 'FeatureCollection', features: ssu.map(s => ({ type: 'Feature', geometry: s.geomJ, properties: s })) },
+    { style: f => ({ color: SSU_COLOR[f.properties.status] || '#555', weight: 2, fillOpacity: .18 }) })
+    .bindPopup(l => { const p = l.feature.properties; return `<b>${esc(p.code)}</b> ${esc(p.name)}<br>${esc(p.soilType)}<br>Status: ${esc(p.status)} · v${esc(p.currentVersion)}<br>Luas: ${num(p.areaHa)} ha`; }).addTo(m);
+  bl.addTo(m); m._ctl.addOverlay(sl, 'SSU'); m._ctl.addOverlay(bl, 'Blok');
+  if (ssu.length) m.fitBounds(sl.getBounds(), { padding: [20, 20] });
+  legend(m, [[SSU_COLOR.APPROVED, 'SSU disetujui'], [SSU_COLOR.DRAFT, 'SSU draft'], ['transparent', 'Batas blok', 'border:2px dashed #b8860b'], [PT_COLOR.PLANNED, 'Titik rencana'], [PT_COLOR.OBSERVED, 'Titik teramati (aktual)']]);
+  $('#mpInfo').textContent = ssu.length + ' SSU · ' + blocks.length + ' blok';
+  let pl;
+  $('#mpC').onchange = async e => {
+    if (pl) m.removeLayer(pl); if (!e.target.value) return;
+    const pts = (await listAll('SamplingPoints', { campaignId: e.target.value })).filter(p => p.status !== 'VOID');
+    pl = L.layerGroup(pts.map(p => { const obs = p.status === 'OBSERVED' && p.actualLat !== '';
+      const mk = L.circleMarker(obs ? [p.actualLat, p.actualLng] : [p.planLat, p.planLng], { radius: 6, color: '#fff', weight: 1.5, fillColor: PT_COLOR[p.status], fillOpacity: 1 });
+      return mk.bindPopup(`<b>${esc(p.code)}</b><br>${esc(p.status)}<br>Rencana: ${num(p.planLat, 6)}, ${num(p.planLng, 6)}${obs ? `<br>Aktual: ${num(p.actualLat, 6)}, ${num(p.actualLng, 6)} (±${num(p.accuracy, 1)} m)` : ''}<br>Petugas: ${esc(p.assignedName || '-')}`); })).addTo(m);
+    $('#mpInfo').textContent = pts.length + ' titik';
+  };
+};
+
+/* ---------------------------------- SSU ---------------------------------- */
+function ssuForm(row) {
+  const box = document.createElement('div'); let geo = null, check = null;
+  box.innerHTML = `<div class="grid g2"><div>${formHtml(SSU_FIELDS, row || { estateId: S.estateId })}</div><div>
+    <label class="f"><span>Geometri (GeoJSON)${row ? ' — kosongkan bila tidak berubah' : ' *'}</span><textarea class="in mono" rows="7" id="gjTxt" placeholder='{"type":"Polygon","coordinates":[...]}'></textarea></label>
+    <div class="bar"><button class="btn sm" id="gjFile">Muat file .geojson</button><select class="in" id="gjCrs" style="flex:1">${CRS_OPTS.map(o => `<option value="${o.value}">${esc(o.label)}</option>`).join('')}</select><button class="btn sm" id="gjVal">Validasi</button></div>
+    <div id="gjRes" class="help"></div><div class="map" id="gjMap" style="height:220px"></div></div></div>`;
+  const read = async () => { const t = $('#gjTxt', box).value.trim(); if (!t) return null; try { return JSON.parse(t); } catch (e) { throw new Error('GeoJSON tidak valid: ' + e.message); } };
+  let m;
+  const show = (g) => { if (!m) m = makeMap($('#gjMap', box)); if (!m) return; if (m._g) m.removeLayer(m._g); m._g = L.geoJSON(g, { style: { color: '#16a34a' } }).addTo(m); m.fitBounds(m._g.getBounds()); };
+  return { box, async validate() {
+    geo = await read(); if (!geo) { check = null; return null; }
+    check = await run('gis.validate', { geojson: geo, crs: $('#gjCrs', box).value });
+    $('#gjRes', box).innerHTML = `${badge('VALIDATED', 'Valid')} Luas ${num(check.areaHa, 4)} ha (UTM) · CRS sumber ${esc(check.crsSource)} → ${esc(check.crsTarget)} · transformasi: ${esc(check.transform)}`;
+    show(check.geom); return check; },
+    init() { if (row && row.geomJ) setTimeout(() => show(row.geomJ), 100);
+      $('#gjFile', box).onclick = async () => { const f = await pickFile('.geojson,.json,application/geo+json,application/json'); if (f) { $('#gjTxt', box).value = await f.text(); } };
+      $('#gjVal', box).onclick = () => this.validate().catch(e => { $('#gjRes', box).innerHTML = `<span class="err-msg">${esc(e.message)}</span>`; }); },
+    get geo() { return geo; }, crs: () => $('#gjCrs', box).value };
+}
+const SSU_FIELDS = [{ name: 'estateId', label: 'Estate', type: 'select', required: true }, { name: 'divisionId', label: 'Afdeling', type: 'select' }, { name: 'code', label: 'Kode SSU', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }, { name: 'soilType', label: 'Jenis tanah / satuan peta' }, { name: 'note', label: 'Catatan versi / alasan perubahan geometri' }];
+async function openSsuForm(row, after) {
+  SSU_FIELDS[0].options = estateOpts();
+  SSU_FIELDS[1].options = (await listAll('Divisions', estateFilter())).map(d => ({ value: d.id, label: d.code + ' — ' + d.name }));
+  const f = ssuForm(row);
+  await modal(row ? 'Ubah SSU ' + row.code : 'SSU baru', f.box, [{ label: 'Batal' }, { label: 'Simpan', cls: 'pri', onClick: async b => {
+    const v = formRead(b, SSU_FIELDS); if (!v) return false;
+    await f.validate().catch(e => { throw e; });
+    if (!row && !f.geo) { toast('Geometri wajib untuk SSU baru.', 'bad'); return false; }
+    await run('ssu.save', Object.assign(v, { id: row && row.id, geojson: f.geo || undefined, crs: f.crs() }), f.geo && row ? 'Versi geometri baru dibuat (perlu persetujuan ulang).' : 'SSU tersimpan.');
+  } }], { wide: true, onOpen: () => f.init() });
+  after();
+}
+Pages.ssu = function () {
+  C().innerHTML = '<div class="card" id="sc"></div>';
+  const w = can('ssu.write'), ap = can('ssu.approve');
+  const dt = dataTable($('#sc'), { table: 'SoilUnits', filter: estateFilter(), filters: `<select class="in" data-filter="status" style="width:auto"><option value="">Semua status</option><option>DRAFT</option><option>APPROVED</option><option>RETIRED</option></select>`,
+    cols: [{ k: 'code', label: 'Kode' }, { k: 'name', label: 'Nama' }, { k: 'soilType', label: 'Jenis tanah' }, { k: 'areaHa', label: 'Luas (ha)', fmt: v => num(v, 3) }, { k: 'currentVersion', label: 'Versi', fmt: v => 'v' + esc(v) }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+    tools: (w ? `<button class="btn pri" data-new>${ic('plus')} SSU baru</button> <button class="btn" data-imp>Impor GeoJSON</button>` : '') + ` <button class="btn" data-exp>${ic('dl')} Ekspor GeoJSON</button>`,
+    actions: r => (w ? actBtn('edit', 'Ubah') + ' ' : '') + actBtn('ver', 'Riwayat versi') + (ap && r.status === 'DRAFT' ? ' ' + actBtn('APPROVED', 'Setujui', 'pri') : '') + (ap && r.status === 'APPROVED' ? ' ' + actBtn('RETIRED', 'Pensiunkan', 'danger') : ''),
+    onAction: async (a, r) => {
+      if (a === 'edit') openSsuForm(r, () => dt.reload());
+      if (a === 'ver') { const v = await listAll('SoilUnitVersions', { ssuId: r.id });
+        modal('Riwayat versi ' + r.code, `<div class="tbl-wrap"><table class="tbl"><tr><th>Versi</th><th>Luas (ha)</th><th>CRS sumber → target</th><th>Transformasi</th><th>Catatan</th><th>Tanggal</th></tr>${v.sort((a, b) => b.version - a.version).map(x => `<tr><td>v${x.version}</td><td>${num(x.areaHa, 4)}</td><td>${esc(x.crsSource)} → ${esc(x.crsTarget)}</td><td>${esc(x.transform)}</td><td>${esc(x.note)}</td><td>${fmtDate(x.createdAt, 1)}</td></tr>`).join('')}</table></div>`, null, { wide: true }); }
+      if (a === 'APPROVED' || a === 'RETIRED') { if (await confirmBox((a === 'APPROVED' ? 'Setujui ' : 'Pensiunkan ') + r.code + ' v' + r.currentVersion + '?')) { await run('ssu.status', { id: r.id, to: a }, 'Status diperbarui.'); dt.reload(); } }
+    } });
+  const n = $('[data-new]'); if (n) n.onclick = () => openSsuForm(null, () => dt.reload());
+  const im = $('[data-imp]'); if (im) im.onclick = () => importSsu(() => dt.reload());
+  $('[data-exp]').onclick = async () => { if (!S.estateId) return toast('Pilih estate di header terlebih dahulu.', 'bad'); const fc = await run('ssu.export', { estateId: S.estateId }); download('ssu_' + S.estateId.slice(0, 8) + '.geojson', JSON.stringify(fc), 'application/geo+json'); };
+};
+async function importSsu(after) {
+  const fields = [{ name: 'estateId', label: 'Estate tujuan', type: 'select', required: true, options: estateOpts(), value: S.estateId }, { name: 'crs', label: 'CRS sumber', type: 'select', options: CRS_OPTS }, { name: 'codeField', label: 'Kolom atribut kode', value: 'code', required: true }, { name: 'nameField', label: 'Kolom atribut nama', value: 'name' }];
+  let gj = null, fname = '';
+  const box = document.createElement('div');
+  box.innerHTML = `<form onsubmit="return false">${formHtml(fields)}</form><div class="bar"><button class="btn" id="pf">Pilih file GeoJSON</button><span id="fn" class="muted"></span></div><div id="rep"></div>`;
+  await modal('Impor SSU dari GeoJSON (FeatureCollection)', box, [{ label: 'Tutup' },
+    { label: 'Uji (dry-run)', onClick: async b => { const v = formRead(b, fields); if (!v || !gj) { toast('Lengkapi isian & pilih file.', 'bad'); return false; } const r = await run('ssu.import', Object.assign(v, { geojson: gj, dryRun: true, fileName: fname }));
+      $('#rep', b).innerHTML = `<p>${r.ok} dari ${r.total} fitur valid.</p><div class="tbl-wrap"><table class="tbl"><tr><th>#</th><th>Kode</th><th>Status</th><th>Keterangan</th></tr>${r.report.map(x => `<tr><td>${x.row}</td><td>${esc(x.code)}</td><td>${badge(x.ok ? 'VALIDATED' : 'REJECTED', x.ok ? 'OK' : 'Galat')}</td><td>${x.ok ? num(x.areaHa, 3) + ' ha · ' + esc(x.crs) : esc(x.error)}</td></tr>`).join('')}</table></div>`; return false; } },
+    { label: 'Impor fitur valid', cls: 'pri', onClick: async b => { const v = formRead(b, fields); if (!v || !gj) return false; const r = await run('ssu.import', Object.assign(v, { geojson: gj, fileName: fname })); toast(r.created + ' SSU dibuat (status DRAFT).', 'ok'); } }],
+    { wide: true, onOpen: b => { $('#pf', b).onclick = async () => { const f = await pickFile('.geojson,.json'); if (!f) return; try { gj = JSON.parse(await f.text()); fname = f.name; $('#fn', b).textContent = f.name + ' · ' + ((gj.features || [gj]).length) + ' fitur'; } catch (e) { toast('File bukan JSON valid.', 'bad'); } }; } });
+  after();
+}
+
+/* ------------------------------ Kampanye ------------------------------ */
+Pages.campaigns = function () {
+  C().innerHTML = '<div class="card" id="cc"></div>';
+  const w = can('campaign.write');
+  const next = s => ((S.meta.flow || {}).Campaign || {})[s] || [];
+  const dt = dataTable($('#cc'), { table: 'Campaigns', filter: estateFilter(), cols: [{ k: 'code', label: 'Kode' }, { k: 'name', label: 'Nama' }, { k: 'estateName', label: 'Estate' }, { k: 'protocolCode', label: 'Protokol', fmt: (v, r) => esc(v) + ' v' + esc(r.protocolVersion) }, { k: 'startDate', label: 'Periode', fmt: (v, r) => esc(v || '-') + ' s/d ' + esc(r.endDate || '-') }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+    tools: w ? `<button class="btn pri" data-new>${ic('plus')} Kampanye baru</button>` : '',
+    actions: r => (w && r.status === 'PLANNED' ? actBtn('edit', 'Ubah') + ' ' : '') + next(r.status).filter(s => s !== 'IN_PROGRESS').map(s => actBtn(s, { APPROVED: 'Setujui', COMPLETED: 'Selesaikan', CANCELLED: 'Batalkan' }[s] || s, s === 'CANCELLED' ? 'danger' : '')).join(' '),
+    onAction: async (a, r) => { if (a === 'edit') return campaignForm(r, () => dt.reload());
+      if (await confirmBox('Ubah status ' + r.code + ' → ' + a + '?' + (a === 'APPROVED' ? ' Protokol akan DIKUNCI.' : ''))) { await run('campaign.transition', { id: r.id, to: a }, 'Status kampanye diperbarui.'); dt.reload(); } } });
+  const n = $('[data-new]'); if (n) n.onclick = () => campaignForm(null, () => dt.reload());
+};
+async function campaignForm(row, after) {
+  const est = (row && row.estateId) || S.estateId;
+  if (!est) return toast('Pilih estate di header terlebih dahulu.', 'bad');
+  const [prots, ssus, links] = await Promise.all([listAll('Protocols'), listAll('SoilUnits', { estateId: est, status: 'APPROVED' }), row ? listAll('CampaignSoilUnits', { campaignId: row.id }) : []]);
+  const fields = [{ name: 'code', label: 'Kode kampanye', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true },
+    { name: 'protocolId', label: 'Protokol (APPROVED)', type: 'select', required: true, options: prots.filter(p => p.status !== 'DRAFT').map(p => ({ value: p.id, label: p.code + ' v' + p.version + ' — ' + p.name + ' (' + p.status + ')' })) },
+    { name: 'startDate', label: 'Mulai', type: 'date' }, { name: 'endDate', label: 'Selesai', type: 'date' }, { name: 'note', label: 'Catatan', type: 'textarea' },
+    { name: 'ssuIds', label: 'SSU disertakan (hanya APPROVED; versi saat ini akan dibekukan)', type: 'checks', options: ssus.map(s => ({ value: s.id, label: s.code + ' — ' + s.name + ' (v' + s.currentVersion + ', ' + num(s.areaHa) + ' ha)' })), value: links.map(l => l.ssuId) }];
+  if (await formModal(row ? 'Ubah kampanye' : 'Kampanye baru', fields, row || {}, v => run('campaign.save', Object.assign(v, { id: row && row.id, estateId: est }), 'Kampanye tersimpan.'), { wide: true })) after();
+}
+
+/* --------------------- Rencana Sampling (protokol & rencana) --------------------- */
+Pages.plans = function () {
+  C().innerHTML = '<div class="card" id="pc"></div>';
+  tabs($('#pc'), [['prot', 'Protokol sampling (berversi)'], ['plan', 'Rencana per kampanye']], async (t, body) => {
+    if (t === 'prot') {
+      const w = can('protocol.write');
+      const dt = dataTable(body, { table: 'Protocols', cols: [{ k: 'code', label: 'Kode' }, { k: 'version', label: 'Versi', fmt: v => 'v' + esc(v) }, { k: 'name', label: 'Nama' }, { k: 'method', label: 'Metode' }, { k: 'pointsPerSsu', label: 'Titik/SSU' }, { k: 'sampleType', label: 'Jenis' }, { k: 'depthsJ', label: 'Kedalaman', fmt: v => esc((v || []).map(d => d.code + ' ' + d.topCm + '–' + d.bottomCm + 'cm').join(', ')) }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+        tools: w ? `<button class="btn pri" data-new>${ic('plus')} Protokol baru</button>` : '',
+        actions: r => actBtn('view', 'Detail') + (w ? ' ' + actBtn('edit', r.status === 'DRAFT' ? 'Ubah' : 'Buat versi baru') : '') + (can('protocol.approve') && r.status === 'DRAFT' ? ' ' + actBtn('approve', 'Setujui', 'pri') : ''),
+        onAction: async (a, r) => {
+          if (a === 'view') return modal('Protokol ' + r.code + ' v' + r.version, `<pre class="mono" style="white-space:pre-wrap">${esc(JSON.stringify(r, null, 2))}</pre>`, null, { wide: true });
+          if (a === 'edit') return protocolForm(r, () => dt.reload());
+          if (a === 'approve' && await confirmBox('Setujui protokol ' + r.code + ' v' + r.version + '? Setelah dipakai kampanye yang disetujui, protokol terkunci.')) { await run('protocol.approve', { id: r.id }, 'Protokol disetujui.'); dt.reload(); }
+        } });
+      const n = $('[data-new]', body); if (n) n.onclick = () => protocolForm(null, () => dt.reload());
+    } else {
+      const camps = await listAll('Campaigns', estateFilter());
+      body.innerHTML = `<div class="bar"><select class="in" id="plC" style="max-width:360px"><option value="">— pilih kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)}</option>`).join('')}</select></div><div id="plB" class="state">Pilih kampanye untuk melihat rencana.</div>`;
+      $('#plC', body).onchange = async e => {
+        const c = camps.find(x => x.id === e.target.value); if (!c) return;
+        const [links, pts, prot] = await Promise.all([listAll('CampaignSoilUnits', { campaignId: c.id }), listAll('SamplingPoints', { campaignId: c.id }), api('crud.get', { table: 'Protocols', id: c.protocolId })]);
+        $('#plB', body).className = '';
+        $('#plB', body).innerHTML = `<p>Protokol <b>${esc(prot.code)} v${esc(prot.version)}</b> · ${esc(prot.method)} · ${prot.pointsPerSsu} titik/SSU · ${prot.subsamplesPerPoint} subsampel/titik · ${esc(prot.sampleType)} · kedalaman ${esc((prot.depthsJ || []).map(d => d.code).join(', '))}</p>
+          <div class="tbl-wrap"><table class="tbl"><tr><th>SSU</th><th>Versi dibekukan</th><th>Titik rencana</th><th>Teramati</th><th>Target sampel</th></tr>${links.map(l => { const p = pts.filter(x => x.ssuId === l.ssuId && x.status !== 'VOID');
+            return `<tr><td>${esc(l.ssuCode)}</td><td>v${esc(l.ssuVersion)}</td><td>${p.length}</td><td>${p.filter(x => x.status === 'OBSERVED').length}</td><td>${prot.sampleType === 'COMPOSITE' ? (prot.depthsJ || []).length + ' komposit' : p.length * (prot.depthsJ || []).length + ' individual'}</td></tr>`; }).join('')}</table></div>`;
+      };
+    }
+  });
+};
+async function protocolForm(row, after) {
+  const params = await listAll('LabParameters');
+  const depthsTxt = row ? (row.depthsJ || []).map(d => [d.code, d.label || '', d.topCm, d.bottomCm].join(',')).join('\n') : '';
+  const q = (row && row.qcRulesJ) || {};
+  const fields = [{ name: 'code', label: 'Kode protokol', required: true, pattern: '[A-Za-z0-9._-]{1,40}' }, { name: 'name', label: 'Nama', required: true }, { name: 'purpose', label: 'Tujuan sampling', required: true, type: 'textarea', rows: 2 },
+    { name: 'method', label: 'Metode penempatan titik', type: 'select', required: true, options: [{ value: 'random', label: 'Acak (random, ber-seed)' }, { value: 'systematic', label: 'Sistematis (grid)' }, { value: 'centroid', label: 'Sentroid (1 titik)' }] },
+    { name: 'depths', label: 'Kedalaman (satu per baris: kode,label,atas_cm,bawah_cm)', type: 'textarea', required: true, value: depthsTxt, help: 'Contoh: D1,0-20 cm,0,20 — tidak ada nilai bawaan universal; tetapkan sesuai pedoman agronom.' },
+    { name: 'pointsPerSsu', label: 'Jumlah titik per SSU', type: 'number', min: 1, required: true }, { name: 'subsamplesPerPoint', label: 'Subsampel per titik', type: 'number', min: 1, required: true },
+    { name: 'sampleType', label: 'Jenis sampel', type: 'select', required: true, options: [{ value: 'COMPOSITE', label: 'Komposit (subsampel digabung per SSU per kedalaman)' }, { value: 'INDIVIDUAL', label: 'Individual (per titik per kedalaman)' }] },
+    { name: 'compositeRule', label: 'Aturan komposit' }, { name: 'parametersJ', label: 'Parameter laboratorium', type: 'checks', options: params.map(p => ({ value: p.code, label: p.code + ' — ' + p.name + ' (' + p.unit + ')' })) },
+    { name: 'acceptance', label: 'Kriteria penerimaan', type: 'textarea', rows: 2 }, { name: 'deviation', label: 'Prosedur penyimpangan', type: 'textarea', rows: 2 }, { name: 'handling', label: 'Prosedur penanganan sampel', type: 'textarea', rows: 2 },
+    { name: 'duplicateRpdMax', label: 'QC: batas RPD duplikat (%)', type: 'number', step: 'any', value: q.duplicateRpdMax, help: 'Kosongkan bila belum ditetapkan.' }, { name: 'transitMaxDays', label: 'QC: maks hari pengiriman', type: 'number', value: q.transitMaxDays }];
+  const ok = await formModal(row ? (row.status === 'DRAFT' ? 'Ubah protokol' : 'Versi baru dari ' + row.code + ' v' + row.version) : 'Protokol baru', fields, row || {}, v => {
+    const depthsJ = v.depths.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const p = l.split(','); return { code: (p[0] || '').trim(), label: (p[1] || '').trim(), topCm: Number(p[2]), bottomCm: Number(p[3]) }; });
+    const qc = {}; if (v.duplicateRpdMax !== '') qc.duplicateRpdMax = v.duplicateRpdMax; if (v.transitMaxDays !== '') qc.transitMaxDays = v.transitMaxDays;
+    return run('protocol.save', Object.assign(v, { id: row && row.id, depthsJ, qcRulesJ: qc }), 'Protokol tersimpan (DRAFT).');
+  }, { wide: true });
+  if (ok) after();
+}
+
+/* ------------------------------ Titik Sampling ------------------------------ */
+Pages.points = async function () {
+  const camps = (await listAll('Campaigns', estateFilter())).filter(c => c.status !== 'CANCELLED');
+  C().innerHTML = `<div class="card"><div class="bar"><select class="in" id="ptC" style="max-width:360px"><option value="">— pilih kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)} (${esc(c.status)})</option>`).join('')}</select><span class="sp"></span>
+    ${can('points.write') ? '<button class="btn pri" id="ptGen" disabled>Buat titik</button>' : ''} ${can('points.assign') ? '<button class="btn" id="ptAs" disabled>Tugaskan terpilih</button>' : ''}</div><div class="grid g2"><div id="ptT"><div class="state">Pilih kampanye.</div></div><div class="map" id="ptM"></div></div></div>`;
+  const m = makeMap($('#ptM')); let layer, sel = new Set(), cur, dt;
+  const draw = rows => { if (!m) return; if (layer) m.removeLayer(layer);
+    layer = L.layerGroup(rows.map(p => L.circleMarker([p.planLat, p.planLng], { radius: 6, color: '#fff', weight: 1.5, fillColor: PT_COLOR[p.status] || '#999', fillOpacity: 1 }).bindPopup(`<b>${esc(p.code)}</b><br>${esc(p.status)} · seed ${esc(p.seed)}`))).addTo(m);
+    if (rows.length) m.fitBounds(L.latLngBounds(rows.map(p => [p.planLat, p.planLng])), { padding: [30, 30] }); };
+  $('#ptC').onchange = e => {
+    cur = camps.find(c => c.id === e.target.value); sel.clear(); if ($('#ptGen')) $('#ptGen').disabled = !cur; if ($('#ptAs')) $('#ptAs').disabled = !cur; if (!cur) return;
+    dt = dataTable($('#ptT'), { table: 'SamplingPoints', filter: { campaignId: cur.id }, size: 50, sort: 'code', filters: `<select class="in" data-filter="status" style="width:auto"><option value="">Semua</option><option>PLANNED</option><option>OBSERVED</option><option>VOID</option></select>`,
+      cols: [{ k: 'id', label: '', fmt: (v, r) => r.status === 'PLANNED' ? `<input type="checkbox" data-sel="${esc(v)}">` : '' }, { k: 'code', label: 'Kode' }, { k: 'ssuCode', label: 'SSU' }, { k: 'planLat', label: 'Rencana', fmt: (v, r) => `<span class="mono">${num(v, 6)}, ${num(r.planLng, 6)}</span>` }, { k: 'assignedName', label: 'Petugas' }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+      onLoad: rows => draw(rows.filter(r => r.status !== 'VOID')) });
+  };
+  $('#ptT').addEventListener('change', e => { const c = e.target.closest('[data-sel]'); if (c) c.checked ? sel.add(c.dataset.sel) : sel.delete(c.dataset.sel); });
+  if ($('#ptGen')) $('#ptGen').onclick = async () => {
+    const f = [{ name: 'method', label: 'Metode (kosong = sesuai protokol)', type: 'select', options: [{ value: 'random', label: 'Acak' }, { value: 'systematic', label: 'Sistematis' }, { value: 'centroid', label: 'Sentroid' }] },
+      { name: 'seed', label: 'Seed (kosong = acak, tetap disimpan)', type: 'number' }, { name: 'edgeBufferM', label: 'Jarak minimum dari batas SSU (m)', type: 'number', min: 0, value: 0 }, { name: 'regenerate', label: 'Opsi', type: 'checks', options: [{ value: '1', label: 'Buat ulang (ganti titik PLANNED lama → VOID)' }] }];
+    const r = await formModal('Buat titik sampling — ' + cur.code, f, {}, v => run('points.generate', { campaignId: cur.id, method: v.method || undefined, seed: v.seed, edgeBufferM: v.edgeBufferM, regenerate: v.regenerate.length > 0 }));
+    if (r) { toast(r.created + ' titik dibuat. Seed: ' + r.summary.map(s => s.ssu + '=' + s.seed).join(', '), 'ok'); dt.reload(); }
+  };
+  if ($('#ptAs')) $('#ptAs').onclick = async () => {
+    if (!sel.size) return toast('Centang titik PLANNED yang akan ditugaskan.', 'bad');
+    const staff = await run('user.field', { estateId: cur.estateId });
+    const ok = await formModal('Tugaskan ' + sel.size + ' titik', [{ name: 'userId', label: 'Petugas lapangan', type: 'select', required: true, options: staff.map(s => ({ value: s.id, label: s.name + ' (' + s.email + ')' })) }], {}, v => run('points.assign', { pointIds: [...sel], userId: v.userId }, 'Titik ditugaskan.'));
+    if (ok) { sel.clear(); dt.reload(); }
+  };
+};
+
+/* --------------------------- Pekerjaan Lapangan --------------------------- */
+let GEO = { pos: null, watch: null };
+function startGps(cb) {
+  if (!navigator.geolocation) return toast('Perangkat tidak mendukung GPS.', 'bad');
+  if (GEO.watch !== null) navigator.geolocation.clearWatch(GEO.watch);
+  GEO.watch = navigator.geolocation.watchPosition(p => { GEO.pos = { lat: p.coords.latitude, lng: p.coords.longitude, acc: Math.round(p.coords.accuracy * 10) / 10, at: new Date(p.timestamp).toISOString() }; cb && cb(GEO.pos); },
+    e => toast('GPS: ' + e.message, 'bad'), { enableHighAccuracy: true, maximumAge: 2000, timeout: 30000 });
+}
+function distM(a, b, c, d) { const R = 6371008.8, r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); }
+function bearing(a, b, c, d) { const r = Math.PI / 180, y = Math.sin((d - b) * r) * Math.cos(c * r), x = Math.cos(a * r) * Math.sin(c * r) - Math.sin(a * r) * Math.cos(c * r) * Math.cos((d - b) * r); return (Math.atan2(y, x) / r + 360) % 360; }
+Pages.field = async function (refreshOnly) {
+  const pack = await IDB.get('tasks'), queue = (await IDB.qAll()).filter(o => !o.userId || !S.me || o.userId === S.me.id).sort((a, b) => b.createdAt < a.createdAt ? -1 : 1);
+  const expired = pack && new Date(pack.expiresAt).getTime() < Date.now();
+  const done = new Set(queue.filter(o => o.status !== 'REJECTED').map(o => o.data && o.data.pointId));
+  const todo = pack ? pack.points.filter(p => !done.has(p.id)) : [];
+  if (refreshOnly && S.page !== 'field') return;
+  C().innerHTML = `<div class="card"><h2><span style="flex:1 1 100%">Paket tugas offline</span><button class="btn" id="fdDl">${ic('dl')} Unduh tugas</button><button class="btn pri" id="fdSync">${ic('sync')} Sinkron sekarang</button></h2>
+    ${pack ? `<p class="muted">Diunduh ${fmtDate(pack.downloadedAt, 1)} · berlaku s/d ${fmtDate(pack.expiresAt, 1)} · ${pack.points.length} titik, ${todo.length} belum dicatat ${expired ? badge('REJECTED', 'Kedaluwarsa — unduh ulang') : ''}</p>` : '<p class="muted">Belum ada paket. Unduh saat ada sinyal; setelah itu dapat bekerja tanpa internet.</p>'}
+    <p class="help">Data disimpan di IndexedDB perangkat (tidak terenkripsi bawaan). Kunci layar perangkat, dan logout setelah selesai untuk menghapus data lokal.</p>
+    <div class="bar"><span>GPS:</span><span id="gpsTxt" class="mono muted">belum aktif</span><button class="btn sm" id="gpsOn">Aktifkan GPS</button></div></div>
+    <div class="grid g2"><div class="card"><h2>Titik untuk dicatat (${todo.length})</h2><div id="todo">${todo.length ? todo.map(p => `<div class="list-item"><div class="grow"><b>${esc(p.code)}</b><br><span class="muted mono" data-dist="${p.id}">${Number(p.planLat).toFixed(6)}, ${Number(p.planLng).toFixed(6)}</span></div><button class="btn sm" data-nav-pt="${p.id}">Navigasi</button><button class="btn sm pri" data-rec="${p.id}" ${expired ? 'disabled' : ''}>Catat</button></div>`).join('') : '<div class="state">Tidak ada titik tertunda.</div>'}</div></div>
+    <div class="card"><h2>Antrean & status sinkronisasi</h2><div class="legend" style="box-shadow:none;padding:0 0 8px">${badge('LOCAL')} belum dikirim · ${badge('RETRY')} gagal kirim, dicoba ulang otomatis · ${badge('REVIEW', 'Menunggu validasi')} diterima server, perlu tinjauan · ${badge('VALIDATED', 'Tervalidasi')} · ${badge('CONFLICT')} · ${badge('REJECTED')}</div>
+    <div id="queue">${queue.length ? queue.map(o => { const pt = pack && pack.points.find(p => p.id === (o.data || {}).pointId);
+      return `<div class="list-item"><div class="grow"><b>${esc(pt ? pt.code : (o.data || {}).pointId || o.opId)}</b> ${o.status === 'DONE' ? badge(o.serverStatus, o.serverStatus === 'REVIEW' ? 'Menunggu validasi' : 'Tervalidasi') : badge(o.status)}<br><span class="muted" style="font-size:12px">${fmtDate(o.createdAt, 1)}${o.tries ? ' · percobaan ' + o.tries : ''}${o.lastError ? ' · ' + esc(o.lastError) : ''}${o.result && o.result.issues && o.result.issues.length ? ' · ' + esc(o.result.issues.join('; ')) : ''}</span></div>
+      ${o.status === 'CONFLICT' ? `<button class="btn sm" data-force="${o.opId}">Pertahankan data saya</button><button class="btn sm danger" data-drop="${o.opId}">Pakai data server</button>` : ''}${o.status === 'REJECTED' ? `<button class="btn sm danger" data-drop="${o.opId}">Hapus</button>` : ''}</div>`; }).join('') : '<div class="state">Antrean kosong.</div>'}</div></div></div>`;
+  $('#fdDl').onclick = async () => { const p = await run('field.tasks', {}, 'Paket tugas diunduh.'); await IDB.set('tasks', p); Pages.field(); };
+  $('#fdSync').onclick = () => Sync.run(true);
+  const upd = pos => { $('#gpsTxt') && ($('#gpsTxt').textContent = `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)} ±${pos.acc} m`);
+    todo.forEach(p => { const el = $(`[data-dist="${p.id}"]`); if (el) el.textContent = Math.round(distM(pos.lat, pos.lng, p.planLat, p.planLng)) + ' m · arah ' + Math.round(bearing(pos.lat, pos.lng, p.planLat, p.planLng)) + '°'; }); };
+  $('#gpsOn').onclick = () => startGps(upd); if (GEO.pos) upd(GEO.pos);
+  C().onclick = async e => {
+    const n = e.target.closest('[data-nav-pt]'), r = e.target.closest('[data-rec]'), f = e.target.closest('[data-force]'), d = e.target.closest('[data-drop]');
+    if (n) navigatePoint(pack, pack.points.find(p => p.id === n.dataset.navPt));
+    if (r) recordPoint(pack, pack.points.find(p => p.id === r.dataset.rec));
+    if (f) { const o = (await IDB.qAll()).find(x => x.opId === f.dataset.force); o.force = true; o.status = 'RETRY'; o.nextAt = 0; await IDB.qPut(o); Sync.run(true); }
+    if (d && await confirmBox('Hapus data lokal ini dari perangkat?')) { await IDB.qDel(d.dataset.drop); Sync.badge(); Pages.field(); }
+  };
+};
+function navigatePoint(pack, p) {
+  const box = document.createElement('div'); box.innerHTML = `<div class="map" id="navM" style="height:55vh"></div><p id="navT" class="mono"></p>`;
+  modal('Navigasi ke ' + p.code, box, null, { wide: true, onOpen: b => {
+    const m = makeMap($('#navM', b)); if (!m) return;
+    const s = pack.ssu.find(x => x.ssuId === p.ssuId); if (s) L.geoJSON(s.geom, { style: { color: '#16a34a' } }).addTo(m);
+    L.circleMarker([p.planLat, p.planLng], { radius: 8, color: '#fff', fillColor: '#2563eb', fillOpacity: 1 }).addTo(m).bindTooltip(p.code, { permanent: true });
+    m.setView([p.planLat, p.planLng], 17);
+    let me;
+    startGps(pos => { if (!$('#navT', b)) return; if (!me) me = L.circle([pos.lat, pos.lng], { radius: pos.acc, color: '#dc2626' }).addTo(m); else me.setLatLng([pos.lat, pos.lng]).setRadius(pos.acc);
+      $('#navT', b).textContent = `Jarak ${Math.round(distM(pos.lat, pos.lng, p.planLat, p.planLng))} m · arah ${Math.round(bearing(pos.lat, pos.lng, p.planLat, p.planLng))}° · akurasi ±${pos.acc} m`; });
+  } });
+}
+async function recordPoint(pack, p) {
+  const camp = pack.campaigns.find(c => c.id === p.campaignId), prot = camp.protocol;
+  let photo = '', meta = null;
+  const fields = [{ name: 'depths', label: 'Kedalaman diambil', type: 'checks', required: true, options: prot.depths.map(d => ({ value: d.code, label: d.code + ' (' + d.topCm + '–' + d.bottomCm + ' cm)' })), value: prot.depths.map(d => d.code) },
+    { name: 'notes', label: 'Catatan pengamatan', type: 'textarea', help: `${prot.subsamplesPerPoint} subsampel/titik · ${prot.handling || ''}` }];
+  const box = document.createElement('div');
+  box.innerHTML = `<p><b>Posisi aktual:</b> <span class="mono" id="rcPos">menunggu GPS…</span></p><form onsubmit="return false">${formHtml(fields)}</form>
+    <div class="bar"><label class="btn">Ambil foto<input type="file" accept="image/*" capture="environment" id="rcPh" class="hidden"></label><img id="rcPrev" class="avatar hidden" style="border-radius:8px;width:56px;height:56px"></div><p class="help">Foto dikompres otomatis (≤ ±200 KB). ${esc(prot.acceptance || '')}</p>`;
+  await modal('Catat ' + p.code, box, [{ label: 'Batal' }, { label: 'Simpan di perangkat', cls: 'pri', onClick: async b => {
+    const v = formRead(b, fields); if (!v) return false;
+    if (!GEO.pos) { toast('Tunggu posisi GPS.', 'bad'); return false; }
+    const data = { pointId: p.id, lat: GEO.pos.lat, lng: GEO.pos.lng, accuracy: GEO.pos.acc, observedAt: new Date().toISOString(), depths: v.depths, notes: v.notes, photo, photoMeta: meta };
+    await Sync.enqueue('observation', data, p.version);
+    toast('Tersimpan di perangkat. Akan dikirim saat online.', 'ok'); Pages.field();
+  } }], { onOpen: b => {
+    startGps(pos => { const el = $('#rcPos', b); if (el) el.textContent = `${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)} ±${pos.acc} m · ${Math.round(distM(pos.lat, pos.lng, p.planLat, p.planLng))} m dari rencana`; });
+    $('#rcPh', b).onchange = async e => { const f = e.target.files[0]; if (!f) return; try { photo = await imageToDataUrl(f, 1280, 280000); meta = { name: f.name, type: 'image/jpeg', originalBytes: f.size, chars: photo.length, takenAt: new Date(f.lastModified || Date.now()).toISOString() };
+      $('#rcPrev', b).src = photo; $('#rcPrev', b).classList.remove('hidden'); $('#rcPrev', b).onclick = () => zoomImage(photo, 'Foto lapangan'); } catch (er) { toast(er.message, 'bad'); } };
+  } });
+}
+
+/* Halaman: Sampel, Pengiriman, Laboratorium, QC, Analisis GIS, Rekomendasi, Laporan, Pengguna, Audit, Pengaturan */
+function qrSvg(text) {
+  if (typeof qrcode === 'undefined') return '<span class="muted">QR tidak tersedia offline</span>';
+  const q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 3, margin: 1, scalable: true });
+}
+function printLabels(samples, title) {
+  const w = window.open('', '_blank'); if (!w) return toast('Izinkan pop-up untuk mencetak label.', 'bad');
+  w.document.write(`\x3c!doctype html>\x3cmeta charset="utf-8">\x3ctitle>${esc(title)}\x3c/title>\x3cstyle>body{font-family:Arial,sans-serif;margin:8mm}.label-sheet{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}.label{border:1px dashed #999;padding:3mm;display:flex;gap:3mm;align-items:center;font-size:10px;break-inside:avoid}.label svg{width:24mm;height:24mm;flex:none}.label b{font-size:11px;display:block;word-break:break-all}@media print{button{display:none}}\x3c/style>
+    <button onclick="print()">Cetak</button><h3>${esc(title)}</h3><div class="label-sheet">${samples.map(s => `<div class="label">${qrSvg(s.code)}<div><b>${esc(s.code)}</b>${esc(s.kind)} · ${esc(s.depth)}<br>SSU ${esc(s.ssuCode || '-')}<br>${esc(s.campaignCode || '')}</div></div>`).join('')}</div>`);
+  w.document.close();
+}
+async function traceModal(idOrCode) {
+  const t = await run('sample.trace', { id: idOrCode });
+  modal('Lacak sampel ' + t.sample.code, `<div class="grid g2"><div><p>${badge(t.sample.status)} <b>${esc(t.sample.kind)}</b> · kedalaman ${esc(t.sample.depth)}</p>
+    <p>Kampanye: <b>${esc(t.campaign.code)}</b><br>SSU: <b>${esc(t.ssu ? t.ssu.code + ' v' + t.ssu.currentVersion : '-')}</b><br>Titik: ${esc(t.point ? t.point.code + ' (' + num(t.point.actualLat, 6) + ', ' + num(t.point.actualLng, 6) + ')' : '-')}</p>
+    ${t.components.length ? `<p>Dibentuk dari ${t.components.length} subsampel: <span class="mono">${t.components.map(esc).join(', ')}</span></p>` : ''}${t.partOf.length ? `<p>Bagian dari komposit: <b>${t.partOf.map(esc).join(', ')}</b></p>` : ''}
+    ${t.sample.rejectReason ? `<p>${badge('REJECTED', 'Alasan penolakan')} ${esc(t.sample.rejectReason)}<br>Tindak lanjut: ${esc(t.sample.followUp || 'belum')}</p>` : ''}
+    <div style="width:120px">${qrSvg(t.sample.code)}</div></div><div><h4>Chain of custody</h4>${t.custody.map(e => `<div class="list-item"><div class="grow"><b>${esc(e.event)}</b> ${badge(e.toStatus)}<br><span class="muted" style="font-size:12px">${fmtDate(e.at, 1)} · ${esc(e.fromStatus || '∅')} → ${esc(e.toStatus)}<br>${esc(e.note)}</span></div></div>`).join('')}
+    <h4>Hasil lab</h4>${t.results.length ? `<table class="tbl">${t.results.map(r => `<tr><td>${esc(r.paramCode)}</td><td>${num(r.value, 4)} ${esc(r.unit)}</td><td>${badge(r.status)} ${badge(r.flag)}</td><td>rev ${esc(r.revision)}</td></tr>`).join('')}</table>` : '<span class="muted">Belum ada.</span>'}</div></div>`, null, { wide: true });
+}
+
+/* -------------------------------- Sampel -------------------------------- */
+Pages.samples = async function () {
+  const camps = await listAll('Campaigns', estateFilter()), w = can('sample.write');
+  C().innerHTML = `<div class="card" id="smc"></div>`;
+  const sel = new Set();
+  const dt = dataTable($('#smc'), { table: 'Samples', filter: estateFilter(), size: 50,
+    filters: `<select class="in" data-filter="campaignId" style="width:auto"><option value="">Semua kampanye</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)}</option>`).join('')}</select>
+      <select class="in" data-filter="kind" style="width:auto"><option value="">Semua jenis</option>${['INDIVIDUAL', 'SUBSAMPLE', 'COMPOSITE', 'DUPLICATE', 'CONTROL'].map(k => `<option>${k}</option>`).join('')}</select>
+      <select class="in" data-filter="status" style="width:auto"><option value="">Semua status</option>${Object.keys(S.meta.flow.Sample).map(k => `<option>${k}</option>`).join('')}</select>`,
+    tools: (w ? `<button class="btn pri" data-auto>Komposit otomatis</button> <button class="btn" data-comp>Komposit dari pilihan</button> <button class="btn" data-ctl>Sampel kontrol</button> ` : '') + `<button class="btn" data-lbl>Cetak label QR</button> <button class="btn" data-find>Cari kode/QR</button>`,
+    cols: [{ k: 'id', label: '', fmt: v => `<input type="checkbox" data-sel="${esc(v)}">` }, { k: 'code', label: 'Kode', fmt: v => `<span class="mono">${esc(v)}</span>` }, { k: 'kind', label: 'Jenis' }, { k: 'ssuCode', label: 'SSU' }, { k: 'depth', label: 'Kedalaman' }, { k: 'status', label: 'Status', fmt: v => badge(v) }, { k: 'createdAt', label: 'Dibuat', fmt: v => fmtDate(v, 1) }],
+    actions: r => actBtn('trace', 'Lacak') + (w && ['INDIVIDUAL', 'COMPOSITE'].includes(r.kind) && r.status === 'COLLECTED' ? ' ' + actBtn('dup', 'Duplikat') : '') + (w && r.status === 'REJECTED' ? ' ' + actBtn('fu', 'Tindak lanjut', 'danger') : ''),
+    onAction: async (a, r) => {
+      if (a === 'trace') traceModal(r.id);
+      if (a === 'dup') { await run('sample.special', { kind: 'DUPLICATE', parentId: r.id }, 'Sampel duplikat dibuat.'); dt.reload(); }
+      if (a === 'fu') { if (await formModal('Tindak lanjut ' + r.code, [{ name: 'to', label: 'Tindakan', type: 'select', required: true, options: [{ value: 'RESAMPLE_REQUIRED', label: 'Ambil ulang (titik dibuka kembali)' }, { value: 'DISCARDED', label: 'Buang / tidak dilanjutkan' }] }, { name: 'note', label: 'Catatan', required: true }], {}, v => run('sample.followUp', Object.assign(v, { id: r.id }), 'Tindak lanjut dicatat.'))) dt.reload(); }
+    } });
+  $('#smc').addEventListener('change', e => { const c = e.target.closest('[data-sel]'); if (c) c.checked ? sel.add(c.dataset.sel) : sel.delete(c.dataset.sel); });
+  const q = s => $(s, $('#smc'));
+  if (q('[data-auto]')) q('[data-auto]').onclick = async () => {
+    const cid = dt.state.filter.campaignId; if (!cid) return toast('Pilih kampanye pada filter terlebih dahulu.', 'bad');
+    const subs = await listAll('Samples', { campaignId: cid, kind: 'SUBSAMPLE', status: 'COLLECTED' }), g = {};
+    subs.forEach(s => (g[s.ssuId + '|' + s.depth] = g[s.ssuId + '|' + s.depth] || []).push(s));
+    const groups = Object.values(g).filter(x => x.length >= 2);
+    if (!groups.length) return toast('Tidak ada kelompok subsampel (≥2) yang siap.', 'bad');
+    if (!(await confirmBox('Buat ' + groups.length + ' komposit (per SSU per kedalaman)?'))) return;
+    let n = 0; for (const grp of groups) { try { await api('sample.composite', { sampleIds: grp.map(s => s.id) }); n++; } catch (e) { toast(grp[0].ssuCode + '/' + grp[0].depth + ': ' + e.message, 'bad'); } }
+    toast(n + ' komposit dibuat.', 'ok'); dt.reload();
+  };
+  if (q('[data-comp]')) q('[data-comp]').onclick = async () => { if (sel.size < 2) return toast('Centang minimal 2 subsampel.', 'bad'); await run('sample.composite', { sampleIds: [...sel] }, 'Komposit dibuat.'); sel.clear(); dt.reload(); };
+  if (q('[data-ctl]')) q('[data-ctl]').onclick = async () => { if (await formModal('Sampel kontrol', [{ name: 'campaignId', label: 'Kampanye', type: 'select', required: true, options: camps.map(c => ({ value: c.id, label: c.code })) }, { name: 'depth', label: 'Kode kedalaman', required: true }, { name: 'note', label: 'Keterangan (mis. bahan acuan)' }], {}, v => run('sample.special', Object.assign(v, { kind: 'CONTROL' }), 'Sampel kontrol dibuat.'))) dt.reload(); };
+  q('[data-lbl]').onclick = () => { const rows = dt.rows().filter(r => !sel.size || sel.has(r.id)); if (!rows.length) return toast('Tidak ada sampel.', 'bad'); printLabels(rows, 'Label sampel (' + rows.length + ')'); };
+  q('[data-find]').onclick = async () => { const v = await formModal('Cari sampel', [{ name: 'code', label: 'Kode sampel (ketik atau tempel hasil pindai QR)', required: true }], {}, v => v); if (v) traceModal(v.code.trim().toUpperCase()); };
+};
+
+/* ------------------------------ Pengiriman ------------------------------ */
+Pages.shipments = async function () {
+  const w = can('shipment.write'), rc = can('lab.receive');
+  C().innerHTML = '<div class="card" id="shc"></div>';
+  const dt = dataTable($('#shc'), { table: 'Shipments', filter: estateFilter(), cols: [{ k: 'code', label: 'Manifest' }, { k: 'campaignCode', label: 'Kampanye' }, { k: 'labName', label: 'Laboratorium' }, { k: 'courier', label: 'Kurir' }, { k: 'sentAt', label: 'Dikirim', fmt: v => fmtDate(v, 1) }, { k: 'receivedAt', label: 'Diterima', fmt: v => fmtDate(v, 1) }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+    tools: w ? `<button class="btn pri" data-new>${ic('plus')} Manifest baru</button>` : '',
+    actions: r => actBtn('man', 'Manifest') + (w && r.status === 'DRAFT' ? ' ' + actBtn('send', 'Serahkan ke kurir', 'pri') + ' ' + actBtn('cancel', 'Batalkan', 'danger') : '') + (rc && r.status === 'SENT' ? ' ' + actBtn('recv', 'Terima di lab', 'pri') : ''),
+    onAction: async (a, r) => {
+      if (a === 'man') return manifest(r.id);
+      if (a === 'send' && await confirmBox('Serahkan ' + r.code + ' ke kurir? Status semua sampel → SHIPPED.')) { await run('shipment.send', { id: r.id }, 'Diserahkan.'); dt.reload(); }
+      if (a === 'cancel' && await confirmBox('Batalkan manifest ' + r.code + '? Sampel kembali COLLECTED.')) { await run('shipment.cancel', { id: r.id }, 'Dibatalkan.'); dt.reload(); }
+      if (a === 'recv') receive(r, () => dt.reload());
+    } });
+  const n = $('[data-new]'); if (n) n.onclick = async () => {
+    const [camps, labs] = await Promise.all([listAll('Campaigns', estateFilter()), listAll('Laboratories')]);
+    const box = document.createElement('div'), f1 = [{ name: 'campaignId', label: 'Kampanye', type: 'select', required: true, options: camps.map(c => ({ value: c.id, label: c.code + ' ' + c.name })) }, { name: 'labId', label: 'Laboratorium', type: 'select', required: true, options: labs.map(l => ({ value: l.id, label: l.name })) }, { name: 'courier', label: 'Kurir / pembawa' }, { name: 'note', label: 'Catatan' }];
+    box.innerHTML = `<form onsubmit="return false">${formHtml(f1)}</form><h4>Sampel siap kirim (COLLECTED, bukan subsampel)</h4><div id="shS" class="state">Pilih kampanye.</div>`;
+    await modal('Manifest pengiriman baru', box, [{ label: 'Batal' }, { label: 'Buat manifest', cls: 'pri', onClick: async b => { const v = formRead(b, f1); if (!v) return false; v.sampleIds = $$('[data-pick]:checked', b).map(x => x.value); if (!v.sampleIds.length) { toast('Pilih sampel.', 'bad'); return false; } await run('shipment.create', v, 'Manifest dibuat.'); dt.reload(); } }],
+      { wide: true, onOpen: b => { $('[name="campaignId"]', b).onchange = async e => { const s = (await listAll('Samples', { campaignId: e.target.value, status: 'COLLECTED' })).filter(x => x.kind !== 'SUBSAMPLE');
+        $('#shS', b).className = ''; $('#shS', b).innerHTML = s.length ? `<label class="chk"><input type="checkbox" id="pickAll" checked> Pilih semua (${s.length})</label>` + s.map(x => `<label class="chk"><input type="checkbox" data-pick value="${esc(x.id)}" checked> <span class="mono">${esc(x.code)}</span> · ${esc(x.kind)}</label>`).join('') : '<div class="state">Tidak ada sampel siap kirim.</div>';
+        const all = $('#pickAll', b); if (all) all.onchange = () => $$('[data-pick]', b).forEach(c => c.checked = all.checked); }; } });
+  };
+};
+async function manifest(id) {
+  const m = await run('shipment.manifest', { id });
+  modal('Manifest ' + m.shipment.code, `<div id="mfP"><h3 style="margin:0">${esc(S.settings.appTitle || 'SSU Digital Enterprise')} — Manifest ${esc(m.shipment.code)}</h3>
+    <p>Estate: ${esc(m.estate.name)} · Kampanye: ${esc(m.campaign.code)} · Lab: ${esc(m.lab.name)}<br>Kurir: ${esc(m.shipment.courier || '-')} · Status: ${esc(m.shipment.status)} · Dibuat ${fmtDate(m.shipment.createdAt, 1)}</p>
+    <table class="tbl"><tr><th>#</th><th>QR</th><th>Kode sampel</th><th>Jenis</th><th>Kedalaman</th><th>Status</th></tr>${m.samples.map((s, i) => `<tr><td>${i + 1}</td><td style="width:60px">${qrSvg(s.code)}</td><td class="mono">${esc(s.code)}</td><td>${esc(s.kind)}</td><td>${esc(s.depth)}</td><td>${esc(s.status)}</td></tr>`).join('')}</table>
+    <div class="grid g3" style="margin-top:30px;text-align:center"><div>Diserahkan oleh<br><br><br>(________________)</div><div>Kurir<br><br><br>(________________)</div><div>Diterima laboratorium<br><br><br>(________________)</div></div></div>`,
+    [{ label: 'Tutup' }, { label: 'Cetak', cls: 'pri', onClick: () => { const w = window.open('', '_blank'); w.document.write('\x3c!doctype html>\x3cmeta charset="utf-8">\x3cstyle>body{font-family:Arial;font-size:12px;margin:10mm}table{width:100%;border-collapse:collapse}td,th{border:1px solid #999;padding:4px}svg{width:48px;height:48px}.grid{display:grid;grid-template-columns:1fr 1fr 1fr}\x3c/style>' + $('#mfP').innerHTML); w.document.close(); w.print(); return false; } }], { wide: true });
+}
+async function receive(sh, after) {
+  const m = await run('shipment.manifest', { id: sh.id });
+  const box = document.createElement('div');
+  box.innerHTML = `<p>Centang sampel yang <b>DITOLAK</b> dan isi alasannya. Sampel lain dianggap diterima baik.</p>${m.samples.map(s => `<div class="list-item"><label class="chk grow"><input type="checkbox" data-rej="${esc(s.id)}"> <span class="mono">${esc(s.code)}</span></label><input class="in" style="max-width:55%" data-why="${esc(s.id)}" placeholder="Alasan penolakan"></div>`).join('')}`;
+  await modal('Penerimaan laboratorium ' + sh.code, box, [{ label: 'Batal' }, { label: 'Konfirmasi penerimaan', cls: 'pri', onClick: async b => {
+    const rej = $$('[data-rej]:checked', b).map(c => ({ sampleId: c.dataset.rej, reason: $(`[data-why="${c.dataset.rej}"]`, b).value.trim() }));
+    if (rej.some(r => !r.reason)) { toast('Alasan penolakan wajib diisi.', 'bad'); return false; }
+    const r = await run('shipment.receive', { id: sh.id, rejections: rej }); toast(r.received + ' diterima, ' + r.rejected + ' ditolak.', 'ok'); after(); } }], { wide: true });
+}
+
+/* ------------------------------ Laboratorium ------------------------------ */
+Pages.lab = function () {
+  C().innerHTML = '<div class="card" id="lbc"></div>';
+  tabs($('#lbc'), [['imp', 'Impor hasil (CSV/XLSX)'], ['rev', 'Tinjau & validasi'], ['hist', 'Riwayat impor'], ['revs', 'Riwayat revisi']], async (t, body) => {
+    if (t === 'imp') return labImport(body);
+    if (t === 'hist') return dataTable(body, { table: 'LabImports', cols: [{ k: 'at', label: 'Waktu', fmt: v => fmtDate(v, 1) }, { k: 'fileName', label: 'File' }, { k: 'rows', label: 'Baris' }, { k: 'okRows', label: 'Diterima' }, { k: 'errorRows', label: 'Galat' }, { k: 'byName', label: 'Oleh' }, { k: 'sourceHas', label: 'Sumber', fmt: v => v ? 'tersimpan' : '-' }], searchable: false });
+    if (t === 'revs') return dataTable(body, { table: 'LabResultRevisions', cols: [{ k: 'at', label: 'Waktu', fmt: v => fmtDate(v, 1) }, { k: 'oldValue', label: 'Nilai lama' }, { k: 'newValue', label: 'Nilai baru' }, { k: 'reason', label: 'Alasan' }, { k: 'byName', label: 'Oleh' }], searchable: false });
+    const sel = new Set(), v = can('lab.validate');
+    const dt = dataTable(body, { table: 'LabResults', filter: Object.assign({ status: 'PENDING' }, estateFilter()), size: 50,
+      filters: `<select class="in" data-filter="status" style="width:auto">${['PENDING', 'REVIEW', 'VALIDATED', 'REJECTED'].map(s => `<option ${s === 'PENDING' ? 'selected' : ''}>${s}</option>`).join('')}</select>`,
+      tools: v ? '<button class="btn pri" data-ok>Validasi terpilih</button> <button class="btn danger" data-no>Tolak terpilih</button>' : '',
+      cols: [{ k: 'id', label: '', fmt: x => `<input type="checkbox" data-sel="${esc(x)}">` }, { k: 'sampleCode', label: 'Sampel', fmt: x => `<span class="mono">${esc(x)}</span>` }, { k: 'paramCode', label: 'Parameter' }, { k: 'depth', label: 'Kedalaman' }, { k: 'value', label: 'Nilai', fmt: (x, r) => num(x, 4) + ' ' + esc(r.unit) }, { k: 'method', label: 'Metode' }, { k: 'revision', label: 'Rev' }, { k: 'flag', label: 'Penanda', fmt: x => badge(x) }, { k: 'status', label: 'Status', fmt: x => badge(x) }],
+      actions: r => v && ['PENDING', 'REVIEW'].includes(r.status) ? actBtn('rv', 'Revisi') : '',
+      onAction: async (a, r) => { if (await formModal('Revisi ' + r.sampleCode + ' ' + r.paramCode, [{ name: 'value', label: 'Nilai baru (' + r.unit + ')', required: true }, { name: 'reason', label: 'Alasan revisi (wajib)', required: true }], {}, x => run('lab.revise', Object.assign(x, { id: r.id }), 'Revisi tercatat.'))) dt.reload(); } });
+    body.addEventListener('change', e => { const c = e.target.closest('[data-sel]'); if (c) c.checked ? sel.add(c.dataset.sel) : sel.delete(c.dataset.sel); });
+    const act = async dec => { if (!sel.size) return toast('Centang hasil.', 'bad'); const anyOor = dt.rows().some(r => sel.has(r.id) && r.flag === 'OUT_OF_RANGE');
+      const x = await formModal((dec === 'VALIDATED' ? 'Validasi ' : 'Tolak ') + sel.size + ' hasil', [{ name: 'note', label: 'Catatan peninjauan' + (anyOor ? ' (wajib: ada nilai di luar rentang)' : ''), required: anyOor || dec === 'REJECTED' }], {}, y => run('lab.review', { ids: [...sel], decision: dec, note: y.note }, 'Diperbarui.'));
+      if (x) { sel.clear(); dt.reload(); } };
+    if ($('[data-ok]', body)) { $('[data-ok]', body).onclick = () => act('VALIDATED'); $('[data-no]', body).onclick = () => act('REJECTED'); }
+  });
+};
+async function labImport(body) {
+  if (!can('lab.import')) { body.innerHTML = '<div class="state">Anda tidak memiliki hak impor hasil laboratorium.</div>'; return; }
+  const [labs, params] = await Promise.all([listAll('Laboratories'), listAll('LabParameters')]);
+  body.innerHTML = `<div class="grid g3"><label class="f"><span>Laboratorium *</span><select class="in" id="liLab">${labs.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('')}</select></label>
+    <label class="f"><span>File hasil (CSV/XLSX) *</span><input class="in" type="file" id="liF" accept=".csv,.xlsx,.xls,text/csv"></label><label class="f"><span>Lembar (XLSX)</span><select class="in" id="liSh"></select></label></div>
+    <div id="liMap"></div><div id="liRep"></div>
+    <p class="help">Integrasi aktif saat ini: impor berkas CSV/XLSX. Belum ada koneksi API langsung ke laboratorium. Nilai di luar rentang hanya ditandai untuk ditinjau.</p>`;
+  let wb = null, rows = [], headers = [], srcText = '', fileName = '';
+  const parseSheet = () => {
+    const ws = wb.Sheets[$('#liSh').value]; const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+    headers = (aoa[0] || []).map(h => String(h).trim()); rows = aoa.slice(1).filter(r => r.some(c => String(c).trim() !== '')).map(r => Object.fromEntries(headers.map((h, i) => [h, r[i]])));
+    if (!headers.length || headers.some((h, i) => !h || headers.indexOf(h) !== i)) { $('#liMap').innerHTML = '<div class="state err">Baris pertama harus berisi judul kolom unik dan tidak kosong.</div>'; return; }
+    srcText = XLSX.utils.sheet_to_csv(ws);
+    const guess = h => params.find(p => h.toLowerCase().replace(/[^a-z0-9]/g, '').includes(p.code.toLowerCase().replace(/[^a-z0-9]/g, '')));
+    $('#liMap').innerHTML = `<h4>Pemetaan kolom (${rows.length} baris data)</h4><div class="grid g3"><label class="f"><span>Kolom ID sampel *</span><select class="in" id="liId">${headers.map(h => `<option ${/kode|id|sample|sampel/i.test(h) ? 'selected' : ''}>${esc(h)}</option>`).join('')}</select></label>
+      <label class="f"><span>Kolom metode (opsional)</span><select class="in" id="liMet"><option value="">— tidak ada —</option>${headers.map(h => `<option ${/metode|method/i.test(h) ? 'selected' : ''}>${esc(h)}</option>`).join('')}</select></label></div>
+      <div class="tbl-wrap"><table class="tbl"><tr><th>Kolom file</th><th>Parameter sistem</th><th>Satuan di file</th></tr>${headers.map((h, i) => { const g = guess(h); return `<tr><td>${esc(h)}</td><td><select class="in" data-pm="${i}"><option value="">— abaikan —</option>${params.map(p => `<option value="${esc(p.code)}" ${g && g.code === p.code ? 'selected' : ''}>${esc(p.code)} — ${esc(p.name)} (${esc(p.unit)})</option>`).join('')}</select></td><td><input class="in" data-un="${i}" value="${esc(g ? g.unit : '')}" placeholder="satuan"></td></tr>`; }).join('')}</table></div>
+      <div class="bar" style="margin-top:10px"><label class="chk"><input type="checkbox" id="liRev"> Mode revisi (hasil yang sudah ada akan direvisi)</label><input class="in" id="liWhy" placeholder="Alasan revisi" style="max-width:280px"><label class="chk"><input type="checkbox" id="liPart"> Impor baris valid saja bila ada galat</label><span class="sp"></span><button class="btn" id="liDry">Uji (dry-run)</button><button class="btn pri" id="liGo">Impor</button></div>`;
+    $$('[data-pm]').forEach(s => s.onchange = () => { const p = params.find(x => x.code === s.value); if (p) $(`[data-un="${s.dataset.pm}"]`).value = p.unit; });
+    $('#liDry').onclick = () => go2(true); $('#liGo').onclick = () => go2(false);
+  };
+  async function go2(dry) {
+    const mapping = { sampleCode: $('#liId').value, method: $('#liMet').value || undefined, params: $$('[data-pm]').filter(s => s.value).map(s => ({ column: headers[Number(s.dataset.pm)], param: s.value, unit: $(`[data-un="${s.dataset.pm}"]`).value.trim() })) };
+    if (!mapping.params.length) return toast('Petakan minimal satu kolom parameter.', 'bad');
+    if (mapping.params.some(p => p.column === mapping.sampleCode)) return toast('Kolom ID sampel tidak boleh dipetakan sebagai parameter.', 'bad');
+    const r = await run('lab.import', { labId: $('#liLab').value, fileName, headers, rows, mapping, sourceText: dry ? '' : srcText, dryRun: dry, allowRevision: $('#liRev').checked, revisionReason: $('#liWhy').value, acceptPartial: $('#liPart').checked });
+    $('#liRep').innerHTML = `<div class="card" style="margin-top:12px"><h2>${dry ? 'Hasil uji (belum disimpan)' : r.blocked ? 'Impor diblokir' : 'Impor selesai'}</h2><p>${r.total} baris · ${r.newResults} hasil baru · ${r.revisions} revisi · ${r.errors.length} galat ${r.message ? '<br>' + esc(r.message) : ''}</p>
+      ${r.errors.length ? `<div class="tbl-wrap" style="max-height:320px"><table class="tbl"><tr><th>Baris</th><th>Sampel</th><th>Parameter</th><th>Galat</th></tr>${r.errors.map(e => `<tr><td>${e.line}</td><td class="mono">${esc(e.sample || '')}</td><td>${esc(e.param || '')}</td><td>${esc(e.error)}</td></tr>`).join('')}</table></div><button class="btn sm" id="liErr">Unduh laporan galat (CSV)</button>` : ''}</div>`;
+    const eb = $('#liErr'); if (eb) eb.onclick = () => download('galat_impor.csv', 'baris,sampel,parameter,galat\n' + r.errors.map(e => [e.line, e.sample || '', e.param || '', '"' + String(e.error).replace(/"/g, '""') + '"'].join(',')).join('\n'), 'text/csv');
+    if (!dry && !r.blocked) toast('Tersimpan. Hasil berstatus PENDING/REVIEW menunggu validasi reviewer.', 'ok');
+  }
+  $('#liF').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { await loadScript(XLSX_URL, 'XLSX'); } catch (er) { return toast('Pustaka pembaca XLSX gagal dimuat (perlu online pertama kali).', 'bad'); }
+    if (f.size > 8e6) return toast('File > 8 MB. Pecah menjadi beberapa file.', 'bad');
+    fileName = f.name; wb = XLSX.read(await f.arrayBuffer(), { type: 'array', cellDates: false });
+    $('#liSh').innerHTML = wb.SheetNames.map(n => `<option>${esc(n)}</option>`).join(''); $('#liSh').onchange = parseSheet; parseSheet();
+  };
+}
+
+/* ---------------------------------- QC ---------------------------------- */
+Pages.qc = async function () {
+  const camps = await listAll('Campaigns', estateFilter());
+  C().innerHTML = `<div class="card"><div class="bar"><select class="in" id="qcC" style="max-width:360px"><option value="">— pilih kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)}</option>`).join('')}</select>${can('qc.run') ? '<button class="btn pri" id="qcRun">Jalankan QC</button>' : ''}</div><div id="qcR"></div></div><div class="card"><h2>Riwayat pemeriksaan QC</h2><div id="qcH"></div></div>`;
+  const hist = dataTable($('#qcH'), { table: 'QCChecks', filter: estateFilter(), searchable: false, filters: `<select class="in" data-filter="result" style="width:auto"><option value="">Semua</option><option>FAIL</option><option>PASS</option></select>`, cols: [{ k: 'at', label: 'Waktu', fmt: v => fmtDate(v, 1) }, { k: 'ruleCode', label: 'Aturan' }, { k: 'result', label: 'Hasil', fmt: v => badge(v) }, { k: 'detail', label: 'Detail' }] });
+  if ($('#qcRun')) $('#qcRun').onclick = async () => { const c = $('#qcC').value; if (!c) return toast('Pilih kampanye.', 'bad'); const r = await run('qc.run', { campaignId: c });
+    $('#qcR').innerHTML = `<p>${r.total} pemeriksaan · ${badge(r.fail ? 'FAIL' : 'PASS', r.fail + ' gagal')}</p><div class="tbl-wrap"><table class="tbl"><tr><th>Aturan</th><th>Hasil</th><th>Detail</th></tr>${r.checks.map(x => `<tr><td>${esc(x.ruleCode)}</td><td>${badge(x.result)}</td><td>${esc(x.detail)}</td></tr>`).join('')}</table></div>`; hist.reload(); };
+};
+
+/* ------------------------------ Analisis GIS ------------------------------ */
+Pages.analytics = async function () {
+  if (!S.estateId) { C().innerHTML = '<div class="card state">Pilih estate pada header untuk analisis.</div>'; if (S.estates.length === 1) { S.estateId = S.estates[0].id; LS.set('estateId', S.estateId); return Pages.analytics(); } return; }
+  const [camps, params, prots] = await Promise.all([listAll('Campaigns', estateFilter()), listAll('LabParameters'), listAll('Protocols')]);
+  const depths = [...new Set(prots.flatMap(p => (p.depthsJ || []).map(d => d.code)))];
+  C().innerHTML = `<div class="card"><div class="grid g4"><label class="f"><span>Kampanye</span><select class="in" id="anC"><option value="">Semua</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)}</option>`).join('')}</select></label>
+    <label class="f"><span>Parameter</span><select class="in" id="anP">${params.map(p => `<option value="${esc(p.code)}">${esc(p.code)} — ${esc(p.name)}</option>`).join('')}</select></label>
+    <label class="f"><span>Kedalaman</span><select class="in" id="anD">${depths.map(d => `<option>${esc(d)}</option>`).join('')}</select></label>
+    <label class="f"><span>Kelompok</span><select class="in" id="anG"><option value="ssu">Per SSU</option><option value="block">Per blok</option><option value="division">Per afdeling</option><option value="estate">Per estate</option></select></label></div>
+    <div class="bar"><button class="btn pri" id="anRun">Hitung statistik</button><button class="btn" id="anMap">Peta parameter</button><label class="chk"><input type="checkbox" id="anIdw"> Coba interpolasi IDW (bila data memadai)</label><span class="sp"></span><select class="in" id="anB" style="width:auto"><option value="">Bandingkan dgn kampanye…</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)}</option>`).join('')}</select><button class="btn" id="anCmp">Bandingkan</button></div></div>
+    <div class="card" id="anOut"><div class="state">Atur filter lalu hitung. Hanya hasil berstatus VALIDATED yang dipakai.</div></div><div class="card"><div class="map" id="anM"></div></div>`;
+  const f = () => ({ estateId: S.estateId, campaignId: $('#anC').value, paramCode: $('#anP').value, depth: $('#anD').value, groupBy: $('#anG').value });
+  const meta = m => `<p class="help">Sumber: ${esc(m.source || 'LabResults (VALIDATED)')} · parameter ${esc(m.paramCode)} · kedalaman ${esc(m.depth)} · kampanye ${esc(m.campaign || m.campaignId)} · periode ${esc(m.period || '-')} · n = ${esc(m.n)} · dibuat ${fmtDate(m.generatedAt, 1)} ${m.note ? '· ' + esc(m.note) : ''}</p>`;
+  $('#anRun').onclick = async () => { const r = await run('analytics.stats', f());
+    const max = Math.max(...r.rows.map(x => x.max || 0), 1);
+    $('#anOut').innerHTML = `<h2>Statistik deskriptif<span class="sp"></span><button class="btn sm" id="anCsv">${ic('dl')} CSV</button></h2>${r.warning ? `<p>${badge('REVIEW', r.warning)}</p>` : ''}${meta(r.meta)}
+      ${r.rows.length ? `<div class="tbl-wrap"><table class="tbl"><tr><th>Kelompok</th><th>n</th><th>Rata-rata</th><th>Median</th><th>SD</th><th>CV%</th><th>Min</th><th>Maks</th><th>Satuan</th><th>Metode</th><th style="min-width:140px"></th></tr>${r.rows.map(x => `<tr><td>${esc(x.label)}</td><td>${x.n}</td><td>${num(x.mean, 3)}</td><td>${num(x.median, 3)}</td><td>${num(x.sd, 3)}</td><td>${num(x.cv, 1)}</td><td>${num(x.min, 3)}</td><td>${num(x.max, 3)}</td><td>${esc(x.unit)}</td><td>${esc(x.method || '-')}</td><td><div class="progress"><i style="width:${Math.max(2, x.mean / max * 100)}%"></i></div></td></tr>`).join('')}</table></div>` : '<div class="state">Tidak ada hasil VALIDATED untuk filter ini.</div>'}`;
+    const cb = $('#anCsv'); if (cb) cb.onclick = () => download('statistik_' + r.meta.paramCode + '.csv', 'kelompok,n,mean,median,sd,cv,min,max,unit,method\n' + r.rows.map(x => [x.label, x.n, x.mean, x.median, x.sd, x.cv, x.min, x.max, x.unit, x.method].join(',')).join('\n') + '\n#meta,' + JSON.stringify(r.meta).replace(/,/g, ';'), 'text/csv'); };
+  $('#anCmp').onclick = async () => { const a = $('#anC').value, b = $('#anB').value; if (!a || !b || a === b) return toast('Pilih dua kampanye berbeda.', 'bad');
+    const r = await run('analytics.compare', Object.assign(f(), { campaignA: a, campaignB: b }));
+    $('#anOut').innerHTML = `<h2>Perbandingan antarperiode</h2><p class="help">${esc(r.meta.note)}</p><div class="tbl-wrap"><table class="tbl"><tr><th>SSU</th><th>Rata-rata A (n)</th><th>Rata-rata B (n)</th><th>Selisih B−A</th><th>Satuan / metode</th></tr>${r.rows.map(x => `<tr><td>${esc(x.ssu)}</td><td>${num(x.meanA, 3)} (${x.nA})</td><td>${x.comparable ? num(x.meanB, 3) + ' (' + x.nB + ')' : '<span class="muted">tidak sebanding</span>'}</td><td>${x.comparable ? num(x.delta, 3) : '-'}</td><td>${esc(x.unit)} / ${esc(x.method || '-')}</td></tr>`).join('')}</table></div>`; };
+  let m = makeMap($('#anM')), lay = [];
+  $('#anMap').onclick = async () => { if (!m) return; lay.forEach(l => m.removeLayer(l)); lay = [];
+    const r = await run('analytics.map', Object.assign(f(), { interpolate: $('#anIdw').checked }));
+    const vals = r.ssu.features.map(x => x.properties.mean).filter(v => v !== null).concat(r.idw ? r.idw.cells.map(c => c.value) : []);
+    const lo = Math.min(...vals), hi = Math.max(...vals), pal = ['#fef3c7', '#fcd34d', '#f59e0b', '#c2410c', '#7c2d12'];
+    const col = v => v === null || !isFinite(lo) ? '#e5e7eb' : pal[Math.min(4, Math.floor((v - lo) / ((hi - lo) || 1) * 5))];
+    if (r.idw) lay.push(L.layerGroup(r.idw.cells.map(c => L.rectangle([[c.lat - c.dLat / 2, c.lng - c.dLng / 2], [c.lat + c.dLat / 2, c.lng + c.dLng / 2]], { stroke: false, fillColor: col(c.value), fillOpacity: .55 }).bindTooltip('PREDIKSI ' + num(c.value, 3)))).addTo(m));
+    const g = L.geoJSON(r.ssu, { style: x => ({ color: '#111', weight: 1.5, fillColor: col(x.properties.mean), fillOpacity: r.idw ? 0 : .7, dashArray: r.idw ? '4 3' : null }) }).bindPopup(l => `<b>${esc(l.feature.properties.code)}</b><br>TERUKUR rata-rata: ${num(l.feature.properties.mean, 3)} (n=${l.feature.properties.n})`).addTo(m); lay.push(g);
+    lay.push(L.layerGroup(r.points.map(p => L.circleMarker([p.lat, p.lng], { radius: 5, color: '#111', weight: 1, fillColor: col(p.value), fillOpacity: 1 }).bindTooltip('TERUKUR ' + esc(p.code) + ': ' + num(p.value, 3)))).addTo(m));
+    if (r.ssu.features.length) m.fitBounds(g.getBounds());
+    lay.push(legend(m, pal.map((c, i) => [c, (isFinite(lo) ? num(lo + (hi - lo) * i / 5, 2) + ' – ' + num(lo + (hi - lo) * (i + 1) / 5, 2) : '-')]).concat([['#e5e7eb', 'Tidak ada data'], ['transparent', 'Poligon/titik = TERUKUR', 'border:2px solid #111'], ['transparent', r.idw ? 'Sel arsir = PREDIKSI (IDW)' : 'Tanpa prediksi', 'border:2px dashed #c2410c']])));
+    $('#anOut').innerHTML = `<h2>Peta parameter tanah</h2>${meta(Object.assign({}, r.meta, { campaign: r.meta.campaignId }))}<p>${r.idw ? badge('REVIEW', 'PREDIKSI') + ' ' + esc(r.idw.method) + ' dari ' + r.idw.n + ' titik — bukan pengukuran.' : esc(r.idwReason || '')}</p>${r.warning ? `<p>${badge('REVIEW', r.warning)}</p>` : ''}`; };
+};
+
+/* ------------------------------ Rekomendasi ------------------------------ */
+Pages.recs = function () {
+  C().innerHTML = '<div class="card" id="rcc"></div>';
+  tabs($('#rcc'), [['rec', 'Rekomendasi'], ['rule', 'Aturan / pedoman agronomi']], async (t, body) => {
+    if (t === 'rule') {
+      const w = can('rules.write'), ap = can('rules.approve'), params = await listAll('LabParameters');
+      const dt = dataTable(body, { table: 'AgronomyRules', cols: [{ k: 'paramCode', label: 'Parameter' }, { k: 'depth', label: 'Kedalaman' }, { k: 'operator', label: 'Kondisi', fmt: (v, r) => esc(v + ' ' + r.threshold) }, { k: 'action', label: 'Tindakan' }, { k: 'doseText', label: 'Dosis/arahan' }, { k: 'sourceRef', label: 'Sumber pedoman' }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+        tools: w ? `<button class="btn pri" data-new>${ic('plus')} Aturan baru</button>` : '',
+        actions: r => (ap && r.status === 'DRAFT' ? actBtn('APPROVED', 'Setujui', 'pri') : '') + (ap && r.status === 'APPROVED' ? actBtn('RETIRED', 'Nonaktifkan', 'danger') : ''),
+        onAction: async (a, r) => { if (await confirmBox((a === 'APPROVED' ? 'Setujui' : 'Nonaktifkan') + ' aturan ' + r.paramCode + ' ' + r.operator + ' ' + r.threshold + '?')) { await run('rule.status', { id: r.id, status: a }, 'Diperbarui.'); dt.reload(); } } });
+      const n = $('[data-new]', body); if (n) n.onclick = async () => { if (await formModal('Aturan agronomi baru', [{ name: 'paramCode', label: 'Parameter', type: 'select', required: true, options: params.map(p => ({ value: p.code, label: p.code + ' (' + p.unit + ')' })) }, { name: 'depth', label: 'Kode kedalaman', required: true }, { name: 'operator', label: 'Operator', type: 'select', required: true, options: ['<', '<=', '>', '>='] }, { name: 'threshold', label: 'Ambang', type: 'number', step: 'any', required: true }, { name: 'action', label: 'Tindakan yang dianjurkan', required: true }, { name: 'doseText', label: 'Dosis/arahan (sesuai pedoman)', type: 'textarea' }, { name: 'sourceRef', label: 'Sumber pedoman (dokumen, edisi, halaman) *', required: true, help: 'Wajib. Aturan tanpa sumber tidak dapat dipakai.' }], {}, v => run('rule.save', v, 'Aturan disimpan sebagai DRAFT (perlu persetujuan orang lain).'))) dt.reload(); };
+      return;
+    }
+    const camps = await listAll('Campaigns', estateFilter());
+    const nx = { DRAFT: [['REVIEW', 'Ajukan review', 'rec.write']], REVIEW: [['APPROVED', 'Setujui', 'rec.review'], ['DRAFT', 'Kembalikan', 'rec.review']], APPROVED: [['PUBLISHED', 'Terbitkan', 'rec.publish'], ['DRAFT', 'Kembalikan', 'rec.review']], PUBLISHED: [] };
+    const dt = dataTable(body, { table: 'Recommendations', filter: estateFilter(), cols: [{ k: 'code', label: 'Kode' }, { k: 'title', label: 'Judul' }, { k: 'campaignCode', label: 'Kampanye' }, { k: 'itemsJ', label: 'Item', fmt: v => (v || []).length }, { k: 'status', label: 'Status', fmt: v => badge(v) }],
+      tools: can('rec.write') ? `<select class="in" id="rgC" style="width:auto"><option value="">— kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)}</option>`).join('')}</select><button class="btn pri" data-gen>Susun dari aturan</button>` : '',
+      actions: r => actBtn('view', 'Lihat') + ' ' + (nx[r.status] || []).filter(x => can(x[2])).map(x => actBtn(x[0], x[1], x[0] === 'PUBLISHED' ? 'pri' : '')).join(' '),
+      onAction: async (a, r) => {
+        if (a === 'view') { const h = await listAll('RecommendationApprovals', { recId: r.id });
+          return modal(r.code + ' — ' + r.title, `<p>${badge(r.status)} ${esc((r.basisJ || {}).disclaimer || '')}</p><div class="tbl-wrap"><table class="tbl"><tr><th>SSU</th><th>Parameter</th><th>Rata-rata (n)</th><th>Aturan</th><th>Tindakan</th><th>Dosis/arahan</th><th>Sumber</th></tr>${(r.itemsJ || []).map(i => `<tr><td>${esc(i.ssu)}</td><td>${esc(i.param)} ${esc(i.depth)}</td><td>${num(i.mean, 3)} (${i.n})</td><td>${esc(i.rule)}</td><td>${esc(i.action)}</td><td>${esc(i.doseText)}</td><td>${esc(i.sourceRef)}</td></tr>`).join('') || '<tr><td colspan="7" class="state">Tidak ada SSU yang memenuhi kondisi aturan.</td></tr>'}</table></div><h4>Riwayat persetujuan</h4>${h.map(x => `<div>${fmtDate(x.at, 1)} · ${esc(x.byName)} · ${esc(x.fromStatus)} → ${esc(x.toStatus)} ${esc(x.note)}</div>`).join('') || '<span class="muted">-</span>'}`, null, { wide: true }); }
+        const v = await formModal('Ubah status → ' + a, [{ name: 'note', label: 'Catatan' + (a === 'DRAFT' ? ' (wajib)' : ''), required: a === 'DRAFT' }], {}, x => run('rec.transition', { id: r.id, to: a, note: x.note }, 'Status diperbarui.'));
+        if (v) dt.reload();
+      } });
+    const g = $('[data-gen]', body); if (g) g.onclick = async () => { const c = $('#rgC', body).value; if (!c) return toast('Pilih kampanye.', 'bad'); const r = await run('rec.generate', { campaignId: c }); toast('Draft ' + r.code + ' dibuat dengan ' + r.itemsJ.length + ' item.', 'ok'); dt.reload(); };
+  });
+};
+
+/* -------------------------------- Laporan -------------------------------- */
+Pages.reports = async function () {
+  const camps = await listAll('Campaigns', estateFilter());
+  C().innerHTML = `<div class="card"><div class="bar"><select class="in" id="rpC" style="max-width:360px"><option value="">— pilih kampanye —</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)} ${esc(c.name)}</option>`).join('')}</select><button class="btn pri" id="rpGo">Buat laporan</button><button class="btn" id="rpCsv">${ic('dl')} Ekspor hasil lab (CSV)</button><button class="btn" id="rpGj">${ic('dl')} Ekspor SSU (GeoJSON)</button><button class="btn" id="rpPr">Cetak / PDF</button></div></div><div id="rpOut"></div>`;
+  $('#rpGo').onclick = async () => { const id = $('#rpC').value; if (!id) return toast('Pilih kampanye.', 'bad'); const r = await run('report.campaign', { campaignId: id });
+    $('#rpOut').innerHTML = `<div class="card"><div class="print-only"><img src="${esc(S.settings.logo || DEFAULT_LOGO)}" style="height:48px"> <b>${esc(S.settings.appTitle || '')}</b></div><h2>Laporan kampanye ${esc(r.campaign.code)} — ${esc(r.campaign.name)}</h2>
+      <p>Estate ${esc(r.estate.name)} · Protokol ${esc(r.protocol.code)} v${esc(r.protocol.version)} · Periode ${esc(r.campaign.startDate || '-')} s/d ${esc(r.campaign.endDate || '-')} · Status ${badge(r.campaign.status)}</p>
+      <div class="grid g4"><div class="kpi"><div class="v">${r.points.observed}/${r.points.total}</div><div class="l">Titik teramati</div></div><div class="kpi"><div class="v">${Object.values(r.samples).reduce((a, b) => a + b, 0)}</div><div class="l">Sampel</div></div><div class="kpi"><div class="v">${r.results.validated}/${r.results.total}</div><div class="l">Hasil tervalidasi</div></div><div class="kpi"><div class="v">${r.recs.length}</div><div class="l">Rekomendasi</div></div></div>
+      <h3>Ringkasan parameter (VALIDATED)</h3><table class="tbl"><tr><th>Parameter</th><th>n</th><th>Rata-rata</th><th>Median</th><th>SD</th><th>Min</th><th>Maks</th></tr>${r.summary.map(s => `<tr><td>${esc(s.param)}</td><td>${s.n}</td><td>${num(s.mean, 3)}</td><td>${num(s.median, 3)}</td><td>${num(s.sd, 3)}</td><td>${num(s.min, 3)}</td><td>${num(s.max, 3)}</td></tr>`).join('')}</table>
+      <h3>Status sampel</h3><p>${Object.keys(r.samples).map(k => badge(k, k + ' · ' + r.samples[k])).join(' ')}</p><h3>Rekomendasi</h3><p>${r.recs.map(x => esc(x.code) + ' ' + badge(x.status) + ' (' + x.items + ' item)').join('<br>') || '-'}</p>
+      <p class="help">Dibuat ${fmtDate(r.generatedAt, 1)} oleh ${esc(r.generatedBy)}. Statistik deskriptif bukan bukti sebab-akibat.</p></div>`; };
+  $('#rpCsv').onclick = async () => { const r = await run('report.resultsCsv', { campaignId: $('#rpC').value }); download(r.fileName, '﻿' + r.csv, 'text/csv'); };
+  $('#rpGj').onclick = async () => { if (!S.estateId) return toast('Pilih estate di header.', 'bad'); download('ssu.geojson', JSON.stringify(await run('ssu.export', { estateId: S.estateId })), 'application/geo+json'); };
+  $('#rpPr').onclick = () => print();
+};
+
+/* --------------------------- Pengguna & Hak Akses --------------------------- */
+Pages.users = async function () {
+  const users = await run('user.list', {}), roles = S.meta.roles, lbl = S.meta.roleLabel;
+  C().innerHTML = `<div class="card" id="usc"><div class="tabs"><button class="on" data-t="u">Pengguna</button><button data-t="m">Matriks RBAC</button></div><div id="usB"></div></div>`;
+  const listView = () => { $('#usB').innerHTML = `<div class="bar"><input class="in" id="usQ" placeholder="Cari nama/email…" style="max-width:280px"><span class="sp"></span><button class="btn pri" id="usNew">${ic('plus')} Pengguna baru</button></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Cakupan estate</th><th>Status</th><th>Login terakhir</th><th></th></tr></thead><tbody id="usT"></tbody></table></div>`;
+    const draw = q => { const r = users.filter(u => !q || (u.name + u.email).toLowerCase().includes(q.toLowerCase()));
+      $('#usT').innerHTML = r.length ? r.map(u => `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${u.roles.map(x => `<span class="badge">${esc(lbl[x] || x)}</span>`).join(' ')}</td><td>${u.estates.includes('*') ? 'Semua' : esc(u.estates.map(e => (S.estates.find(x => x.id === e) || {}).code || e.slice(0, 6)).join(', '))}</td><td>${badge(u.active ? 'APPROVED' : 'RETIRED', u.active ? 'Aktif' : 'Nonaktif')}</td><td>${fmtDate(u.lastLogin, 1)}</td><td class="nowrap"><button class="btn sm" data-ed="${esc(u.id)}">Ubah</button> <button class="btn sm" data-rs="${esc(u.id)}">Reset password</button></td></tr>`).join('') : '<tr><td colspan="7"><div class="state">Tidak ada pengguna.</div></td></tr>'; };
+    draw(''); $('#usQ').oninput = e => draw(e.target.value);
+    $('#usNew').onclick = () => userForm(null); $('#usT').onclick = async e => { const ed = e.target.closest('[data-ed]'), rs = e.target.closest('[data-rs]');
+      if (ed) userForm(users.find(u => u.id === ed.dataset.ed));
+      if (rs && await confirmBox('Buat password sementara baru untuk pengguna ini?')) { const r = await run('user.resetPassword', { id: rs.dataset.rs }); modal('Password sementara', `<p>Berikan secara langsung kepada pengguna. Ditampilkan <b>sekali</b> dan tidak tercatat di log.</p><p class="mono" style="font-size:18px">${esc(r.tempPassword)}</p>`); } }; };
+  async function userForm(u) {
+    const f = [{ name: 'name', label: 'Nama', required: true }, { name: 'email', label: 'Email', type: 'email', required: true }, { name: 'roles', label: 'Role', type: 'checks', required: true, options: roles.map(r => ({ value: r, label: lbl[r] })) },
+      { name: 'estates', label: 'Cakupan estate', type: 'checks', options: [{ value: '*', label: 'Semua estate (korporat)' }].concat(S.estates.map(e => ({ value: e.id, label: e.code + ' — ' + e.name }))) }, { name: 'active', label: 'Status', type: 'select', required: true, options: [{ value: '1', label: 'Aktif' }, { value: '0', label: 'Nonaktif' }] }];
+    const r = await formModal(u ? 'Ubah pengguna' : 'Pengguna baru', f, u ? Object.assign({}, u, { active: u.active ? '1' : '0' }) : { active: '1' }, v => run('user.save', Object.assign(v, { id: u && u.id, active: v.active === '1' }), 'Pengguna disimpan.'));
+    if (r) { if (r.tempPassword) await modal('Password sementara', `<p>Akun dibuat. Berikan password sementara ini kepada <b>${esc(r.email)}</b> (ditampilkan sekali, wajib diganti saat login pertama):</p><p class="mono" style="font-size:18px">${esc(r.tempPassword)}</p>`); Pages.users(); }
+  }
+  const matrix = () => { const perms = [...new Set(Object.values(S.meta.rolePerms).flat())].filter(p => p !== '*').sort();
+    $('#usB').innerHTML = `<p class="help">Otorisasi diperiksa di server untuk setiap permintaan; menu yang tersembunyi bukan satu-satunya pengaman. Scope estate membatasi data per pengguna.</p><div class="tbl-wrap"><table class="tbl"><tr><th>Permission</th>${roles.map(r => `<th style="writing-mode:vertical-rl;transform:rotate(180deg)">${esc(lbl[r])}</th>`).join('')}</tr>${perms.map(p => `<tr><td class="mono">${esc(p)}</td>${roles.map(r => { const ps = S.meta.rolePerms[r]; return `<td style="text-align:center">${ps.includes('*') || ps.includes(p) ? '✔' : ''}</td>`; }).join('')}</tr>`).join('')}</table></div>`; };
+  $('#usc .tabs').onclick = e => { const b = e.target.closest('[data-t]'); if (!b) return; $$('#usc .tabs button').forEach(x => x.classList.toggle('on', x === b)); b.dataset.t === 'u' ? listView() : matrix(); };
+  listView();
+};
+
+/* ------------------------------- Audit Log ------------------------------- */
+Pages.audit = function () {
+  C().innerHTML = '<div class="card" id="auc"></div>';
+  dataTable($('#auc'), { table: 'AuditLogs', size: 50, filters: `<select class="in" data-filter="entity" style="width:auto"><option value="">Semua entitas</option>${['Users', 'SoilUnits', 'Protocols', 'Campaigns', 'SamplingPoints', 'Observations', 'Samples', 'Shipments', 'LabImports', 'LabResults', 'Recommendations', 'AgronomyRules', 'Settings'].map(e => `<option>${e}</option>`).join('')}</select>`,
+    cols: [{ k: 'at', label: 'Waktu', fmt: v => `<span class="nowrap">${fmtDate(v, 1)}</span>` }, { k: 'userName', label: 'Pengguna' }, { k: 'action', label: 'Aksi', fmt: v => `<span class="mono">${esc(v)}</span>` }, { k: 'entity', label: 'Entitas' }, { k: 'requestId', label: 'Request ID', fmt: v => `<span class="mono">${esc(v)}</span>` }, { k: 'detailJ', label: 'Detail', fmt: v => `<span class="mono" style="font-size:11px">${esc(JSON.stringify(v || {}).slice(0, 140))}</span>` }] });
+};
+
+/* ------------------------------- Pengaturan ------------------------------- */
+Pages.settings = async function () {
+  const lic = can('read') ? await api('license.status', {}).catch(() => S.me.license || {}) : (S.me.license || {});
+  let est = null; try { est = navigator.storage && navigator.storage.estimate ? await navigator.storage.estimate() : null; } catch (e) {}
+  C().innerHTML = `<div class="grid g2"><div class="card"><h2>Profil</h2><div class="bar"><img class="avatar" id="stAv" src="${esc($('#myAvatar').src)}" style="width:84px;height:84px" title="Klik untuk memperbesar"><div><b>${esc(S.me.name)}</b><br><span class="muted">${esc(S.me.email)}</span><br><button class="btn sm" id="stUp">Ganti foto</button> <button class="btn sm danger" id="stDel">Hapus foto</button></div></div>
+      <div class="bar"><button class="btn" id="stName">Ubah nama</button><button class="btn" id="stPw">Ganti password</button></div></div>
+    <div class="card"><h2>Lisensi</h2><p>${badge(lic.licensed ? 'APPROVED' : 'REJECTED', lic.label || '-')} ${lic.licensed ? '' : esc(lic.reason || '')}</p><p class="muted">Organisasi: ${esc(lic.org || '-')} · Berlaku s/d ${esc(lic.exp || '-')} · Batas ${lic.limits ? lic.limits.estates + ' estate / ' + lic.limits.users + ' pengguna' : '-'}</p>${can('settings.write') ? '<button class="btn pri" id="stLic">Aktifkan kunci lisensi</button>' : ''}</div>
+    ${can('settings.write') ? `<div class="card"><h2>Branding</h2><div class="bar"><img class="logo" data-brand-logo style="width:56px;height:56px;border:1px solid var(--line)" title="Klik untuk memperbesar"><div><b data-brand-title></b><br><span class="muted" data-brand-sub></span></div></div><button class="btn" id="stBr">${ic('edit')} Edit judul, logo & warna</button></div>
+    <div class="card"><h2>Ambang operasional</h2><p class="help">Diatur oleh perusahaan; bukan standar universal.</p><form id="stOp" onsubmit="return false">${formHtml(OPS)}</form><button class="btn pri" id="stOpS">Simpan ambang</button></div>` : ''}
+    ${can('backup') ? `<div class="card"><h2>Backup & pemulihan</h2><p class="help">Backup otomatis harian (30 terakhir) di Google Drive. Uji pemulihan membandingkan isi salinan dengan data aktif.</p><button class="btn pri" id="stBk">Backup sekarang</button> <button class="btn" id="stVf">Uji pemulihan…</button><div id="stBkR"></div></div>` : ''}
+    <div class="card"><h2>Perangkat & koneksi</h2><p>Mode: <b>${IS_GAS ? 'Apps Script (online)' : 'PWA'}</b>${IS_GAS ? '' : ` · Server: <span class="mono" style="word-break:break-all">${esc(apiUrl() || '-')}</span>`}</p>
+      <p class="muted">Penyimpanan lokal: ${est ? num(est.usage / 1048576, 1) + ' MB dari ' + num(est.quota / 1048576, 0) + ' MB' : '-'}</p><div class="bar">${IS_GAS ? '' : '<button class="btn" id="stApi">Ubah URL server</button>'}<button class="btn danger" id="stWipe">Hapus data lokal perangkat</button></div></div>
+    <div class="card"><h2>Versi & dokumen hukum</h2><p>Aplikasi <b class="mono">v${VERSION}</b> (build ${BUILD_DATE}) · dokumen hukum versi ${LEGAL_VERSION}${S.me.consent ? ' · disetujui ' + fmtDate(S.me.consent.at, 1) : ''}</p>
+      <div class="bar"><button class="btn" data-lg="about">Tentang & riwayat versi</button><button class="btn" data-lg="terms">Syarat & Ketentuan</button><button class="btn" data-lg="privacy">Pemberitahuan Privasi</button></div>
+      ${can('settings.write') ? `<h4>Identitas pada dokumen hukum</h4><form id="stLg" onsubmit="return false">${formHtml(LEGAL_FIELDS, S.settings)}</form><button class="btn pri" id="stLgS">Simpan identitas</button>` : ''}</div>
+    <div class="card"><h2>Tentang & lisensi pihak ketiga</h2><p>${esc(S.settings.appTitle || 'SSU Digital Enterprise')} v${VERSION}</p><ul class="muted" style="font-size:12.5px"><li>Leaflet 1.9.4 — BSD-2-Clause</li><li>SheetJS Community Edition 0.20.3 — Apache-2.0</li><li>qrcode-generator 1.4.4 — MIT</li><li>Font Inter — SIL OFL 1.1</li><li>Data peta © OpenStreetMap contributors (ODbL); citra © Esri & penyedia</li></ul></div></div>`;
+  applyBranding(); $$('img[data-brand-logo]').forEach(i => i.onclick = () => zoomImage(i.src, 'Logo'));
+  $('#stAv').onclick = () => zoomImage($('#stAv').src, 'Foto profil');
+  $('#stUp').onclick = async () => { const f = await pickFile('image/jpeg,image/png,image/webp'); if (!f) return; try { const d = await imageToDataUrl(f, 600, 300000); await run('profile.update', { photo: d }, 'Foto profil diperbarui.'); $('#myAvatar').src = d; $('#stAv').src = d; } catch (e) { toast(e.message, 'bad'); } };
+  $('#stDel').onclick = async () => { await run('profile.update', { photo: '' }, 'Foto dihapus.'); $('#myAvatar').src = DEFAULT_AVATAR; $('#stAv').src = DEFAULT_AVATAR; };
+  $('#stName').onclick = () => formModal('Ubah nama', [{ name: 'name', label: 'Nama', required: true, value: S.me.name }], {}, async v => { await run('profile.update', v, 'Nama diperbarui.'); S.me.name = v.name; });
+  $('#stPw').onclick = () => formModal('Ganti password', [{ name: 'oldPassword', label: 'Password lama', type: 'password', required: true }, { name: 'newPassword', label: 'Password baru (min 10, huruf+angka)', type: 'password', required: true }, { name: 'again', label: 'Ulangi', type: 'password', required: true }], {}, v => { if (v.newPassword !== v.again) throw new Error('Password baru tidak sama.'); return run('auth.changePassword', v, 'Password diganti.'); });
+  if ($('#stLic')) $('#stLic').onclick = () => formModal('Aktivasi lisensi', [{ name: 'key', label: 'Kunci lisensi dari penyedia', type: 'textarea', rows: 5, required: true }], {}, v => run('license.activate', { key: v.key.replace(/\s/g, '') }, 'Lisensi aktif.').then(() => Pages.settings()));
+  if ($('#stBr')) $('#stBr').onclick = () => editBranding().then(() => Pages.settings());
+  if ($('#stOpS')) { const cur = await api('settings.admin', {}).catch(() => ({})); OPS.forEach(o => { const el = $(`[name="${o.name}"]`); if (el && cur[o.name] !== undefined && cur[o.name] !== '') el.value = cur[o.name]; });
+    $('#stOpS').onclick = async () => { const v = formRead($('#stOp'), OPS); if (!v) return; Object.keys(v).forEach(k => { if (v[k] === '') delete v[k]; }); await run('settings.save', v, 'Ambang disimpan.'); }; }
+  if ($('#stBk')) { $('#stBk').onclick = async () => { const r = await run('backup.now', {}, 'Backup dibuat.'); $('#stBkR').innerHTML = `<p>${esc(r.name)} · <a href="${esc(r.url)}" target="_blank" rel="noopener">buka</a> · ID <span class="mono">${esc(r.fileId)}</span></p>`; };
+    $('#stVf').onclick = () => formModal('Uji pemulihan backup', [{ name: 'fileId', label: 'ID file backup', required: true }], {}, async v => { const r = await run('backup.verify', v); modal('Hasil uji pemulihan', `<p>${badge(r.ok ? 'PASS' : 'FAIL', r.ok ? 'Struktur valid' : 'Ada masalah')}</p><table class="tbl"><tr><th>Tabel</th><th>Baris backup</th><th>Baris aktif</th><th>Header</th></tr>${r.tables.map(t => `<tr><td>${esc(t.table)}</td><td>${t.backupRows}</td><td>${t.liveRows}</td><td>${t.headerOk ? '✔' : '✖'}</td></tr>`).join('')}</table>`, null, { wide: true }); }); }
+  if ($('#stApi')) $('#stApi').onclick = configApi;
+  $$('[data-lg]').forEach(b => b.onclick = () => showLegal(b.dataset.lg));
+  if ($('#stLgS')) $('#stLgS').onclick = async () => { const v = formRead($('#stLg'), LEGAL_FIELDS); if (!v) return; S.settings = Object.assign(S.settings, await run('settings.save', v, 'Identitas dokumen hukum disimpan.')); LS.set('settings', S.settings); };
+  $('#stWipe').onclick = async () => { const n = (await IDB.qAll()).filter(o => o.status !== 'DONE').length; if (await confirmBox('Hapus paket tugas & antrean lokal' + (n ? ' (' + n + ' BELUM TERSINKRON akan hilang)' : '') + '?')) { await IDB.wipe(); Sync.badge(); toast('Data lokal dihapus.', 'ok'); } };
+};
+const LEGAL_FIELDS = [{ name: 'orgName', label: 'Nama organisasi (Pengendali Data)', help: 'mis. PT Contoh Sawit Lestari' }, { name: 'providerName', label: 'Nama penyedia aplikasi' }, { name: 'privacyContact', label: 'Email kontak privasi / Pejabat PDP', type: 'email' }];
+const OPS = [{ name: 'fieldMaxDeviationM', label: 'Batas deviasi titik aktual vs rencana (m)', type: 'number', min: 0 }, { name: 'fieldMaxAccuracyM', label: 'Batas akurasi GPS (m)', type: 'number', min: 0 }, { name: 'idwMinPoints', label: 'Minimum titik untuk interpolasi IDW', type: 'number', min: 3 }, { name: 'transitMaxDays', label: 'Maks hari sampel dalam perjalanan (0 = nonaktif)', type: 'number', min: 0 }];
+
+/* ------------------------------ Start ------------------------------ */
+window.addEventListener('hashchange', () => { const p = location.hash.slice(1); if (S.me && p && p !== S.page && Pages[p]) go(p); });
+if ('serviceWorker' in navigator && !IS_GAS && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+boot();
+</script></body></html>
