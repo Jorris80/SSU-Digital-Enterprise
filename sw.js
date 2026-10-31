@@ -1,8 +1,8 @@
-/* SSU Digital Enterprise — service worker v1.2.0
+/* SSU Digital Enterprise — service worker v1.2.1
  * - App shell & pustaka CDN: cache-first (aplikasi terbuka tanpa internet)
  * - Ubin peta: stale-while-revalidate, hanya ubin yang pernah dilihat (maks 1500) — tidak ada prefetch massal
  * - Panggilan API Apps Script (POST) TIDAK pernah di-cache; data lapangan disimpan di IndexedDB oleh aplikasi */
-const V = 'ssu-1.2.0', SHELL = V + '-shell', TILES = 'ssu-tiles', MAX_TILES = 1500;
+const V = 'ssu-1.2.1', SHELL = V + '-shell', TILES = 'ssu-tiles', MAX_TILES = 1500;
 const ASSETS = ['./', './index.html', './offline.html', './manifest.json', './icon.svg',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css', 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
   'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js', 'https://unpkg.com/pmtiles@3.2.1/dist/pmtiles.js'];

@@ -169,7 +169,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 .doc-meta{padding:6px 8px;font-size:12px;display:flex;flex-direction:column;gap:1px}.doc-meta b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.doc-meta span{color:var(--muted)}
 .doc-view{text-align:center;background:#111;border-radius:10px;min-height:200px;display:flex;align-items:center;justify-content:center}.doc-view img{max-width:100%;max-height:62vh;cursor:zoom-in}
 </style></head><body><div id="bootSplash"><svg width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0f5132"/><path d="M32 12c-9 8-14 16-14 24a14 14 0 0 0 28 0c0-8-5-16-14-24z" fill="#7fc79b"/><path d="M14 44h36v8H14z" fill="#b8860b"/></svg>
-<div class="spin"></div><div id="bootMsg">Memuat SSU Digital Enterprise... v1.2.0</div><div id="bootDiag"></div>
+<div class="spin"></div><div id="bootMsg">Memuat SSU Digital Enterprise... v1.2.1</div><div id="bootDiag"></div>
 <noscript><div class="diag">JavaScript dinonaktifkan. Aktifkan JavaScript untuk memakai aplikasi.</div></noscript></div>
 <script>/* watchdog boot: berjalan walau skrip utama gagal dimuat/di-parse */
 (function () {
@@ -183,7 +183,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
            : '<li>Pastikan URL server (/exec) benar dan penerapan berakses <i>Siapa saja</i>.</li><li>Bila baru diperbarui, tutup semua tab aplikasi lalu buka lagi (cache lama).</li>') +
       '</ul><button onclick="location.reload()">Muat ulang</button><button class="alt" onclick="__ssuClear()">Hapus sesi tersimpan &amp; muat ulang</button>' +
       (gas ? '' : '<button class="alt" onclick="__ssuSetUrl()">Atur URL server</button>') +
-      '<div style="font-size:11px;color:#5d6b63;margin-top:8px">v1.2.0 &middot; ' + (gas ? 'Apps Script' : 'PWA') + '</div></div>';
+      '<div style="font-size:11px;color:#5d6b63;margin-top:8px">v1.2.1 &middot; ' + (gas ? 'Apps Script' : 'PWA') + '</div></div>';
   }
   window.__ssuDiag = diag;
   window.__ssuClear = function () { try { ['session', 'me', 'settings'].forEach(function (k) { localStorage.removeItem('ssu.' + k); }); } catch (e) {} location.reload(); };
@@ -194,7 +194,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 })();</script><div id="toasts"></div>
 <script>/* SSU Digital Enterprise — inti frontend: API, IndexedDB, antrean sinkronisasi, UI kit, login, shell. */
 'use strict';
-const VERSION = '1.2.0';
+const VERSION = '1.2.1';
 const BUILD_DATE = '2026-10-28';
 const IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 const LS = {
@@ -269,6 +269,7 @@ function api(action, payload, opt = {}) {
     if (e.code === 'MUST_ACCEPT') consentFlow();
     throw e;
   };
+  if (window.SSU_DEMO) return SSU_DEMO.call(req, opt).then(handle);   // versi demo: server berjalan di browser
   if (IS_GAS) return new Promise((res, rej) => {
     let done = false;
     const to = setTimeout(() => { if (done) return; done = true; rej(Object.assign(new Error('Server Apps Script tidak merespons. Bila browser login dengan lebih dari satu akun Google, buka aplikasi di jendela Incognito atau logout dari akun lain, lalu muat ulang.'), { code: 'NETWORK', timeout: true })); }, opt.timeout || 30000);
@@ -525,14 +526,14 @@ function serverStatusLine() {
 function renderLogin(msg) {
   document.body.innerHTML = `<div class="login"><div class="login-art"><div><div style="display:flex;gap:12px;align-items:center"><img class="logo" data-brand-logo alt="logo" title="Klik untuk memperbesar"><div><div style="font-weight:700" data-brand-title></div><div style="opacity:.75;font-size:12.5px" data-brand-sub></div></div></div></div>
     <div><h2>Kebenaran data tanah, dari titik sampling sampai rekomendasi.</h2><ul><li>SSU berversi & validasi geometri/CRS</li><li>Kerja lapangan offline dengan sinkronisasi aman</li><li>Chain of custody, impor lab, QC, analitik GIS</li></ul></div>
-    <div style="font-size:12px;opacity:.6">v${VERSION} · ${IS_GAS ? 'Apps Script' : 'PWA'}</div>
+    <div style="font-size:12px;opacity:.6">v${VERSION} · ${window.SSU_DEMO ? 'DEMO' : IS_GAS ? 'Apps Script' : 'PWA'}</div>
     <svg class="bg" viewBox="0 0 200 200"><path fill="#fff" d="M100 10c-30 30-50 60-50 90a50 50 0 0 0 100 0c0-30-20-60-50-90z"/></svg></div>
     <div class="login-box"><div class="login-card"><img class="logo" data-brand-logo alt="logo" title="Klik untuk memperbesar"><h1 style="font-size:22px;margin:14px 0 2px" data-brand-title></h1><p class="muted" style="margin:0 0 18px">Masuk untuk melanjutkan</p>
     <form id="loginForm"><label class="f"><span>Email</span><input class="in" name="email" type="email" autocomplete="username" required></label>
     <label class="f"><span>Password</span><input class="in" name="password" type="password" autocomplete="current-password" required></label>
     <div class="err-msg" id="loginErr">${esc(msg || '')}</div>
     <button class="btn pri" style="width:100%;justify-content:center;padding:10px;margin-top:8px">Masuk</button></form>
-    <div class="bar" style="margin-top:12px"><a href="#" id="forgot">Lupa password?</a><span class="sp"></span>${IS_GAS ? '' : '<a href="#" id="cfgApi">Koneksi server</a>'}</div>
+    <div class="bar" style="margin-top:12px"><a href="#" id="forgot">Lupa password?</a><span class="sp"></span>${IS_GAS || window.SSU_DEMO ? '' : '<a href="#" id="cfgApi">Koneksi server</a>'}</div>
     <p class="help">Sesi berlaku 12 jam. Jangan gunakan perangkat bersama tanpa logout.</p><p class="help" id="srvLine">Menghubungi server…</p>
     <p class="help" style="margin-top:14px">Dengan masuk, Anda menyetujui <a href="#" data-legal="terms">Syarat & Ketentuan</a> dan telah membaca <a href="#" data-legal="privacy">Pemberitahuan Privasi</a>.<br><a href="#" data-legal="about">Versi aplikasi v${VERSION}</a></p></div></div></div><div id="toasts"></div>`;
   applyBranding();
@@ -546,7 +547,7 @@ function renderLogin(msg) {
   if ($('#cfgApi')) $('#cfgApi').onclick = e => { e.preventDefault(); configApi(); };
   $$('[data-legal]').forEach(a => a.onclick = e => { e.preventDefault(); showLegal(a.dataset.legal); });
   serverStatusLine();
-  if (!IS_GAS && !apiUrl()) configApi();
+  if (!IS_GAS && !window.SSU_DEMO && !apiUrl()) configApi();
 }
 function configApi() {
   formModal('Koneksi ke server Apps Script', [{ name: 'apiUrl', label: 'URL Web App (/exec)', required: true, pattern: 'https://script\\.google\\.com/macros/s/[A-Za-z0-9_-]+/exec', patternMsg: 'Harus URL https://script.google.com/macros/s/…/exec', value: apiUrl() }], {},
@@ -588,7 +589,7 @@ const MENU = [
 function renderShell() {
   const nav = MENU.map(([g, items]) => { const vis = items.filter(i => can(i[3])); return vis.length ? `<div class="nav-group">${g}</div>` + vis.map(i => `<button data-nav="${i[0]}">${ic(i[2])}<span>${i[1]}</span>${i[0] === 'field' ? ' <span id="syncCount" class="badge b-warn hidden" style="margin-left:auto"></span>' : ''}</button>`).join('') : ''; }).join('');
   document.body.innerHTML = `<div class="app" id="app"><aside class="side"><div class="brand"><img class="logo" data-brand-logo alt="logo" title="Klik untuk memperbesar"><div class="brand-txt"><div class="brand-title" data-brand-title></div><div class="brand-sub" data-brand-sub></div></div></div>
-    <nav class="nav">${nav}</nav><div class="side-foot"><a href="#" data-legal="about" style="color:inherit">v${VERSION}</a> · ${IS_GAS ? 'Apps Script' : 'PWA'} · <span id="licChip"></span><br><a href="#" data-legal="terms" style="color:inherit">Syarat & Ketentuan</a> · <a href="#" data-legal="privacy" style="color:inherit">Privasi</a></div></aside>
+    <nav class="nav">${nav}</nav><div class="side-foot"><a href="#" data-legal="about" style="color:inherit">v${VERSION}</a> · ${window.SSU_DEMO ? 'DEMO' : IS_GAS ? 'Apps Script' : 'PWA'} · <span id="licChip"></span><br><a href="#" data-legal="terms" style="color:inherit">Syarat & Ketentuan</a> · <a href="#" data-legal="privacy" style="color:inherit">Privasi</a></div></aside>
     <div class="main"><header class="top"><button class="btn sm burger" id="burger" aria-label="Menu">${ic('menu')}</button><h1 id="pageTitle"></h1>
     ${can('settings.write') ? `<button class="btn sm" id="editBrand" title="Edit judul & logo">${ic('edit')}</button>` : ''}
     ${S.estates.length > 1 ? `<select class="in" id="estateSel" style="width:auto;max-width:180px"><option value="">Semua estate</option>${S.estates.map(e => `<option value="${esc(e.id)}"${e.id === S.estateId ? ' selected' : ''}>${esc(e.name)}</option>`).join('')}</select>` : ''}
@@ -649,7 +650,8 @@ async function boot() {
   if (S.me.needsConsent) return consentFlow();
   renderShell(); await Sync.recover(); Sync.run();
   if (can('read')) setTimeout(() => ['Organizations', 'Divisions', 'Protocols', 'LabParameters', 'Laboratories'].forEach(t => listAll(t).catch(() => {})), 1500);   // hangatkan cache
-  go(!navigator.onLine && can('field.write') ? 'field' : (location.hash.slice(1) || (can('read') ? 'dashboard' : 'field')));
+  const allowed = MENU.flatMap(m => m[1]).filter(i => can(i[3])).map(i => i[0]), want = location.hash.slice(1);
+  go(!navigator.onLine && can('field.write') ? 'field' : (allowed.includes(want) ? want : (can('read') ? 'dashboard' : 'field')));   // halaman di luar hak peran → beranda
 }
 const Pages = {};
 
@@ -658,6 +660,7 @@ const Pages = {};
  * — semua pengguna akan diminta menyetujui ulang. */
 const LEGAL_VERSION = '2026-10-28.2';
 const CHANGELOG = [
+  ['1.2.1', '2026-10-31', 'Perbaikan: impor hasil lab CSV tanpa pustaka tambahan + pencocokan kolom otomatis (mis. "P Bray I (ppm)"), warna peta parameter untuk titik di luar rentang, keterangan peta analisis menampilkan kode kampanye & periode, label SSU per poligon, sorotan "loncat ke" memudar agar warna SSU terlihat, halaman awal disesuaikan dengan hak akses peran. Tersedia versi DEMO.'],
   ['1.2.0', '2026-10-28', 'Lebih cepat: login 1 round-trip (sebelumnya 5), hash password di V8 (bukan 1.500 panggilan Utilities), cache kolom/lisensi/referensi, logout seketika. Peta: loncat ke Organisasi/Estate/Afdeling/Blok/SSU/koordinat, foto udara PMTiles offline, cetak peta A4/A3 layout gaya ArcGIS. Dokumentasi foto ke Google Drive (sheet hanya menyimpan URL), termasuk foto lapangan offline.'],
   ['1.1.2', '2026-10-28', 'Versi Apps Script: JS & CSS dikirim sebagai Base64 ASCII murni lalu di-decode di browser, sehingga tidak dapat dirusak oleh pemrosesan HtmlService (galat "Failed to execute write on Document"). Galat sintaks kini menunjuk ssu-app.js:baris.'],
   ['1.1.1', '2026-10-28', 'Perbaikan galat "Failed to execute write on Document" di Apps Script: tag HTML di dalam skrip (fitur cetak) di-escape saat build sehingga skrip tidak terpotong oleh HtmlService.'],
@@ -718,7 +721,7 @@ async function aboutHtml() {
   let srv = null; try { srv = await api('health', {}, { noAuthRedirect: true, timeout: 15000 }); } catch (e) {}
   const lic = (S.me && S.me.license) || {};
   return `<table class="tbl"><tr><td>Aplikasi</td><td><b>${esc((S.settings || {}).appTitle || 'SSU Digital Enterprise')}</b></td></tr>
-    <tr><td>Versi aplikasi (klien)</td><td><span class="mono">v${VERSION}</span> · build ${BUILD_DATE} · ${IS_GAS ? 'Apps Script' : 'PWA'}</td></tr>
+    <tr><td>Versi aplikasi (klien)</td><td><span class="mono">v${VERSION}</span> · build ${BUILD_DATE} · ${window.SSU_DEMO ? 'DEMO' : IS_GAS ? 'Apps Script' : 'PWA'}</td></tr>
     <tr><td>Versi server</td><td>${srv ? `<span class="mono">v${esc(srv.version)}</span> · status ${esc(srv.status)}${srv.version !== VERSION ? ' · <b style="color:var(--warn)">berbeda dari klien — perbarui berkas & penerapan</b>' : ''}` : '<span class="muted">tidak dapat dihubungi</span>'}</td></tr>
     <tr><td>Versi dokumen hukum</td><td>${LEGAL_VERSION}${S.me && S.me.consent ? ' · Anda setujui ' + fmtDate(S.me.consent.at, 1) : ''}</td></tr>
     <tr><td>Lisensi</td><td>${esc(lic.label || '-')}${lic.exp ? ' · s/d ' + esc(lic.exp) : ''}</td></tr>
@@ -879,6 +882,7 @@ async function zoomToBar(el, m, data) {
     hl = L.layerGroup([L.rectangle(b.pad(0.02), { color: '#facc15', weight: 3, fill: false, dashArray: '6 4', interactive: false })]
       .concat(geoms.filter(Boolean).map(g => L.geoJSON(g, { style: { color: '#facc15', weight: 3, fill: false }, interactive: false })))).addTo(m);
     m.flyToBounds(b, { padding: [30, 30], duration: 0.6, maxZoom: 18 });
+    const mine = hl; setTimeout(() => { if (hl === mine && hl) { m.removeLayer(hl); hl = null; } }, 4500);   // sorotan memudar
     toast('Peta: ' + label, '');
   }
   const geomsOfEstate = id => blocks.filter(x => x.estateId === id).map(x => x.geomJ).concat(ssus.filter(x => x.estateId === id).map(x => x.geomJ));
@@ -903,7 +907,7 @@ async function zoomToBar(el, m, data) {
     if (k === 'xy') {
       const p = v.split(/[ ,;]+/).map(Number);
       if (p.length !== 2 || !p.every(isFinite) || Math.abs(p[0]) > 90 || Math.abs(p[1]) > 180) return toast('Format koordinat: lat, lng (desimal)', 'bad');
-      if (mk) m.removeLayer(mk); mk = L.marker(p).addTo(m).bindPopup(p[0].toFixed(6) + ', ' + p[1].toFixed(6)).openPopup(); m.flyTo(p, Math.max(m.getZoom(), 17), { duration: 0.6 });
+      if (mk) m.removeLayer(mk); mk = L.circleMarker(p, { radius: 8, color: '#fff', weight: 2, fillColor: '#dc2626', fillOpacity: 1 }).addTo(m).bindPopup(p[0].toFixed(6) + ', ' + p[1].toFixed(6)).openPopup(); m.flyTo(p, Math.max(m.getZoom(), 17), { duration: 0.6 });
     }
   });
 }
@@ -947,7 +951,7 @@ async function openMapPrint(opt) {
   const inset = v.opts.includes('inset') ? `<div class="pt-box"><div class="pt-h">Peta lokasi</div><div id="ptInset" class="pt-inset"></div></div>` : '';
   const panel = land ? `<div class="pt-side" style="width:${side}mm">${ttl}${scale}${legend}${inset}${info}</div>`
     : `<div class="pt-bottom" style="height:${bottom}mm"><div class="pt-col">${ttl}${scale}</div><div class="pt-col">${legend}${inset}</div><div class="pt-col">${info}</div></div>`;
-  wrap.innerHTML = `<div class="pt-tools"><b>Pratinjau cetak ${v.paper} ${land ? 'lanskap' : 'potret'}</b><span class="muted">Geser/zoom peta di dalam bingkai sebelum mencetak.</span><span class="sp"></span>
+  wrap.innerHTML = `<div class="pt-tools"><b>Pratinjau cetak ${v.paper} ${land ? 'lanskap' : 'potret'}</b><span class="muted">Geser/zoom peta di dalam bingkai sebelum mencetak. Bila dialog cetak tidak muncul, buka aplikasi di tab browser tersendiri.</span><span class="sp"></span>
       <button class="btn pri" id="ptGo">Cetak / Simpan PDF</button><button class="btn" id="ptClose">Tutup</button></div>
     <div class="pt-sheet" style="width:${W}mm;height:${H}mm"><div class="pt-neat" style="left:${M}mm;top:${M}mm;right:${M}mm;bottom:${M}mm">
       <div class="pt-mapwrap" style="width:${mapW}mm;height:${mapH}mm"><div id="ptMap" style="width:100%;height:100%"></div><div id="ptGrid" class="pt-grid"></div></div>${panel}</div></div>`;
@@ -1249,7 +1253,7 @@ function mapThematic(data) {   // lapisan tematik dapat dibuat ulang (dipakai ju
     const sl = L.geoJSON({ type: 'FeatureCollection', features: data.ssus.map(x => ({ type: 'Feature', geometry: x.geomJ, properties: x })) },
       { style: f => ({ color: SSU_COLOR[f.properties.status] || '#555', weight: 2, fillOpacity: .18 }) })
       .bindPopup(l => { const p = l.feature.properties; return `<b>${esc(p.code)}</b> ${esc(p.name)}<br>${esc(p.soilType)}<br>Status: ${esc(p.status)} · v${esc(p.currentVersion)}<br>Luas: ${num(p.areaHa)} ha`; })
-      .bindTooltip(l => esc(l.feature.properties.code), { permanent: data.labels, direction: 'center', className: 'ssu-lbl' });
+      .eachLayer(l => l.bindTooltip(esc(l.feature.properties.code), { permanent: !!data.labels, direction: 'center', className: 'ssu-lbl' }));
     bl.addTo(m); sl.addTo(m);
     const pl = data.points && data.points.length ? L.layerGroup(data.points.map(p => { const obs = p.status === 'OBSERVED' && p.actualLat !== '';
       return L.circleMarker(obs ? [p.actualLat, p.actualLng] : [p.planLat, p.planLng], { radius: 6, color: '#fff', weight: 1.5, fillColor: PT_COLOR[p.status], fillOpacity: 1 })
@@ -1652,6 +1656,29 @@ Pages.lab = function () {
     if ($('[data-ok]', body)) { $('[data-ok]', body).onclick = () => act('VALIDATED'); $('[data-no]', body).onclick = () => act('REJECTED'); }
   });
 };
+/** Pembaca CSV bawaan (RFC 4180, pemisah , ; atau tab) — CSV dapat diimpor tanpa SheetJS & tanpa internet. */
+const CsvLite = {
+  parse(text) {
+    text = String(text).replace(/^\ufeff/, '');
+    const first = text.split(/\r?\n/, 1)[0], d = [';', '\t', ','].sort((a, b) => first.split(b).length - first.split(a).length)[0];
+    const rows = []; let row = [], cell = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; continue; }
+      if (c === '"') q = true; else if (c === d) { row.push(cell); cell = ''; }
+      else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+      else cell += c;
+    }
+    if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  },
+  read(text) { return { SheetNames: ['CSV'], Sheets: { CSV: { aoa: CsvLite.parse(text) } } }; },
+  utils: {
+    sheet_to_json(ws) { return ws.aoa; },
+    sheet_to_csv(ws) { return ws.aoa.map(r => r.map(v => /[",\n;]/.test(v) ? '"' + String(v).replace(/"/g, '""') + '"' : v).join(',')).join('\n'); }
+  }
+};
+
 async function labImport(body) {
   if (!can('lab.import')) { body.innerHTML = '<div class="state">Anda tidak memiliki hak impor hasil laboratorium.</div>'; return; }
   const [labs, params] = await Promise.all([listAll('Laboratories'), listAll('LabParameters')]);
@@ -1659,13 +1686,17 @@ async function labImport(body) {
     <label class="f"><span>File hasil (CSV/XLSX) *</span><input class="in" type="file" id="liF" accept=".csv,.xlsx,.xls,text/csv"></label><label class="f"><span>Lembar (XLSX)</span><select class="in" id="liSh"></select></label></div>
     <div id="liMap"></div><div id="liRep"></div>
     <p class="help">Integrasi aktif saat ini: impor berkas CSV/XLSX. Belum ada koneksi API langsung ke laboratorium. Nilai di luar rentang hanya ditandai untuk ditinjau.</p>`;
-  let wb = null, rows = [], headers = [], srcText = '', fileName = '';
+  let wb = null, lib = null, rows = [], headers = [], srcText = '', fileName = '';
   const parseSheet = () => {
-    const ws = wb.Sheets[$('#liSh').value]; const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+    const ws = wb.Sheets[$('#liSh').value]; const aoa = lib.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
     headers = (aoa[0] || []).map(h => String(h).trim()); rows = aoa.slice(1).filter(r => r.some(c => String(c).trim() !== '')).map(r => Object.fromEntries(headers.map((h, i) => [h, r[i]])));
     if (!headers.length || headers.some((h, i) => !h || headers.indexOf(h) !== i)) { $('#liMap').innerHTML = '<div class="state err">Baris pertama harus berisi judul kolom unik dan tidak kosong.</div>'; return; }
-    srcText = XLSX.utils.sheet_to_csv(ws);
-    const guess = h => params.find(p => h.toLowerCase().replace(/[^a-z0-9]/g, '').includes(p.code.toLowerCase().replace(/[^a-z0-9]/g, '')));
+    srcText = lib.utils.sheet_to_csv(ws);
+    const ALIAS = { PH_H2O: ['phh2o', 'phair', 'phaq'], PH_KCL: ['phkcl'], C_ORG: ['corg', 'corganik', 'karbonorganik', 'walkley'], N_TOT: ['ntot', 'ntotal', 'kjeldahl'],
+      P_AV: ['pav', 'bray', 'olsen', 'ptersedia', 'pavail'], K_DD: ['kdd', 'kexch', 'ktukar'], CA_DD: ['cadd', 'caexch'], MG_DD: ['mgdd', 'mgexch'], KTK: ['ktk', 'cec'], AL_DD: ['aldd', 'alexch'],
+      SAND: ['sand', 'pasir'], SILT: ['silt', 'debu'], CLAY: ['clay', 'liat'] };
+    const norm = x => String(x).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const guess = h => { const n = norm(h); return params.find(p => n.includes(norm(p.code))) || params.find(p => (ALIAS[p.code] || []).some(a => n.includes(a))) || params.find(p => n === norm(p.name)); };
     $('#liMap').innerHTML = `<h4>Pemetaan kolom (${rows.length} baris data)</h4><div class="grid g3"><label class="f"><span>Kolom ID sampel *</span><select class="in" id="liId">${headers.map(h => `<option ${/kode|id|sample|sampel/i.test(h) ? 'selected' : ''}>${esc(h)}</option>`).join('')}</select></label>
       <label class="f"><span>Kolom metode (opsional)</span><select class="in" id="liMet"><option value="">— tidak ada —</option>${headers.map(h => `<option ${/metode|method/i.test(h) ? 'selected' : ''}>${esc(h)}</option>`).join('')}</select></label></div>
       <div class="tbl-wrap"><table class="tbl"><tr><th>Kolom file</th><th>Parameter sistem</th><th>Satuan di file</th></tr>${headers.map((h, i) => { const g = guess(h); return `<tr><td>${esc(h)}</td><td><select class="in" data-pm="${i}"><option value="">— abaikan —</option>${params.map(p => `<option value="${esc(p.code)}" ${g && g.code === p.code ? 'selected' : ''}>${esc(p.code)} — ${esc(p.name)} (${esc(p.unit)})</option>`).join('')}</select></td><td><input class="in" data-un="${i}" value="${esc(g ? g.unit : '')}" placeholder="satuan"></td></tr>`; }).join('')}</table></div>
@@ -1683,13 +1714,19 @@ async function labImport(body) {
     const eb = $('#liErr'); if (eb) eb.onclick = () => download('galat_impor.csv', 'baris,sampel,parameter,galat\n' + r.errors.map(e => [e.line, e.sample || '', e.param || '', '"' + String(e.error).replace(/"/g, '""') + '"'].join(',')).join('\n'), 'text/csv');
     if (!dry && !r.blocked) toast('Tersimpan. Hasil berstatus PENDING/REVIEW menunggu validasi reviewer.', 'ok');
   }
-  $('#liF').onchange = async e => {
-    const f = e.target.files[0]; if (!f) return;
-    try { await loadScript(XLSX_URL, 'XLSX'); } catch (er) { return toast('Pustaka pembaca XLSX gagal dimuat (perlu online pertama kali).', 'bad'); }
-    if (f.size > 8e6) return toast('File > 8 MB. Pecah menjadi beberapa file.', 'bad');
-    fileName = f.name; wb = XLSX.read(await f.arrayBuffer(), { type: 'array', cellDates: false });
+  const openFile = async (name, getText, getBuf, size) => {
+    if (size > 8e6) return toast('File > 8 MB. Pecah menjadi beberapa file.', 'bad');
+    if (/\.(csv|txt)$/i.test(name)) { lib = CsvLite; wb = CsvLite.read(await getText()); }
+    else {
+      try { await loadScript(XLSX_URL, 'XLSX'); } catch (er) { return toast('Pustaka pembaca XLSX tidak dapat dimuat. Simpan berkas sebagai CSV lalu impor ulang (CSV tidak memerlukan internet).', 'bad'); }
+      lib = XLSX; wb = XLSX.read(await getBuf(), { type: 'array', cellDates: false });
+    }
+    fileName = name;
     $('#liSh').innerHTML = wb.SheetNames.map(n => `<option>${esc(n)}</option>`).join(''); $('#liSh').onchange = parseSheet; parseSheet();
   };
+  $('#liF').onchange = e => { const f = e.target.files[0]; if (f) openFile(f.name, () => f.text(), () => f.arrayBuffer(), f.size); };
+  labImport.openText = (name, text) => openFile(name, async () => text, null, text.length);   // dipakai mode demo
+  if (window.SSU_DEMO && SSU_DEMO.labImportHook) SSU_DEMO.labImportHook(body);
 }
 
 /* ---------------------------------- QC ---------------------------------- */
@@ -1703,7 +1740,11 @@ Pages.qc = async function () {
 
 /* ------------------------------ Analisis GIS ------------------------------ */
 Pages.analytics = async function () {
-  if (!S.estateId) { C().innerHTML = '<div class="card state">Pilih estate pada header untuk analisis.</div>'; if (S.estates.length === 1) { S.estateId = S.estates[0].id; LS.set('estateId', S.estateId); return Pages.analytics(); } return; }
+  if (!S.estateId) {
+    if (!S.estates.length) { C().innerHTML = '<div class="card state">Belum ada estate dalam cakupan Anda.</div>'; return; }
+    S.estateId = S.estates[0].id; LS.set('estateId', S.estateId); const sel = $('#estateSel'); if (sel) sel.value = S.estateId;
+    toast('Analisis memakai estate ' + S.estates[0].name + ' (ubah di header).', '');
+  }
   const [camps, params, prots] = await Promise.all([listAll('Campaigns', estateFilter()), listAll('LabParameters'), listAll('Protocols')]);
   const depths = [...new Set(prots.flatMap(p => (p.depthsJ || []).map(d => d.code)))];
   C().innerHTML = `<div class="card"><div class="grid g4"><label class="f"><span>Kampanye</span><select class="in" id="anC"><option value="">Semua</option>${camps.map(c => `<option value="${esc(c.id)}">${esc(c.code)}</option>`).join('')}</select></label>
@@ -1726,9 +1767,9 @@ Pages.analytics = async function () {
   $('#anOut').addEventListener('click', e => { if (e.target.closest('#anPrint') && S._anPrint) { const P = S._anPrint; openMapPrint({ src: m, title: P.title, subtitle: P.sub, legend: P.lgRows, build: pm => P.draw(pm) }); } });
   $('#anMap').onclick = async () => { if (!m) return; lay.forEach(l => m.removeLayer(l)); lay = [];
     const r = await run('analytics.map', Object.assign(f(), { interpolate: $('#anIdw').checked }));
-    const vals = r.ssu.features.map(x => x.properties.mean).filter(v => v !== null).concat(r.idw ? r.idw.cells.map(c => c.value) : []);
+    const vals = r.ssu.features.map(x => x.properties.mean).filter(v => v !== null).concat(r.idw ? r.idw.cells.map(c => c.value) : [], r.points.map(p => p.value)).filter(v => isFinite(v));
     const lo = Math.min(...vals), hi = Math.max(...vals), pal = ['#fef3c7', '#fcd34d', '#f59e0b', '#c2410c', '#7c2d12'];
-    const col = v => v === null || !isFinite(lo) ? '#e5e7eb' : pal[Math.min(4, Math.floor((v - lo) / ((hi - lo) || 1) * 5))];
+    const col = v => v === null || v === undefined || !isFinite(v) || !isFinite(lo) ? '#e5e7eb' : pal[Math.max(0, Math.min(4, Math.floor((v - lo) / ((hi - lo) || 1) * 5)))];
     const draw = mm => { const out = []; let g;
     if (r.idw) out.push(L.layerGroup(r.idw.cells.map(c => L.rectangle([[c.lat - c.dLat / 2, c.lng - c.dLng / 2], [c.lat + c.dLat / 2, c.lng + c.dLng / 2]], { stroke: false, fillColor: col(c.value), fillOpacity: .55 }).bindTooltip('PREDIKSI ' + num(c.value, 3)))).addTo(mm));
     g = L.geoJSON(r.ssu, { style: x => ({ color: '#111', weight: 1.5, fillColor: col(x.properties.mean), fillOpacity: r.idw ? 0 : .7, dashArray: r.idw ? '4 3' : null }) }).bindPopup(l => `<b>${esc(l.feature.properties.code)}</b><br>TERUKUR rata-rata: ${num(l.feature.properties.mean, 3)} (n=${l.feature.properties.n})`).addTo(mm); out.push(g);
@@ -1739,7 +1780,7 @@ Pages.analytics = async function () {
     const lgRows = pal.map((c, i) => [c, (isFinite(lo) ? num(lo + (hi - lo) * i / 5, 2) + ' – ' + num(lo + (hi - lo) * (i + 1) / 5, 2) : '-')]).concat([['#e5e7eb', 'Tidak ada data'], ['transparent', 'Poligon/titik = TERUKUR', 'border:2px solid #111'], ['transparent', r.idw ? 'Sel arsir = PREDIKSI (IDW)' : 'Tanpa prediksi', 'border:2px dashed #c2410c']]);
     lay.push(legend(m, lgRows));
     S._anPrint = { draw, lgRows, title: 'Peta ' + r.meta.paramCode + ' kedalaman ' + r.meta.depth, sub: (r.idw ? 'TERUKUR + PREDIKSI (IDW)' : 'Rata-rata TERUKUR per SSU') + ' · n = ' + r.meta.n };
-    $('#anOut').innerHTML = `<h2>Peta parameter tanah<span class="sp"></span><button class="btn sm pri" id="anPrint">Cetak peta A4/A3</button></h2>${meta(Object.assign({}, r.meta, { campaign: r.meta.campaignId }))}<p>${r.idw ? badge('REVIEW', 'PREDIKSI') + ' ' + esc(r.idw.method) + ' dari ' + r.idw.n + ' titik — bukan pengukuran.' : esc(r.idwReason || '')}</p>${r.warning ? `<p>${badge('REVIEW', r.warning)}</p>` : ''}`; };
+    $('#anOut').innerHTML = `<h2>Peta parameter tanah<span class="sp"></span><button class="btn sm pri" id="anPrint">Cetak peta A4/A3</button></h2>${meta(r.meta)}<p>${r.idw ? badge('REVIEW', 'PREDIKSI') + ' ' + esc(r.idw.method) + ' dari ' + r.idw.n + ' titik — bukan pengukuran.' : esc(r.idwReason || '')}</p>${r.warning ? `<p>${badge('REVIEW', r.warning)}</p>` : ''}`; };
 };
 
 /* ------------------------------ Rekomendasi ------------------------------ */
@@ -1855,6 +1896,6 @@ const OPS = [{ name: 'fieldMaxDeviationM', label: 'Batas deviasi titik aktual vs
 
 /* ------------------------------ Start ------------------------------ */
 window.addEventListener('hashchange', () => { const p = location.hash.slice(1); if (S.me && p && p !== S.page && Pages[p]) go(p); });
-if ('serviceWorker' in navigator && !IS_GAS && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-boot();
+if ('serviceWorker' in navigator && !IS_GAS && !window.SSU_DEMO_BUILD && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+if (window.SSU_DEMO_BUILD) window.__ssuStart = boot; else boot();   // versi demo menyiapkan data dulu
 </script></body></html>
